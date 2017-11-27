@@ -22,10 +22,13 @@ import com.pythe.common.utils.Xml2JsonUtil;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblSessionMapper;
+import com.pythe.mapper.VCustomerMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblCustomerExample;
 import com.pythe.pojo.TblSession;
+import com.pythe.pojo.VCustomer;
+import com.pythe.pojo.VCustomerExample;
 import com.pythe.rest.service.CustomerService;
 
 
@@ -54,6 +57,9 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	@Autowired
 	private TblSessionMapper sessionMapper;
+	
+	@Autowired
+	private VCustomerMapper vCustomerMapper;
 
 	@Override
 	public PytheResult register(String parameters) {
@@ -82,7 +88,6 @@ public class CustomerServiceImpl implements CustomerService {
 		newAccount.setOutAmount(0d);
 		accountMapper.insert(newAccount);
 		
-		newCustomer.setAccountId(newAccount.getId());
 		customerMapper.updateByPrimaryKey(newCustomer);
 		
 		return PytheResult.ok(newCustomer);
@@ -134,6 +139,20 @@ public class CustomerServiceImpl implements CustomerService {
 		// {"status":200,"msg":"OK","data":"
 		// {\"session_key\":\"G+m8VhyQqd6xZvHB0xPCHA==\",\"expires_in\":7200,\"openid\":\"oU6Xr0Iddiof1I7YFsioFTkwmJiU\"}"}
 		return PytheResult.ok(packet);
+	}
+
+	@Override
+	public PytheResult selectPersonalImformationByCustomerId(Long customerId) {
+		// TODO Auto-generated method stub
+		VCustomerExample example = new VCustomerExample();
+		example.createCriteria().andCustomerIdEqualTo(customerId);
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+		if (!customerList.isEmpty()) {
+			return PytheResult.ok(customerList.get(0));
+		}
+		
+		return PytheResult.build(400, "该用户不存在");
+		
 	}
 
 

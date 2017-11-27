@@ -1,6 +1,5 @@
 package com.pythe.rest.controller;
 
-import java.net.URLDecoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.ExceptionUtil;
 import com.pythe.rest.service.CustomerService;
@@ -71,6 +69,27 @@ public class CustomerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	/**
+	 * 查询用户个人信息查询
+	 * @return
+	 */
+	@RequestMapping(value = "/customer/select", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectPersonalImformationByCustomerId(@RequestParam(required = true, value = "customerId") Long customerId) {
+		try {
+
+			return (customerService.selectPersonalImformationByCustomerId(customerId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+
 	
 
 }

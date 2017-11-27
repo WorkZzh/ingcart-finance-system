@@ -21,6 +21,8 @@ public class DateUtils {
 	public static final SimpleDateFormat DATE_FORMAT_Hour_Minue = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	
+	public static final SimpleDateFormat HOUR_MINUE_FORMAT = new SimpleDateFormat("HH:mm");
+	
 	public static final SimpleDateFormat DATEKEY_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("MMddHHmmss");
 
@@ -86,6 +88,35 @@ public class DateUtils {
 			long millisecond = datetime1.getTime() - datetime2.getTime();
 
 			return Integer.valueOf(String.valueOf(millisecond / 1000));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	
+	/**
+	 * 计算时间差值（单位为秒）
+	 * 
+	 * @param time1
+	 *            时间1
+	 * @param time2
+	 *            时间2
+	 * @return 差值多少个小时
+	 */
+	public static double minusForPartHour(Date datetime1 , Date datetime2) {
+		try {
+
+			long millisecond = datetime1.getTime() - datetime2.getTime();
+
+			long time = millisecond / 1000;
+			
+			if (time%30==0) {
+				return time/30;
+			}else{
+				return (time/30)+1;
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -202,6 +233,20 @@ public class DateUtils {
 	public static String formatDate(Date date) {
 		return DATE_FORMAT.format(date);
 	}
+	
+	
+	/**
+	 * 格式化日期（HH:mm）
+	 * 
+	 * @param date
+	 *            Date对象
+	 * @return 格式化后的日期
+	 */
+	public static String formatDateToHour2Minute(Date date) {
+		return HOUR_MINUE_FORMAT.format(date);
+	}
+	
+	
 
 	/**
 	 * 格式化时间（yyyy-MM-dd HH:mm:ss）

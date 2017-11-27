@@ -1,6 +1,5 @@
 package com.pythe.store.order.job;
 
-import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +8,6 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.utils.HttpClientUtil;
-import com.pythe.mapper.TblTimerMapper;
 
 
 

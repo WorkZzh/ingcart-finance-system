@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pythe.mapper.TblRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.pythe.pojo.TblRecord" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="customer_id" property="customerId" jdbcType="BIGINT" />
+    <result column="car_id" property="carId" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
+    <result column="longitde_start" property="longitdeStart" jdbcType="DOUBLE" />
+    <result column="latitude_start" property="latitudeStart" jdbcType="DOUBLE" />
+    <result column="longitude_stop" property="longitudeStop" jdbcType="DOUBLE" />
+    <result column="latitude_stop" property="latitudeStop" jdbcType="DOUBLE" />
+    <result column="bill_id" property="billId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, customer_id, car_id, status, start_time, stop_time, longitde_start, latitude_start, 
+    longitude_stop, latitude_stop, bill_id
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblRecordExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tbl_record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tbl_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.pythe.pojo.TblRecordExample" >
+    delete from tbl_record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.pythe.pojo.TblRecord" >
+    insert into tbl_record (id, customer_id, car_id, 
+      status, start_time, stop_time, 
+      longitde_start, latitude_start, longitude_stop, 
+      latitude_stop, bill_id)
+    values (#{id,jdbcType=VARCHAR}, #{customerId,jdbcType=BIGINT}, #{carId,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, 
+      #{longitdeStart,jdbcType=DOUBLE}, #{latitudeStart,jdbcType=DOUBLE}, #{longitudeStop,jdbcType=DOUBLE}, 
+      #{latitudeStop,jdbcType=DOUBLE}, #{billId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pythe.pojo.TblRecord" >
+    insert into tbl_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="customerId != null" >
+        customer_id,
+      </if>
+      <if test="carId != null" >
+        car_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="stopTime != null" >
+        stop_time,
+      </if>
+      <if test="longitdeStart != null" >
+        longitde_start,
+      </if>
+      <if test="latitudeStart != null" >
+        latitude_start,
+      </if>
+      <if test="longitudeStop != null" >
+        longitude_stop,
+      </if>
+      <if test="latitudeStop != null" >
+        latitude_stop,
+      </if>
+      <if test="billId != null" >
+        bill_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="carId != null" >
+        #{carId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stopTime != null" >
+        #{stopTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="longitdeStart != null" >
+        #{longitdeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="latitudeStart != null" >
+        #{latitudeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="longitudeStop != null" >
+        #{longitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="latitudeStop != null" >
+        #{latitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="billId != null" >
+        #{billId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.pythe.pojo.TblRecordExample" resultType="java.lang.Integer" >
+    select count(*) from tbl_record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tbl_record
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.customerId != null" >
+        customer_id = #{record.customerId,jdbcType=BIGINT},
+      </if>
+      <if test="record.carId != null" >
+        car_id = #{record.carId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.startTime != null" >
+        start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.stopTime != null" >
+        stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.longitdeStart != null" >
+        longitde_start = #{record.longitdeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="record.latitudeStart != null" >
+        latitude_start = #{record.latitudeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="record.longitudeStop != null" >
+        longitude_stop = #{record.longitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="record.latitudeStop != null" >
+        latitude_stop = #{record.latitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="record.billId != null" >
+        bill_id = #{record.billId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tbl_record
+    set id = #{record.id,jdbcType=VARCHAR},
+      customer_id = #{record.customerId,jdbcType=BIGINT},
+      car_id = #{record.carId,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER},
+      start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
+      longitde_start = #{record.longitdeStart,jdbcType=DOUBLE},
+      latitude_start = #{record.latitudeStart,jdbcType=DOUBLE},
+      longitude_stop = #{record.longitudeStop,jdbcType=DOUBLE},
+      latitude_stop = #{record.latitudeStop,jdbcType=DOUBLE},
+      bill_id = #{record.billId,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pythe.pojo.TblRecord" >
+    update tbl_record
+    <set >
+      <if test="customerId != null" >
+        customer_id = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="carId != null" >
+        car_id = #{carId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stopTime != null" >
+        stop_time = #{stopTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="longitdeStart != null" >
+        longitde_start = #{longitdeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="latitudeStart != null" >
+        latitude_start = #{latitudeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="longitudeStop != null" >
+        longitude_stop = #{longitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="latitudeStop != null" >
+        latitude_stop = #{latitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="billId != null" >
+        bill_id = #{billId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pythe.pojo.TblRecord" >
+    update tbl_record
+    set customer_id = #{customerId,jdbcType=BIGINT},
+      car_id = #{carId,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      stop_time = #{stopTime,jdbcType=TIMESTAMP},
+      longitde_start = #{longitdeStart,jdbcType=DOUBLE},
+      latitude_start = #{latitudeStart,jdbcType=DOUBLE},
+      longitude_stop = #{longitudeStop,jdbcType=DOUBLE},
+      latitude_stop = #{latitudeStop,jdbcType=DOUBLE},
+      bill_id = #{billId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
