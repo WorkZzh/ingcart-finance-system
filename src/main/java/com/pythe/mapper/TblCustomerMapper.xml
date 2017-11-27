@@ -110,6 +110,9 @@
       #{level,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblCustomer" >
+     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+	     select LAST_INSERT_ID()
+	</selectKey>
     insert into tbl_customer
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

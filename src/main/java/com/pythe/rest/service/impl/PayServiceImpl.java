@@ -178,18 +178,21 @@ public class PayServiceImpl implements PayService {
 
 		// 更新账户
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
-		if (null != account) {
-			account.setAmount(account.getAmount() + inAmount);
-			account.setInAmount(account.getInAmount() + inAmount);
-			accountMapper.updateByPrimaryKey(account);
-		} else {
-			TblAccount record = new TblAccount();
-			record.setCustomerId(customerId);
-			record.setInAmount(inAmount);
-			// 是否判断tbl_bill是否是转出或者转入
-			record.setAmount(inAmount);
-			accountMapper.insert(record);
-		}
+		account.setAmount(account.getAmount() + inAmount);
+		account.setInAmount(account.getInAmount() + inAmount);
+		accountMapper.updateByPrimaryKey(account);
+//		if (null != account) {
+//			account.setAmount(account.getAmount() + inAmount);
+//		account.setInAmount(account.getInAmount() + inAmount);
+//		accountMapper.updateByPrimaryKey(account);
+//		} else {
+//			TblAccount record = new TblAccount();
+//			record.setCustomerId(customerId);
+//			record.setInAmount(inAmount);
+//			// 是否判断tbl_bill是否是转出或者转入
+//			record.setAmount(inAmount);
+//			accountMapper.insert(record);
+//		}
 
 		return PytheResult.ok("充值成功");
 	}
