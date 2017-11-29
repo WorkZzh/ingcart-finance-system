@@ -13,6 +13,10 @@ public class TblHoldRecord {
 
     private Date holdStopTime;
 
+    private String recordId;
+
+    private Integer status;
+
     public Long getId() {
         return id;
     }
@@ -51,5 +55,21 @@ public class TblHoldRecord {
 
     public void setHoldStopTime(Date holdStopTime) {
         this.holdStopTime = holdStopTime;
+    }
+
+    public String getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(String recordId) {
+        this.recordId = recordId == null ? null : recordId.trim();
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

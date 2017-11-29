@@ -66,7 +66,8 @@ public class PayServiceImpl implements PayService {
 		String body = json.getString("body");// 商品描述
 		String out_trade_no = System.currentTimeMillis() + "" + new java.util.Random().nextInt(8);// 商品订单号
 		String product_id = FactoryUtils.getUUID();// 商品编号
-		String total_fee = json.getDouble("total_fee") * 100 + "";// 总金额
+		Double a = json.getDouble("total_fee")* 100;
+		String total_fee = a.intValue()+ "";// 总金额
 																	// 分
 		// String time_start = getCurrTime();// 交易起始时间(订单生成时间非必须)
 		String trade_type = json.getString("trade_type");// 公众号支付

@@ -21,12 +21,12 @@ public class CartController {
 	private CartService service;
 	
     /**
-	 *关锁
+	 *开锁
 	 * @return
 	 */
 	@RequestMapping(value = "/use/unlock", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult chargeForAccount(@RequestBody String parameters) throws Exception {
+	public PytheResult unloke(@RequestBody String parameters) throws Exception {
 
 		try {
 			return service.unloke(parameters);
@@ -38,7 +38,7 @@ public class CartController {
 	
 	
     /**
-	 *开锁
+	 *关锁
 	 * @return
 	 */
 	@RequestMapping(value = "/use/lock", method = RequestMethod.POST)
@@ -112,8 +112,8 @@ public class CartController {
     @RequestMapping(value = "/map/carShow", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult selectCartPositionByMap
-	(@RequestParam(required = true,value = "longitude") Integer longitude,
-			@RequestParam(required = true,value = "latitude") Integer latitude
+	(@RequestParam(required = true,value = "longitude") Double longitude,
+			@RequestParam(required = true,value = "latitude") Double latitude
 			) {
 
 		try {
@@ -124,8 +124,87 @@ public class CartController {
 		}
 	}
 	
+    
+    
+    /**
+	 *显示保留的剩余时间,时间够会自动返回400结束
+	 * @return
+	 */
+    @RequestMapping(value = "/save/time", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectSaveRestTimeByCustomerId
+	(@RequestParam(required = true,value = "customerId") Long customerId
+			) {
+		try {
+			return service.selectSaveRestTimeByCustomerId(customerId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
+    /**
+	 *取消预约
+	 * @return
+	 */
+    @RequestMapping(value = "/cancel/appointment", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult deleteAppointmentByCustomerId
+	(@RequestParam(required = true,value = "customerId") Long customerId
+			) {
+		try {
+			return service.deleteAppointmentByCustomerId(customerId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
+    
+    /**
+	 *显示使用的时间
+	 * @return
+	 */
+    @RequestMapping(value = "/use/car/time", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectUseCarTimeByCarId
+	(@RequestParam(required = true,value = "carId") String carId
+			) {
+		try {
+			return service.selectUseCarTimeByCarId(carId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
+    
 	
 
+    
+//    /**
+//	 *解密
+//	 * @return
+//	 */
+//    @RequestMapping(value = "/decode", method = RequestMethod.GET)
+//	@ResponseBody
+//	public PytheResult decode
+//	(@RequestParam(required = true,value = "code") String code
+//			) {
+//
+//		try {
+//			return service.decode(code);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+//		}
+//	}
+//    
+    
+    
 	
 	
 	
