@@ -13,9 +13,13 @@ import com.github.pagehelper.PageHelper;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.FactoryUtils;
+import com.pythe.mapper.TblFaultTypeMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
 import com.pythe.mapper.VAcountRecordMapper;
 import com.pythe.pojo.TblAccount;
+import com.pythe.pojo.TblBill;
+import com.pythe.pojo.TblFaultType;
+import com.pythe.pojo.TblFaultTypeExample;
 import com.pythe.pojo.TblMaintenance;
 import com.pythe.pojo.TblRecord;
 import com.pythe.pojo.VAcountRecord;
@@ -26,6 +30,8 @@ import com.pythe.rest.service.MaintenanceService;
 @Service
 public class MaintenanceServiceImpl implements MaintenanceService{
 
+	@Autowired
+	private TblFaultTypeMapper faultTypeMapper;
 	
 	@Autowired
 	private TblMaintenanceMapper maintenanceMapper;
@@ -40,11 +46,20 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		
 		JSONObject information = JSONObject.parseObject(parameters);
 		Long customerId = information.getLong("customerId");
-		Integer type = information.getInteger("type");
+		String typeStr = information.getString("type").trim();
 		Double longitude = information.getDouble("longitude");
 		Double latitude = information.getDouble("latitude");
 		String carId = information.getString("carId");
 		String description = information.getString("description");
+		
+		Integer type = 0;
+		TblFaultTypeExample faultTypeExample = new TblFaultTypeExample();
+		faultTypeExample.createCriteria().andFaultEqualTo(typeStr);
+		List<TblFaultType> faultTypes = faultTypeMapper.selectByExample(faultTypeExample);
+		if(!faultTypes.isEmpty())
+		{
+			type = faultTypes.get(0).getType();
+		}
 		
 		TblMaintenance record =new TblMaintenance();
 		record.setCustomerId(customerId);
