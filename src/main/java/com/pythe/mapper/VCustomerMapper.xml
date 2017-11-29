@@ -10,6 +10,13 @@
     <result column="amount" property="amount" jdbcType="DOUBLE" />
     <result column="in_amount" property="inAmount" jdbcType="DOUBLE" />
     <result column="out_amount" property="outAmount" jdbcType="DOUBLE" />
+    <result column="car_status" property="carStatus" jdbcType="INTEGER" />
+    <result column="car_id" property="carId" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
+    <result column="record_id" property="recordId" jdbcType="VARCHAR" />
+    <result column="open_id" property="openId" jdbcType="VARCHAR" />
+    <result column="union_id" property="unionId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -70,7 +77,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    customer_id, phone_num, name, description, level, amount, in_amount, out_amount
+    customer_id, phone_num, name, description, level, amount, in_amount, out_amount, 
+    car_status, car_id, start_time, stop_time, record_id, open_id, union_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.VCustomerExample" >
     select
@@ -95,10 +103,16 @@
   <insert id="insert" parameterType="com.pythe.pojo.VCustomer" >
     insert into v_customer (customer_id, phone_num, name, 
       description, level, amount, 
-      in_amount, out_amount)
+      in_amount, out_amount, car_status, 
+      car_id, start_time, stop_time, 
+      record_id, open_id, union_id
+      )
     values (#{customerId,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{description,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, #{amount,jdbcType=DOUBLE}, 
-      #{inAmount,jdbcType=DOUBLE}, #{outAmount,jdbcType=DOUBLE})
+      #{inAmount,jdbcType=DOUBLE}, #{outAmount,jdbcType=DOUBLE}, #{carStatus,jdbcType=INTEGER}, 
+      #{carId,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, 
+      #{recordId,jdbcType=VARCHAR}, #{openId,jdbcType=VARCHAR}, #{unionId,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.VCustomer" >
     insert into v_customer
@@ -127,6 +141,27 @@
       <if test="outAmount != null" >
         out_amount,
       </if>
+      <if test="carStatus != null" >
+        car_status,
+      </if>
+      <if test="carId != null" >
+        car_id,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="stopTime != null" >
+        stop_time,
+      </if>
+      <if test="recordId != null" >
+        record_id,
+      </if>
+      <if test="openId != null" >
+        open_id,
+      </if>
+      <if test="unionId != null" >
+        union_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="customerId != null" >
@@ -152,6 +187,27 @@
       </if>
       <if test="outAmount != null" >
         #{outAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="carStatus != null" >
+        #{carStatus,jdbcType=INTEGER},
+      </if>
+      <if test="carId != null" >
+        #{carId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stopTime != null" >
+        #{stopTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recordId != null" >
+        #{recordId,jdbcType=VARCHAR},
+      </if>
+      <if test="openId != null" >
+        #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="unionId != null" >
+        #{unionId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -188,6 +244,27 @@
       <if test="record.outAmount != null" >
         out_amount = #{record.outAmount,jdbcType=DOUBLE},
       </if>
+      <if test="record.carStatus != null" >
+        car_status = #{record.carStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.carId != null" >
+        car_id = #{record.carId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startTime != null" >
+        start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.stopTime != null" >
+        stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.recordId != null" >
+        record_id = #{record.recordId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openId != null" >
+        open_id = #{record.openId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.unionId != null" >
+        union_id = #{record.unionId,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -202,7 +279,14 @@
       level = #{record.level,jdbcType=INTEGER},
       amount = #{record.amount,jdbcType=DOUBLE},
       in_amount = #{record.inAmount,jdbcType=DOUBLE},
-      out_amount = #{record.outAmount,jdbcType=DOUBLE}
+      out_amount = #{record.outAmount,jdbcType=DOUBLE},
+      car_status = #{record.carStatus,jdbcType=INTEGER},
+      car_id = #{record.carId,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
+      record_id = #{record.recordId,jdbcType=VARCHAR},
+      open_id = #{record.openId,jdbcType=VARCHAR},
+      union_id = #{record.unionId,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>

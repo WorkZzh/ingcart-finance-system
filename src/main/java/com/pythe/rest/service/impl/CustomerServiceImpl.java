@@ -90,7 +90,11 @@ public class CustomerServiceImpl implements CustomerService {
 		
 		customerMapper.updateByPrimaryKey(newCustomer);
 		
-		return PytheResult.ok(newCustomer);
+		VCustomerExample vCustomerExample = new VCustomerExample();
+		vCustomerExample.createCriteria().andCustomerIdEqualTo(newCustomer.getId());
+		List<VCustomer> customers = vCustomerMapper.selectByExample(vCustomerExample);
+		
+		return PytheResult.ok(customers.get(0));
 	}
 
 	@Override
@@ -101,9 +105,9 @@ public class CustomerServiceImpl implements CustomerService {
 		String openId = customerInformation.getString("openId").trim();
 		String unionId = customerInformation.getString("unionId").trim();
 		
-		TblCustomerExample customerExample = new TblCustomerExample();
-		customerExample.createCriteria().andOpenIdEqualTo(openId).andUnionIdEqualTo(unionId);
-		List<TblCustomer> customers = customerMapper.selectByExample(customerExample);
+		VCustomerExample vCustomerExample = new VCustomerExample();
+		vCustomerExample.createCriteria().andOpenIdEqualTo(openId).andUnionIdEqualTo(unionId);
+		List<VCustomer> customers = vCustomerMapper.selectByExample(vCustomerExample);
 		if(customers.isEmpty())
 		{
 			return PytheResult.build(400, "尚未有此客户信息");

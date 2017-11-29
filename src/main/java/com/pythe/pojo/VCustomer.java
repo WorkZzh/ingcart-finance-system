@@ -1,5 +1,7 @@
 package com.pythe.pojo;
 
+import java.util.Date;
+
 public class VCustomer {
     private Long customerId;
 
@@ -16,6 +18,20 @@ public class VCustomer {
     private Double inAmount;
 
     private Double outAmount;
+
+    private Integer carStatus;
+
+    private String carId;
+
+    private Date startTime;
+
+    private Date stopTime;
+
+    private String recordId;
+
+    private String openId;
+
+    private String unionId;
 
     public Long getCustomerId() {
         return customerId;
@@ -79,5 +95,61 @@ public class VCustomer {
 
     public void setOutAmount(Double outAmount) {
         this.outAmount = outAmount;
+    }
+
+    public Integer getCarStatus() {
+        return carStatus;
+    }
+
+    public void setCarStatus(Integer carStatus) {
+        this.carStatus = carStatus;
+    }
+
+    public String getCarId() {
+        return carId;
+    }
+
+    public void setCarId(String carId) {
+        this.carId = carId == null ? null : carId.trim();
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getStopTime() {
+        return stopTime;
+    }
+
+    public void setStopTime(Date stopTime) {
+        this.stopTime = stopTime;
+    }
+
+    public String getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(String recordId) {
+        this.recordId = recordId == null ? null : recordId.trim();
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId == null ? null : openId.trim();
+    }
+
+    public String getUnionId() {
+        return unionId;
+    }
+
+    public void setUnionId(String unionId) {
+        this.unionId = unionId == null ? null : unionId.trim();
     }
 }
