@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.RecursiveAction;
 
 import com.pythe.common.pojo.PytheResult;
 
@@ -104,18 +105,15 @@ public class DateUtils {
 	 *            时间2
 	 * @return 差值多少个小时
 	 */
-	public static double minusForPartHour(Date datetime1 , Date datetime2) {
+	public static int minusForPartHour(Date datetime1 , Date datetime2) {
 		try {
 
 			long millisecond = datetime1.getTime() - datetime2.getTime();
 
-			long time = millisecond / 1000;
+			double time = millisecond / 1000d/60d;
+			Double result = Math.ceil(time);
 			
-			if (time%30==0) {
-				return time/30;
-			}else{
-				return (time/30)+1;
-			}
+			return result.intValue();
 			
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -31,6 +31,8 @@ import com.pythe.pojo.TblRecordExample;
 import com.pythe.rest.service.CartService;
 import com.pythe.rest.service.PayService;
 
+import net.sf.jsqlparser.expression.JsonExpression;
+
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -55,6 +57,9 @@ public class CartServiceImpl implements CartService {
 
 	@Value("${CAR_SAVE_STATUS}")
 	private Integer CAR_SAVE_STATUS;
+
+	@Value("${CAR_LOCK_STATUS}")
+	private Integer CAR_LOCK_STATUS;
 
 	@Value("${CAR_MAINTENCE_STATUS}")
 	private Integer CAR_MAINTENCE_STATUS;
@@ -89,7 +94,7 @@ public class CartServiceImpl implements CartService {
 		final String carId = information.getString("carId");
 		final Double longitude = information.getDouble("longitude");
 		final Double latitude = information.getDouble("latitude");
-
+		final String recordId = FactoryUtils.getUUID();
 		// 判断用户是否被别的车占用
 		// TblCarExample example = new TblCarExample();
 		// example.createCriteria().andUserEqualTo(customerId);
@@ -101,7 +106,7 @@ public class CartServiceImpl implements CartService {
 		// 看看用户消费情况
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
 		if (account.getAmount() <= 0) {
-			return PytheResult.build(400, "余额不足前往充值");
+			return PytheResult.build(300, "余额不足前往充值");
 		}
 
 		// 看看车的状态
@@ -113,18 +118,19 @@ public class CartServiceImpl implements CartService {
 		Integer status = car.getStatus();
 		switch (status) {
 		case 1: {
-			return PytheResult.build(400, "该车正在使用中");
+			return PytheResult.build(400, "此车正在使用中");
 		}
 
 		case 2: {
 			// 是否是该用户继续使用
 			if (car.getUser() != customerId) {
-				return PytheResult.build(400, "该车已被别人保留");
+				return PytheResult.build(500, "抱歉，该车已被预约保留");
 			}
 			// 是，解除状态，将状态变为使用状态
 			car.setLatitude(latitude);
 			car.setLongitude(longitude);
 			car.setUser(customerId);
+			// car.setRecordid(recordId); 因为第一次开锁时候就已经记录的该车属于那条记录
 			car.setStatus(CAR_USER_STATUS);
 			carMapper.updateByPrimaryKey(car);
 
@@ -138,7 +144,7 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.ok("开锁成功");
 		}
 		case 3: {
-			return PytheResult.build(400, "该车需要维修");
+			return PytheResult.build(600, "此车有故障，请换车扫码");
 		}
 		}
 
@@ -147,12 +153,12 @@ public class CartServiceImpl implements CartService {
 		car.setLongitude(longitude);
 		car.setStarttime(new Date());
 		car.setUser(customerId);
+		car.setRecordid(recordId);
 		car.setStatus(CAR_USER_STATUS);
 		carMapper.updateByPrimaryKey(car);
 
 		// 记录登记
 		// 在运行时候先，推荐完要将原来的推荐信号给制空
-		final String recordId = FactoryUtils.getUUID();
 
 		new Thread() {
 			@Override
@@ -167,7 +173,6 @@ public class CartServiceImpl implements CartService {
 				recordMapper.insert(record);
 			}
 		}.start();
-
 		JSONObject object = new JSONObject();
 		object.put("recordId", recordId);
 		return PytheResult.build(200, "开锁成功", object);
@@ -186,8 +191,8 @@ public class CartServiceImpl implements CartService {
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 		car.setLatitude(latitude);
 		car.setLongitude(longitude);
-		car.setUser(null);
-		car.setStatus(CAR_FREE_STATUS);
+		// car.setUser(null);
+		car.setStatus(CAR_LOCK_STATUS);
 		car.setEndtime(new Date());
 		carMapper.updateByPrimaryKey(car);
 
@@ -241,7 +246,13 @@ public class CartServiceImpl implements CartService {
 		carMapper.updateByPrimaryKey(car);
 
 		// 更新停止时间和停止位置和记录用的钱
-		final double amount = EACH_HOUR_PRICE * DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
+		int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
+		Double amount = null;
+		if (time % 30 == 0) {
+			amount = Math.floor(time / 30) * EACH_HOUR_PRICE;
+		} else {
+			amount = (Math.floor(time / 30) + 1) * EACH_HOUR_PRICE;
+		}
 
 		final String billId = FactoryUtils.getUUID();
 		new Thread() {
@@ -261,18 +272,17 @@ public class CartServiceImpl implements CartService {
 		accountMapper.updateByPrimaryKey(account);
 
 		// 更新流水
+		final TblBill bill = new TblBill();
+		bill.setId(billId);
+		bill.setRecordId(recordId);
+		bill.setAmount(amount);
+		bill.setType(BILL_PAY_TYPE);
+		bill.setCustomerId(customerId);
+		bill.setTime(new Date());
+		bill.setRecordId(recordId);
 		new Thread() {
 			@Override
 			public void run() {
-				TblBill bill = new TblBill();
-				bill.setId(billId);
-				bill.setRecordId(recordId);
-				bill.setAmount(amount);
-				bill.setType(BILL_PAY_TYPE);
-				bill.setCustomerId(customerId);
-				bill.setTime(new Date());
-				bill.setRecordId(recordId);
-
 				if (account.getAmount() < 0) {
 					bill.setStatus(NOT_PAY_STATUS);
 				} else {
@@ -282,10 +292,12 @@ public class CartServiceImpl implements CartService {
 			}
 		}.start();
 
-		
 		// 看看更新后的账单是否为正数，如果是，证明扣费成功
 		if (account.getAmount() > 0) {
-			return PytheResult.build(200, "支付成功",amount);
+			JSONObject json = new JSONObject();
+			json.put("price", amount.intValue());
+			json.put("time", time);
+			return PytheResult.build(200, "支付成功", json);
 		} else {
 			return PytheResult.build(300, "余额不足，前往充值");
 		}
@@ -298,11 +310,12 @@ public class CartServiceImpl implements CartService {
 		String carId = information.getString("carId");
 		final Long customerId = information.getLong("customerId");
 		Integer appointmentTime = information.getInteger("appointmentTime");
+		String recordId = information.getString("recordId");
 
 		// 保留的话，让该用户继续霸占这个锁
 		TblCar car = new TblCar();
 		car.setId(carId);
-		car.setUser(null);
+		car.setUser(customerId);
 		car.setStatus(CAR_SAVE_STATUS);
 		car.setEndtime(null);
 		carMapper.updateByPrimaryKeySelective(car);
@@ -311,19 +324,22 @@ public class CartServiceImpl implements CartService {
 		TblHoldRecord record = new TblHoldRecord();
 		record.setCarId(carId);
 		record.setCustomerId(customerId);
+		record.setRecordId(recordId);
 		record.setHoldStartTime(new Date());
+
+		// 保留车
+		record.setStatus(0);
 		record.setHoldStopTime(new DateTime().plusMinutes(appointmentTime).toDate());
 		holdRecordMapper.insert(record);
 		return PytheResult.ok("保留成功");
 	}
-
 
 	@Override
 	public PytheResult selectSaveRestTimeByCustomerId(Long customerId) {
 		// TODO Auto-generated method stub
 		// 将锁的计时器释放掉
 		TblHoldRecordExample example = new TblHoldRecordExample();
-		example.createCriteria().andCustomerIdEqualTo(customerId).andStatusEqualTo(1);
+		example.createCriteria().andCustomerIdEqualTo(customerId).andStatusEqualTo(0);
 		// holdrecordList 进入计时界面时候，是不可能为空的
 		TblHoldRecord holdrecord = holdRecordMapper.selectByExample(example).get(0);
 		// 说明用户已经计时完成
@@ -346,7 +362,13 @@ public class CartServiceImpl implements CartService {
 			carMapper.updateByPrimaryKey(car);
 
 			// 更新停止时间和停止位置和记录用的钱
-			final double amount = EACH_HOUR_PRICE * DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
+			int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
+			Double amount = null;
+			if (time % 30 == 0) {
+				amount = Math.floor(time / 30) * EACH_HOUR_PRICE;
+			} else {
+				amount = (Math.floor(time / 30) + 1) * EACH_HOUR_PRICE;
+			}
 
 			final String billId = FactoryUtils.getUUID();
 
@@ -389,7 +411,17 @@ public class CartServiceImpl implements CartService {
 					billMapper.insert(bill);
 				}
 			}.start();
-			PytheResult.build(300, "预约过期，自动结算", amount);
+
+			// 看看更新后的账单是否为正数，如果是，证明扣费成功
+			if (account.getAmount() > 0) {
+				JSONObject json = new JSONObject();
+				json.put("price", amount.intValue());
+				json.put("time", time);
+				return PytheResult.build(200, "预约过期，自动结算", json);
+			} else {
+				return PytheResult.build(300, "余额不足，前往充值");
+			}
+
 		}
 
 		// 如果没有就返回时间
@@ -417,7 +449,7 @@ public class CartServiceImpl implements CartService {
 		// TODO Auto-generated method stub
 		// 将锁的计时器释放掉
 		TblHoldRecordExample example = new TblHoldRecordExample();
-		example.createCriteria().andCustomerIdEqualTo(customerId).andStatusEqualTo(1);
+		example.createCriteria().andCustomerIdEqualTo(customerId).andStatusEqualTo(0);
 		// holdrecordList 进入计时界面时候，是不可能为空的
 		TblHoldRecord holdrecord = holdRecordMapper.selectByExample(example).get(0);
 		// 说明用户已经计时完成
@@ -427,8 +459,6 @@ public class CartServiceImpl implements CartService {
 		// 取消预约
 		holdrecord.setStatus(1);
 		holdRecordMapper.updateByPrimaryKey(holdrecord);
-		
-		
 
 		String carId = holdrecord.getCarId();
 		// 更新车的位置和使用情况和结束时间(将车设为空闲，并是否释放用户绑定)
@@ -441,13 +471,20 @@ public class CartServiceImpl implements CartService {
 		carMapper.updateByPrimaryKey(car);
 
 		// 更新停止时间和停止位置和记录用的钱
-		final double amount = EACH_HOUR_PRICE * DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
+		// 更新停止时间和停止位置和记录用的钱
+		int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
+		Double amount = null;
+		if (time % 30 == 0) {
+			amount = Math.floor(time / 30) * EACH_HOUR_PRICE;
+		} else {
+			amount = (Math.floor(time / 30) + 1) * EACH_HOUR_PRICE;
+		}
 
 		final String billId = FactoryUtils.getUUID();
 
 		final String recordId = holdrecord.getRecordId();
 
-		//更新记录
+		// 更新记录
 		new Thread() {
 			@Override
 			public void run() {
@@ -485,15 +522,17 @@ public class CartServiceImpl implements CartService {
 				billMapper.insert(bill);
 			}
 		}.start();
-		
+
 		// 看看更新后的账单是否为正数，如果是，证明扣费成功
 		if (account.getAmount() > 0) {
-			return PytheResult.build(200, "支付成功",amount);
+			JSONObject json = new JSONObject();
+			json.put("price", amount.intValue());
+			json.put("time", time);
+			return PytheResult.build(200, "支付成功", json);
 		} else {
 			return PytheResult.build(300, "余额不足，前往充值");
 		}
-		
-		
+
 	}
 
 }

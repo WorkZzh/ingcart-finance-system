@@ -664,6 +664,76 @@ public class TblCarExample {
             addCriterion("user not between", value1, value2, "user");
             return (Criteria) this;
         }
+
+        public Criteria andRecordidIsNull() {
+            addCriterion("recordId is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidIsNotNull() {
+            addCriterion("recordId is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidEqualTo(String value) {
+            addCriterion("recordId =", value, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidNotEqualTo(String value) {
+            addCriterion("recordId <>", value, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidGreaterThan(String value) {
+            addCriterion("recordId >", value, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidGreaterThanOrEqualTo(String value) {
+            addCriterion("recordId >=", value, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidLessThan(String value) {
+            addCriterion("recordId <", value, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidLessThanOrEqualTo(String value) {
+            addCriterion("recordId <=", value, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidLike(String value) {
+            addCriterion("recordId like", value, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidNotLike(String value) {
+            addCriterion("recordId not like", value, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidIn(List<String> values) {
+            addCriterion("recordId in", values, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidNotIn(List<String> values) {
+            addCriterion("recordId not in", values, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidBetween(String value1, String value2) {
+            addCriterion("recordId between", value1, value2, "recordid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordidNotBetween(String value1, String value2) {
+            addCriterion("recordId not between", value1, value2, "recordid");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

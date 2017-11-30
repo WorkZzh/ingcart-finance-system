@@ -21,6 +21,8 @@ public class TblCar {
 
     private Long user;
 
+    private String recordid;
+
     public String getId() {
         return id;
     }
@@ -91,5 +93,13 @@ public class TblCar {
 
     public void setUser(Long user) {
         this.user = user;
+    }
+
+    public String getRecordid() {
+        return recordid;
+    }
+
+    public void setRecordid(String recordid) {
+        this.recordid = recordid == null ? null : recordid.trim();
     }
 }

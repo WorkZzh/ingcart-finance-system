@@ -11,6 +11,7 @@
     <result column="starttime" property="starttime" jdbcType="TIMESTAMP" />
     <result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
     <result column="user" property="user" jdbcType="BIGINT" />
+    <result column="recordId" property="recordid" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -71,7 +72,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, longitude, latitude, status, level, description, starttime, endtime, user
+    id, longitude, latitude, status, level, description, starttime, endtime, user, recordId
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblCarExample" >
     select
@@ -106,12 +107,12 @@
   <insert id="insert" parameterType="com.pythe.pojo.TblCar" >
     insert into tbl_car (id, longitude, latitude, 
       status, level, description, 
-      starttime, endtime, user
-      )
+      starttime, endtime, user, 
+      recordId)
     values (#{id,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, 
       #{status,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, 
-      #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}, #{user,jdbcType=BIGINT}
-      )
+      #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}, #{user,jdbcType=BIGINT}, 
+      #{recordid,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblCar" >
     insert into tbl_car
@@ -143,6 +144,9 @@
       <if test="user != null" >
         user,
       </if>
+      <if test="recordid != null" >
+        recordId,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -171,6 +175,9 @@
       </if>
       <if test="user != null" >
         #{user,jdbcType=BIGINT},
+      </if>
+      <if test="recordid != null" >
+        #{recordid,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -210,6 +217,9 @@
       <if test="record.user != null" >
         user = #{record.user,jdbcType=BIGINT},
       </if>
+      <if test="record.recordid != null" >
+        recordId = #{record.recordid,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -225,7 +235,8 @@
       description = #{record.description,jdbcType=VARCHAR},
       starttime = #{record.starttime,jdbcType=TIMESTAMP},
       endtime = #{record.endtime,jdbcType=TIMESTAMP},
-      user = #{record.user,jdbcType=BIGINT}
+      user = #{record.user,jdbcType=BIGINT},
+      recordId = #{record.recordid,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -257,6 +268,9 @@
       <if test="user != null" >
         user = #{user,jdbcType=BIGINT},
       </if>
+      <if test="recordid != null" >
+        recordId = #{recordid,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -269,7 +283,8 @@
       description = #{description,jdbcType=VARCHAR},
       starttime = #{starttime,jdbcType=TIMESTAMP},
       endtime = #{endtime,jdbcType=TIMESTAMP},
-      user = #{user,jdbcType=BIGINT}
+      user = #{user,jdbcType=BIGINT},
+      recordId = #{recordid,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>
