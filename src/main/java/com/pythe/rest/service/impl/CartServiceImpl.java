@@ -112,7 +112,7 @@ public class CartServiceImpl implements CartService {
 		// 看看车的状态
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 		if (car == null) {
-			PytheResult.ok("该车信息尚未录入，暂无法使用");
+			PytheResult.build(100, "该车信息尚未录入，暂无法使用");
 		}
 
 		Integer status = car.getStatus();
