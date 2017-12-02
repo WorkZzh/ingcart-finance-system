@@ -106,7 +106,7 @@ public class CartServiceImpl implements CartService {
 		// 看看用户消费情况
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
 		if (account.getAmount() <= 0) {
-			return PytheResult.build(300, "余额不足前往充值");
+			return PytheResult.build(300, "余额不足前往充值",account.getAmount());
 		}
 
 		// 看看车的状态
@@ -299,7 +299,7 @@ public class CartServiceImpl implements CartService {
 			json.put("time", time);
 			return PytheResult.build(200, "支付成功", json);
 		} else {
-			return PytheResult.build(300, "余额不足，前往充值");
+			return PytheResult.build(300, "余额不足，前往充值",account.getAmount());
 		}
 	}
 
@@ -419,7 +419,7 @@ public class CartServiceImpl implements CartService {
 				json.put("time", time);
 				return PytheResult.build(200, "预约过期，自动结算", json);
 			} else {
-				return PytheResult.build(300, "余额不足，前往充值");
+				return PytheResult.build(300, "余额不足，前往充值",account.getAmount());
 			}
 
 		}
@@ -530,7 +530,7 @@ public class CartServiceImpl implements CartService {
 			json.put("time", time);
 			return PytheResult.build(200, "支付成功", json);
 		} else {
-			return PytheResult.build(300, "余额不足，前往充值");
+			return PytheResult.build(300, "余额不足，前往充值",account.getAmount());
 		}
 
 	}

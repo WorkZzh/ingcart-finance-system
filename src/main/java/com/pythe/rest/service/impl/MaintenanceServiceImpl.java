@@ -90,21 +90,23 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		
 		
 		String key =null;
-		LinkedList<VAcountRecord> list  =null;
+		LinkedList<JSONObject> list  =null;
 		
-		LinkedHashMap<String,LinkedList<VAcountRecord>> map = new LinkedHashMap<String,LinkedList<VAcountRecord>>();
+		LinkedHashMap<String,LinkedList<JSONObject>> map = new LinkedHashMap<String,LinkedList<JSONObject>>();
 		for (VAcountRecord vAcountRecord : result) {
+			JSONObject json = new JSONObject();
 			key = DateUtils.formatDate(vAcountRecord.getStopTime());
-			
-			vAcountRecord.setRecordId(DateUtils.formatDateToHour2Minute(vAcountRecord.getStartTime()) +"-"+DateUtils.formatDateToHour2Minute(vAcountRecord.getStopTime()));
+			json.put("duration", DateUtils.formatDateToHour2Minute(vAcountRecord.getStartTime()) +"-"+DateUtils.formatDateToHour2Minute(vAcountRecord.getStopTime()));
+			json.put("billId", vAcountRecord.getBillId());
+			json.put("minute", DateUtils.minusForPartHour(vAcountRecord.getStopTime(),vAcountRecord.getStartTime()));
+			json.put("amount", vAcountRecord.getAmount());
 			if (!map.containsKey(key)) {
-				list = new LinkedList<VAcountRecord>();
-				
-				list.add(vAcountRecord);
+				list = new LinkedList<JSONObject>();
+				list.add(json);
 				map.put(key, list);
 			}else{
 				list = map.get(key);
-				list.add(vAcountRecord);
+				list.add(json);
 				map.put(key, list);
 			}
 		}

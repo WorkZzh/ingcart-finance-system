@@ -125,7 +125,6 @@ public class PayServiceImpl implements PayService {
 		// params2.put("trade_type", trade_type);
 		String signB = "";// 签名(该签名本应使用微信商户平台的API证书中的密匙key,但此处使用的是微信公众号的密匙APP_SECRET)
 		signB = FactoryUtils.getSign(params2, WX_KEY);
-		System.out.println("======================>" + signB);
 
 		// String prepay_id ="";
 		// for (String s : str.split("\n"))

@@ -103,7 +103,7 @@ public class DateUtils {
 	 *            时间1
 	 * @param time2
 	 *            时间2
-	 * @return 差值多少个小时
+	 * @return 差值为多少分钟
 	 */
 	public static int minusForPartHour(Date datetime1 , Date datetime2) {
 		try {
