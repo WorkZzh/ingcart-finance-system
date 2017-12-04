@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
+import com.pythe.common.utils.DecodeUtils;
 import com.pythe.common.utils.FactoryUtils;
 import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.common.utils.Xml2JsonUtil;
@@ -62,6 +63,8 @@ public class PayServiceImpl implements PayService {
 		String appid = WX_APPID;// appid
 		String mch_id = WX_MCH_ID;// 微信支付商户号
 		String nonce_str = FactoryUtils.getUUID();// 随机码
+		
+		prepayment_imforamtion = DecodeUtils.decode(prepayment_imforamtion);
 		JSONObject json = JSONObject.parseObject(prepayment_imforamtion);
 		String body = json.getString("body");// 商品描述
 		String out_trade_no = System.currentTimeMillis() + "" + new java.util.Random().nextInt(8);// 商品订单号
