@@ -417,7 +417,7 @@ public class CartServiceImpl implements CartService {
 				JSONObject json = new JSONObject();
 				json.put("price", amount.intValue());
 				json.put("time", time);
-				return PytheResult.build(200, "预约过期，自动结算", json);
+				return PytheResult.build(100, "预约过期，自动结算", json);
 			} else {
 				return PytheResult.build(300, "余额不足，前往充值");
 			}

@@ -1,13 +1,16 @@
 package com.pythe.rest.service.impl;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.pythe.common.pojo.PytheResult;
@@ -92,23 +95,35 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		String key =null;
 		LinkedList<VAcountRecord> list  =null;
 		
+		JSONObject o = new JSONObject();
+		List<String> historyDate = new LinkedList<String>();
+		JSONArray j = new JSONArray();
+		List<JSONArray> record = new LinkedList<JSONArray>();
 		LinkedHashMap<String,LinkedList<VAcountRecord>> map = new LinkedHashMap<String,LinkedList<VAcountRecord>>();
 		for (VAcountRecord vAcountRecord : result) {
 			key = DateUtils.formatDate(vAcountRecord.getStopTime());
 			
 			vAcountRecord.setRecordId(DateUtils.formatDateToHour2Minute(vAcountRecord.getStartTime()) +"-"+DateUtils.formatDateToHour2Minute(vAcountRecord.getStopTime()));
+			
+			
 			if (!map.containsKey(key)) {
 				list = new LinkedList<VAcountRecord>();
 				
 				list.add(vAcountRecord);
 				map.put(key, list);
+				
+				historyDate.add(key);
 			}else{
 				list = map.get(key);
 				list.add(vAcountRecord);
 				map.put(key, list);
+				
 			}
 		}
-		return PytheResult.ok(map);
+		
+		o.put("historyDate", historyDate);
+		o.put("record", map);
+		return PytheResult.ok(o);
 	}
 
 	
