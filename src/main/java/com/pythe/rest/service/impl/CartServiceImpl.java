@@ -236,6 +236,8 @@ public class CartServiceImpl implements CartService {
 		final String recordId = information.getString("recordId");
 		String carId = information.getString("carId");
 		final Long customerId = information.getLong("customerId");
+		
+		final String formId = information.getString("formId");
 
 		// 更新车的位置和使用情况和结束时间
 		// 让车处于空闲状态，让后续的人可以使用
@@ -297,7 +299,7 @@ public class CartServiceImpl implements CartService {
 			JSONObject json = new JSONObject();
 			json.put("price", amount.intValue());
 			json.put("time", time);
-			return PytheResult.build(200, "支付成功", json);
+			return PytheResult.build(100, "支付成功", json);
 		} else {
 			return PytheResult.build(300, "余额不足，前往充值");
 		}
