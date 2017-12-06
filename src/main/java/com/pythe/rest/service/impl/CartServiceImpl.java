@@ -2,6 +2,8 @@ package com.pythe.rest.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.FactoryUtils;
+import com.pythe.common.utils.HttpClientUtil;
+import com.pythe.common.utils.JsonUtils;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblBillMapper;
 import com.pythe.mapper.TblCarMapper;
@@ -20,6 +24,7 @@ import com.pythe.mapper.TblHoldRecordMapper;
 import com.pythe.mapper.TblRecordMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBill;
+import com.pythe.pojo.TblBillExample;
 import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
 import com.pythe.pojo.TblCustomer;
@@ -70,6 +75,19 @@ public class CartServiceImpl implements CartService {
 
 	@Value("${BILL_PAY_TYPE}")
 	private Integer BILL_PAY_TYPE;
+	
+	@Value("${WX_APPID}")
+	private String WX_APPID;
+
+	@Value("${WX_APPSECRET}")
+	private String WX_APPSECRET;
+	
+	@Value("${WX_NOTIFY_PAY_TEMPLATE_ID}")
+	private String WX_NOTIFY_PAY_TEMPLATE_ID;
+
+	
+	@Autowired
+	private TblCustomerMapper customerMapper;
 
 	@Autowired
 	private TblRecordMapper recordMapper;
@@ -112,7 +130,7 @@ public class CartServiceImpl implements CartService {
 		// 看看车的状态
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 		if (car == null) {
-			PytheResult.ok("该车信息尚未录入，暂无法使用");
+			PytheResult.build(100, "该车信息尚未录入，暂无法使用");
 		}
 
 		Integer status = car.getStatus();
@@ -236,6 +254,8 @@ public class CartServiceImpl implements CartService {
 		final String recordId = information.getString("recordId");
 		String carId = information.getString("carId");
 		final Long customerId = information.getLong("customerId");
+		
+		final String formId = information.getString("formId");
 
 		// 更新车的位置和使用情况和结束时间
 		// 让车处于空闲状态，让后续的人可以使用
@@ -291,13 +311,57 @@ public class CartServiceImpl implements CartService {
 				billMapper.insert(bill);
 			}
 		}.start();
+		
+	
+		
+		
+		//微信服务通知推送支付结果
+		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential" + "&appid=" + WX_APPID
+			+"&secret=" + WX_APPSECRET;
+		String result = HttpClientUtil.doGet(url, null);
+		System.out.println(result);
+		String access_token = JSONObject.parseObject(result).getString("access_token");
+		System.out.println("notify===========>"+access_token);
+		//https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=ACCESS_TOKEN
+			
+			
+				
+	    SortedMap<String, Object> params = new TreeMap<String, Object>();
+	    //找出openid并发送
+		params.put("touser", customerMapper.selectByPrimaryKey(customerId).getOpenId());
+		params.put("template_id", WX_NOTIFY_PAY_TEMPLATE_ID);
+		System.out.println(formId);
+		params.put("form_id", formId);
+		
+		TreeMap<String, String> mimiprogram_value_map = new TreeMap<String, String>();
+		mimiprogram_value_map.put("appid", WX_APPID);
+		mimiprogram_value_map.put("pagepath","pages/index/index");
+		params.put("miniprogram", mimiprogram_value_map);
+		
+
+		
+
+		
+		String params_json= JsonUtils.objectToJson(params);
+		System.out.println("### params to post =========================> " + params_json);
+		
+		String xw_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+access_token;
+		String str = HttpClientUtil.doPostJson(xw_url, params_json);
+
+		System.out.println("!!!!!=======================>push pay info: " + str);
+		//微信服务通知推送支付结果
+		
+		
+		
+		
+		
 
 		// 看看更新后的账单是否为正数，如果是，证明扣费成功
 		if (account.getAmount() > 0) {
 			JSONObject json = new JSONObject();
 			json.put("price", amount.intValue());
 			json.put("time", time);
-			return PytheResult.build(200, "支付成功", json);
+			return PytheResult.build(100, "支付成功", json);
 		} else {
 			return PytheResult.build(300, "余额不足，前往充值",account.getAmount());
 		}
@@ -417,7 +481,7 @@ public class CartServiceImpl implements CartService {
 				JSONObject json = new JSONObject();
 				json.put("price", amount.intValue());
 				json.put("time", time);
-				return PytheResult.build(200, "预约过期，自动结算", json);
+				return PytheResult.build(100, "预约过期，自动结算", json);
 			} else {
 				return PytheResult.build(300, "余额不足，前往充值",account.getAmount());
 			}

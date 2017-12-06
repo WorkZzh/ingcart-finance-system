@@ -11,13 +11,16 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
+import com.pythe.common.utils.DecodeUtils;
 import com.pythe.common.utils.FactoryUtils;
 import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.common.utils.Xml2JsonUtil;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblBillMapper;
+import com.pythe.mapper.TblCouponMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBill;
+import com.pythe.pojo.TblCoupon;
 import com.pythe.rest.service.PayService;
 
 @Service
@@ -47,6 +50,9 @@ public class PayServiceImpl implements PayService {
 
 	@Value("${WX_MCH_ID}")
 	private String WX_MCH_ID;
+	
+	@Value("${GIFT_COUPONS_THRESHOLD}")
+	private double GIFT_COUPONS_THRESHOLD;
 
 
 	@Autowired
@@ -55,6 +61,9 @@ public class PayServiceImpl implements PayService {
 	@Autowired
 	private TblBillMapper billMapper;
 
+	@Autowired
+	private TblCouponMapper couponMapper;
+	
 	@Override
 	public PytheResult chargeForAccount(String prepayment_imforamtion) throws Exception{
 
@@ -62,6 +71,8 @@ public class PayServiceImpl implements PayService {
 		String appid = WX_APPID;// appid
 		String mch_id = WX_MCH_ID;// 微信支付商户号
 		String nonce_str = FactoryUtils.getUUID();// 随机码
+		
+		prepayment_imforamtion = DecodeUtils.decode(prepayment_imforamtion);
 		JSONObject json = JSONObject.parseObject(prepayment_imforamtion);
 		String body = json.getString("body");// 商品描述
 		String out_trade_no = System.currentTimeMillis() + "" + new java.util.Random().nextInt(8);// 商品订单号
@@ -193,6 +204,18 @@ public class PayServiceImpl implements PayService {
 //			record.setAmount(inAmount);
 //			accountMapper.insert(record);
 //		}
+		
+		//充值成功时检查是否符合条件，符合则送赠品券
+		if(account.getOutAmount() == 0d && inAmount >= GIFT_COUPONS_THRESHOLD )
+		{
+			TblCoupon giftCoupon = new TblCoupon();
+			giftCoupon.setCode(FactoryUtils.getUUID());
+			giftCoupon.setCustomerId(customerId);
+			giftCoupon.setType(0);
+			giftCoupon.setStatus(0);
+			giftCoupon.setName("婴咖垫套");
+			couponMapper.insert(giftCoupon);
+		}
 
 		return PytheResult.ok("充值成功");
 	}
