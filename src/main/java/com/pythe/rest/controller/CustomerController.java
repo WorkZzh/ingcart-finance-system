@@ -78,7 +78,24 @@ public class CustomerController {
 	 */
 	@RequestMapping(value = "/customer/select", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectPersonalImformationByCustomerId(@RequestParam(required = true, value = "customerId") Long customerId) {
+	public PytheResult selectPersonalImformationByCustomerId(@RequestBody String parameters) {
+		try {
+
+			return (customerService.receiveGift(parameters));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	/**
+	 * 使用赠品券，领取赠品
+	 * @return
+	 */
+	@RequestMapping(value = "/coupon/receiveGift", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult receiveGift(@RequestParam(required = true, value = "customerId") Long customerId) {
 		try {
 
 			return (customerService.selectPersonalImformationByCustomerId(customerId));
@@ -87,9 +104,6 @@ public class CustomerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-
 	
 
 }

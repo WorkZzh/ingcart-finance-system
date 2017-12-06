@@ -165,6 +165,76 @@ public class TblCouponExample {
             return (Criteria) this;
         }
 
+        public Criteria andCodeIsNull() {
+            addCriterion("code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeIsNotNull() {
+            addCriterion("code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeEqualTo(String value) {
+            addCriterion("code =", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeNotEqualTo(String value) {
+            addCriterion("code <>", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeGreaterThan(String value) {
+            addCriterion("code >", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("code >=", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeLessThan(String value) {
+            addCriterion("code <", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeLessThanOrEqualTo(String value) {
+            addCriterion("code <=", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeLike(String value) {
+            addCriterion("code like", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeNotLike(String value) {
+            addCriterion("code not like", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeIn(List<String> values) {
+            addCriterion("code in", values, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeNotIn(List<String> values) {
+            addCriterion("code not in", values, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeBetween(String value1, String value2) {
+            addCriterion("code between", value1, value2, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeNotBetween(String value1, String value2) {
+            addCriterion("code not between", value1, value2, "code");
+            return (Criteria) this;
+        }
+
         public Criteria andNameIsNull() {
             addCriterion("name is null");
             return (Criteria) this;
@@ -595,6 +665,76 @@ public class TblCouponExample {
             return (Criteria) this;
         }
 
+        public Criteria andDealerIdIsNull() {
+            addCriterion("dealer_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdIsNotNull() {
+            addCriterion("dealer_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdEqualTo(String value) {
+            addCriterion("dealer_id =", value, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdNotEqualTo(String value) {
+            addCriterion("dealer_id <>", value, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdGreaterThan(String value) {
+            addCriterion("dealer_id >", value, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdGreaterThanOrEqualTo(String value) {
+            addCriterion("dealer_id >=", value, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdLessThan(String value) {
+            addCriterion("dealer_id <", value, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdLessThanOrEqualTo(String value) {
+            addCriterion("dealer_id <=", value, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdLike(String value) {
+            addCriterion("dealer_id like", value, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdNotLike(String value) {
+            addCriterion("dealer_id not like", value, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdIn(List<String> values) {
+            addCriterion("dealer_id in", values, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdNotIn(List<String> values) {
+            addCriterion("dealer_id not in", values, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdBetween(String value1, String value2) {
+            addCriterion("dealer_id between", value1, value2, "dealerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIdNotBetween(String value1, String value2) {
+            addCriterion("dealer_id not between", value1, value2, "dealerId");
+            return (Criteria) this;
+        }
+
         public Criteria andStatusIsNull() {
             addCriterion("status is null");
             return (Criteria) this;
@@ -652,6 +792,66 @@ public class TblCouponExample {
 
         public Criteria andStatusNotBetween(Integer value1, Integer value2) {
             addCriterion("status not between", value1, value2, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIsNull() {
+            addCriterion("type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIsNotNull() {
+            addCriterion("type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeEqualTo(Integer value) {
+            addCriterion("type =", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotEqualTo(Integer value) {
+            addCriterion("type <>", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeGreaterThan(Integer value) {
+            addCriterion("type >", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("type >=", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLessThan(Integer value) {
+            addCriterion("type <", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("type <=", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIn(List<Integer> values) {
+            addCriterion("type in", values, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotIn(List<Integer> values) {
+            addCriterion("type not in", values, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeBetween(Integer value1, Integer value2) {
+            addCriterion("type between", value1, value2, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("type not between", value1, value2, "type");
             return (Criteria) this;
         }
     }

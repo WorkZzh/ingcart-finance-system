@@ -20,10 +20,12 @@ import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.common.utils.JsonUtils;
 import com.pythe.common.utils.Xml2JsonUtil;
 import com.pythe.mapper.TblAccountMapper;
+import com.pythe.mapper.TblCouponMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblSessionMapper;
 import com.pythe.mapper.VCustomerMapper;
 import com.pythe.pojo.TblAccount;
+import com.pythe.pojo.TblCoupon;
 import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblCustomerExample;
 import com.pythe.pojo.TblSession;
@@ -60,6 +62,9 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	@Autowired
 	private VCustomerMapper vCustomerMapper;
+	
+	@Autowired
+	private TblCouponMapper couponMapper;
 
 	@Override
 	public PytheResult register(String parameters) {
@@ -156,6 +161,32 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 		
 		return PytheResult.build(400, "该用户不存在");
+		
+	}
+
+	@Override
+	public PytheResult receiveGift(String parameters) {
+		
+		JSONObject params = JSONObject.parseObject(parameters);
+		Long customerId = params.getLong("customerId");
+		Long couponId = params.getLong("couponId");
+		String couponCode = params.getString("couponCode").trim();
+		String dealerId = params.getString("dealerId");
+		
+		TblCoupon coupon = couponMapper.selectByPrimaryKey(couponId);
+		if(coupon.getCode().equals(couponCode) && coupon.getCustomerId().equals(customerId))
+		{
+			//使用赠品券
+			coupon.setDealerId(dealerId);
+			coupon.setStatus(1);
+			coupon.setUseTime(new Date());
+			couponMapper.updateByPrimaryKey(coupon);
+			return PytheResult.ok("赠品券已使用");
+		}
+		else
+		{
+			return PytheResult.build(400, "券码错误");
+		}
 		
 	}
 

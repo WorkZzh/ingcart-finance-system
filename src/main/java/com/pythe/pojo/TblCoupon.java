@@ -5,6 +5,8 @@ import java.util.Date;
 public class TblCoupon {
     private Long id;
 
+    private String code;
+
     private String name;
 
     private Date startTime;
@@ -19,7 +21,11 @@ public class TblCoupon {
 
     private Date useTime;
 
+    private String dealerId;
+
     private Integer status;
+
+    private Integer type;
 
     public Long getId() {
         return id;
@@ -27,6 +33,14 @@ public class TblCoupon {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code == null ? null : code.trim();
     }
 
     public String getName() {
@@ -85,11 +99,27 @@ public class TblCoupon {
         this.useTime = useTime;
     }
 
+    public String getDealerId() {
+        return dealerId;
+    }
+
+    public void setDealerId(String dealerId) {
+        this.dealerId = dealerId == null ? null : dealerId.trim();
+    }
+
     public Integer getStatus() {
         return status;
     }
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

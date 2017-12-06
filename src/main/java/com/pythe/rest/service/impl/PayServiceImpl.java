@@ -17,8 +17,10 @@ import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.common.utils.Xml2JsonUtil;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblBillMapper;
+import com.pythe.mapper.TblCouponMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBill;
+import com.pythe.pojo.TblCoupon;
 import com.pythe.rest.service.PayService;
 
 @Service
@@ -48,6 +50,9 @@ public class PayServiceImpl implements PayService {
 
 	@Value("${WX_MCH_ID}")
 	private String WX_MCH_ID;
+	
+	@Value("${GIFT_COUPONS_THRESHOLD}")
+	private double GIFT_COUPONS_THRESHOLD;
 
 
 	@Autowired
@@ -56,6 +61,9 @@ public class PayServiceImpl implements PayService {
 	@Autowired
 	private TblBillMapper billMapper;
 
+	@Autowired
+	private TblCouponMapper couponMapper;
+	
 	@Override
 	public PytheResult chargeForAccount(String prepayment_imforamtion) throws Exception{
 
@@ -197,6 +205,18 @@ public class PayServiceImpl implements PayService {
 //			record.setAmount(inAmount);
 //			accountMapper.insert(record);
 //		}
+		
+		//充值成功时检查是否符合条件，符合则送赠品券
+		if(account.getOutAmount() == 0d && inAmount >= GIFT_COUPONS_THRESHOLD )
+		{
+			TblCoupon giftCoupon = new TblCoupon();
+			giftCoupon.setCode(FactoryUtils.getUUID());
+			giftCoupon.setCustomerId(customerId);
+			giftCoupon.setType(0);
+			giftCoupon.setStatus(0);
+			giftCoupon.setName("婴咖垫套");
+			couponMapper.insert(giftCoupon);
+		}
 
 		return PytheResult.ok("充值成功");
 	}

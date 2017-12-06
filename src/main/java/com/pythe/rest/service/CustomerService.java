@@ -15,6 +15,8 @@ public interface CustomerService  {
 	PytheResult wxSessionRequest(String code);
 
 	PytheResult selectPersonalImformationByCustomerId(Long customerId);
+
+	PytheResult receiveGift(String parameters);
     
 	
 	
