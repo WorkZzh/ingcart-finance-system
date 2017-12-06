@@ -111,7 +111,7 @@ public class CustomerServiceImpl implements CustomerService {
 		String unionId = customerInformation.getString("unionId").trim();
 		
 		VCustomerExample vCustomerExample = new VCustomerExample();
-		vCustomerExample.createCriteria().andOpenIdEqualTo(openId).andUnionIdEqualTo(unionId);
+		vCustomerExample.createCriteria().andOpenIdEqualTo(openId);
 		List<VCustomer> customers = vCustomerMapper.selectByExample(vCustomerExample);
 		if(customers.isEmpty())
 		{

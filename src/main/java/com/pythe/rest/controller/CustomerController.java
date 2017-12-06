@@ -78,10 +78,10 @@ public class CustomerController {
 	 */
 	@RequestMapping(value = "/customer/select", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectPersonalImformationByCustomerId(@RequestBody String parameters) {
+	public PytheResult selectPersonalImformationByCustomerId(@RequestParam(required = true, value = "customerId") Long customerId) {
 		try {
 
-			return (customerService.receiveGift(parameters));
+			return (customerService.selectPersonalImformationByCustomerId(customerId));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
@@ -95,10 +95,10 @@ public class CustomerController {
 	 */
 	@RequestMapping(value = "/coupon/receiveGift", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult receiveGift(@RequestParam(required = true, value = "customerId") Long customerId) {
+	public PytheResult receiveGift(@RequestBody String parameters) {
 		try {
 
-			return (customerService.selectPersonalImformationByCustomerId(customerId));
+			return (customerService.receiveGift(parameters));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
