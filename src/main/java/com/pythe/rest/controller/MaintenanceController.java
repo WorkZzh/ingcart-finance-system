@@ -44,7 +44,7 @@ public class MaintenanceController {
 	}
     
 	
-	
+	//历史行程
     @RequestMapping(value = "/user/trip", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult selectTripBillByCustomerId(	
