@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.pythe.common.pojo.PytheResult;
@@ -91,6 +92,7 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		
 		String key =null;
 		LinkedList<JSONObject> list  =null;
+		List<String> date = new LinkedList<String>();
 		
 		LinkedHashMap<String,LinkedList<JSONObject>> map = new LinkedHashMap<String,LinkedList<JSONObject>>();
 		for (VAcountRecord vAcountRecord : result) {
@@ -104,13 +106,17 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 				list = new LinkedList<JSONObject>();
 				list.add(json);
 				map.put(key, list);
+				date.add(key);
 			}else{
 				list = map.get(key);
 				list.add(json);
 				map.put(key, list);
 			}
 		}
-		return PytheResult.ok(map);
+		JSONObject o = new JSONObject();
+		o.put("historyDate", date);
+		o.put("record", map);
+		return PytheResult.ok(o);
 	}
 
 	
