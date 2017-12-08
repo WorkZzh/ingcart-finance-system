@@ -212,7 +212,7 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/bluetooth/encrypt", method = RequestMethod.POST)
 	@ResponseBody
-	public byte[] bluetoothEncrypt(@RequestBody String parameter) throws Exception {
+	public String bluetoothEncrypt(@RequestBody String parameter) throws Exception {
 
 		
 			

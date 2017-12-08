@@ -87,7 +87,7 @@ public class EncodeUtils {
     
     public static byte[] LOCK_KEY = {32,87,47,82,54,75,63,71,48,80,65,88,17,99,45,43};
 
-	public static byte[] bluetoothEncrypt(String parameter) {
+	public static String bluetoothEncrypt(String parameter) {
 		
 		byte sSrc[] = parameter.getBytes();
 		
@@ -97,7 +97,7 @@ public class EncodeUtils {
 			Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
 			cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
 			byte[] encrypted = cipher.doFinal(sSrc);
-			return encrypted;
+			return new String(encrypted);
 		}catch(Exception ex){
 			return null;
 		}
