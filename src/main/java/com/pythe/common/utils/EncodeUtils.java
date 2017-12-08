@@ -2,6 +2,11 @@ package com.pythe.common.utils;
 
 import java.util.Random;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
+import com.pythe.common.pojo.PytheResult;
+
 /**
  * 采用MD5加密解密
  * @author tfq
@@ -78,6 +83,26 @@ public class EncodeUtils {
     public static char byteAsciiToChar(int ascii){  
         char ch = (char)ascii;  
         return ch;  
-    }  
+    }
+    
+    public static byte[] LOCK_KEY = {32,87,47,82,54,75,63,71,48,80,65,88,17,99,45,43};
+
+	public static byte[] bluetoothEncrypt(String parameter) {
+		
+		byte sSrc[] = parameter.getBytes();
+		
+		
+		try{
+			SecretKeySpec skeySpec = new SecretKeySpec(LOCK_KEY, "AES");
+			Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+			cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+			byte[] encrypted = cipher.doFinal(sSrc);
+			return encrypted;
+		}catch(Exception ex){
+			return null;
+		}
+			
+
+	}  
 
 }

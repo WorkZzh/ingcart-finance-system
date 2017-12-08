@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pythe.common.pojo.PytheResult;
+import com.pythe.common.utils.EncodeUtils;
 import com.pythe.common.utils.ExceptionUtil;
 import com.pythe.rest.service.CartService;
 
@@ -205,7 +206,19 @@ public class CartController {
     
     
 	
-	
+    /**
+	 *蓝牙通信加密
+	 * @return
+	 */
+	@RequestMapping(value = "/bluetooth/encrypt", method = RequestMethod.POST)
+	@ResponseBody
+	public byte[] bluetoothEncrypt(@RequestBody String parameter) throws Exception {
+
+		
+			
+			return EncodeUtils.bluetoothEncrypt(parameter);
+		
+	}
 	
 	
 }
