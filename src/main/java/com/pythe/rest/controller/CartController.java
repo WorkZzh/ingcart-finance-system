@@ -215,8 +215,11 @@ public class CartController {
 	public String bluetoothEncrypt(@RequestBody String parameter) throws Exception {
 
 		
-			
-			return EncodeUtils.bluetoothEncrypt(parameter);
+		System.out.println("==========================>bluetooth: " + parameter);
+		String encryptedStr = EncodeUtils.bluetoothEncrypt(parameter);
+		System.out.println("==========================>bluetooth encrypt: " + encryptedStr);
+		
+		return encryptedStr;
 		
 	}
 	
