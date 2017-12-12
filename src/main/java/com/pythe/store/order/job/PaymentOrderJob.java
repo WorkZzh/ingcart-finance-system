@@ -39,7 +39,9 @@ public class PaymentOrderJob extends QuartzJobBean {
 
 	
 	
-	private static Integer EACH_HOUR_PRICE = 1;
+	private static Integer EACH_HOUR_PRICE = 5;
+	
+	
 	private static Integer BILL_PAY_TYPE = 1;
 	private static Integer NOT_PAY_STATUS = 0;
 	private static Integer PAY_TYPE = 1;
@@ -73,7 +75,6 @@ public class PaymentOrderJob extends QuartzJobBean {
 	    			if (time % 30 == 0) {
 	    				amount = Math.floor(time / 30) * EACH_HOUR_PRICE;
 	    			} else {
-	    				System.out.println(Math.floor(time / 30)+"==========>"+EACH_HOUR_PRICE);
 	    				amount = (Math.floor(time / 30) + 1) * EACH_HOUR_PRICE;
 	    			}
 	    			
@@ -105,7 +106,7 @@ public class PaymentOrderJob extends QuartzJobBean {
 					bill.setCustomerId(customerId);
 					bill.setTime(new Date());
 					bill.setRecordId(recordId);
-					if (account.getAmount() < 0) {
+					if (account.getAmount() < EACH_HOUR_PRICE) {
 						bill.setStatus(NOT_PAY_STATUS);
 					} else {
 						bill.setStatus(PAY_TYPE);

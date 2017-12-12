@@ -123,7 +123,7 @@ public class CartServiceImpl implements CartService {
 
 		// 看看用户消费情况
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
-		if (account.getAmount() <= 0) {
+		if (account.getAmount() < EACH_HOUR_PRICE) {
 			return PytheResult.build(300, "余额不足前往充值",account.getAmount());
 		}
 
@@ -303,7 +303,7 @@ public class CartServiceImpl implements CartService {
 		new Thread() {
 			@Override
 			public void run() {
-				if (account.getAmount() < 0) {
+				if (account.getAmount() < EACH_HOUR_PRICE) {
 					bill.setStatus(NOT_PAY_STATUS);
 				} else {
 					bill.setStatus(PAY_TYPE);
@@ -467,7 +467,7 @@ public class CartServiceImpl implements CartService {
 			new Thread() {
 				@Override
 				public void run() {
-					if (account.getAmount() < 0) {
+					if (account.getAmount() <EACH_HOUR_PRICE) {
 						bill.setStatus(NOT_PAY_STATUS);
 					} else {
 						bill.setStatus(PAY_TYPE);
@@ -477,7 +477,7 @@ public class CartServiceImpl implements CartService {
 			}.start();
 
 			// 看看更新后的账单是否为正数，如果是，证明扣费成功
-			if (account.getAmount() > 0) {
+			if (account.getAmount() > EACH_HOUR_PRICE) {
 				JSONObject json = new JSONObject();
 				json.put("price", amount.intValue());
 				json.put("time", time);
@@ -578,7 +578,7 @@ public class CartServiceImpl implements CartService {
 		new Thread() {
 			@Override
 			public void run() {
-				if (account.getAmount() < 0) {
+				if (account.getAmount() < EACH_HOUR_PRICE) {
 					bill.setStatus(NOT_PAY_STATUS);
 				} else {
 					bill.setStatus(PAY_TYPE);
@@ -588,7 +588,7 @@ public class CartServiceImpl implements CartService {
 		}.start();
 
 		// 看看更新后的账单是否为正数，如果是，证明扣费成功
-		if (account.getAmount() > 0) {
+		if (account.getAmount() > EACH_HOUR_PRICE) {
 			JSONObject json = new JSONObject();
 			json.put("price", amount.intValue());
 			json.put("time", time);
