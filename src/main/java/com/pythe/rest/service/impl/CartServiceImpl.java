@@ -1,6 +1,7 @@
 package com.pythe.rest.service.impl;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -22,6 +23,7 @@ import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblHoldRecordMapper;
 import com.pythe.mapper.TblRecordMapper;
+import com.pythe.mapper.TblStoreMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBill;
 import com.pythe.pojo.TblBillExample;
@@ -33,6 +35,8 @@ import com.pythe.pojo.TblHoldRecord;
 import com.pythe.pojo.TblHoldRecordExample;
 import com.pythe.pojo.TblRecord;
 import com.pythe.pojo.TblRecordExample;
+import com.pythe.pojo.TblStore;
+import com.pythe.pojo.TblStoreExample;
 import com.pythe.rest.service.CartService;
 import com.pythe.rest.service.PayService;
 
@@ -92,6 +96,11 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	private TblRecordMapper recordMapper;
 
+	
+	@Autowired
+	private TblStoreMapper storeMapper;
+	
+	
 	@Autowired
 	private TblBillMapper billMapper;
 
@@ -237,15 +246,43 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public PytheResult selectCartPositionByMap(Double longitude, Double latitude) {
 		// TODO Auto-generated method stub
+		LinkedList<JSONObject> list = new LinkedList<JSONObject>();
+		
 		TblCarExample example = new TblCarExample();
 		example.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 0.0001)
 				.andLatitudeLessThanOrEqualTo(latitude + 0.0001).andLongitudeGreaterThan(longitude - 0.0001)
 				.andLongitudeLessThanOrEqualTo(longitude + 0.0001);
 		List<TblCar> carList = carMapper.selectByExample(example);
-		if (!carList.isEmpty()) {
-			return PytheResult.ok(carList);
+		for (TblCar car: carList) {
+			JSONObject json = new JSONObject();
+			json.put("id", car.getId());
+			json.put("latitude", car.getLatitude());
+			json.put("longitude", car.getLongitude());
+			json.put("type", 0);
+			list.add(json);
+		}
+		
+		TblStoreExample storeExample = new TblStoreExample();
+		storeExample.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 0.0001)
+		.andLatitudeLessThanOrEqualTo(latitude + 0.0001).andLongitudeGreaterThan(longitude - 0.0001)
+		.andLongitudeLessThanOrEqualTo(longitude + 0.0001);
+
+		List<TblStore> storeList= storeMapper.selectByExample(storeExample);
+		for (TblStore store : storeList) {
+			JSONObject json = new JSONObject();
+			json.put("id", store.getId());
+			json.put("latitude", store.getLatitude());
+			json.put("longitude", store.getLongitude());
+			json.put("type", 1);
+			list.add(json);
+		}
+
+		if (!list.isEmpty()) {
+			return PytheResult.ok(list);
 		}
 		return PytheResult.build(300, "附近无婴儿车");
+		
+		
 	}
 
 	@Override

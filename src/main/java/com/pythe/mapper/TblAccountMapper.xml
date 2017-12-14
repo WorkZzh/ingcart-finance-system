@@ -7,6 +7,7 @@
     <result column="in_amount" property="inAmount" jdbcType="DOUBLE" />
     <result column="out_amount" property="outAmount" jdbcType="DOUBLE" />
     <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="giving_amount" property="givingAmount" jdbcType="DOUBLE" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -67,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    customer_id, amount, in_amount, out_amount, level
+    customer_id, amount, in_amount, out_amount, level, giving_amount
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblAccountExample" >
     select
@@ -101,9 +102,11 @@
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblAccount" >
     insert into tbl_account (customer_id, amount, in_amount, 
-      out_amount, level)
+      out_amount, level, giving_amount
+      )
     values (#{customerId,jdbcType=BIGINT}, #{amount,jdbcType=DOUBLE}, #{inAmount,jdbcType=DOUBLE}, 
-      #{outAmount,jdbcType=DOUBLE}, #{level,jdbcType=INTEGER})
+      #{outAmount,jdbcType=DOUBLE}, #{level,jdbcType=INTEGER}, #{givingAmount,jdbcType=DOUBLE}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblAccount" >
     insert into tbl_account
@@ -123,6 +126,9 @@
       <if test="level != null" >
         level,
       </if>
+      <if test="givingAmount != null" >
+        giving_amount,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="customerId != null" >
@@ -139,6 +145,9 @@
       </if>
       <if test="level != null" >
         #{level,jdbcType=INTEGER},
+      </if>
+      <if test="givingAmount != null" >
+        #{givingAmount,jdbcType=DOUBLE},
       </if>
     </trim>
   </insert>
@@ -166,6 +175,9 @@
       <if test="record.level != null" >
         level = #{record.level,jdbcType=INTEGER},
       </if>
+      <if test="record.givingAmount != null" >
+        giving_amount = #{record.givingAmount,jdbcType=DOUBLE},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -177,7 +189,8 @@
       amount = #{record.amount,jdbcType=DOUBLE},
       in_amount = #{record.inAmount,jdbcType=DOUBLE},
       out_amount = #{record.outAmount,jdbcType=DOUBLE},
-      level = #{record.level,jdbcType=INTEGER}
+      level = #{record.level,jdbcType=INTEGER},
+      giving_amount = #{record.givingAmount,jdbcType=DOUBLE}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -197,6 +210,9 @@
       <if test="level != null" >
         level = #{level,jdbcType=INTEGER},
       </if>
+      <if test="givingAmount != null" >
+        giving_amount = #{givingAmount,jdbcType=DOUBLE},
+      </if>
     </set>
     where customer_id = #{customerId,jdbcType=BIGINT}
   </update>
@@ -205,7 +221,8 @@
     set amount = #{amount,jdbcType=DOUBLE},
       in_amount = #{inAmount,jdbcType=DOUBLE},
       out_amount = #{outAmount,jdbcType=DOUBLE},
-      level = #{level,jdbcType=INTEGER}
+      level = #{level,jdbcType=INTEGER},
+      giving_amount = #{givingAmount,jdbcType=DOUBLE}
     where customer_id = #{customerId,jdbcType=BIGINT}
   </update>
 </mapper>

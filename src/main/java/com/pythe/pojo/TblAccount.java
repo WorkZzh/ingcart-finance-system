@@ -11,6 +11,8 @@ public class TblAccount {
 
     private Integer level;
 
+    private Double givingAmount;
+
     public Long getCustomerId() {
         return customerId;
     }
@@ -49,5 +51,13 @@ public class TblAccount {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public Double getGivingAmount() {
+        return givingAmount;
+    }
+
+    public void setGivingAmount(Double givingAmount) {
+        this.givingAmount = givingAmount;
     }
 }
