@@ -236,16 +236,23 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public PytheResult selectCartPositionByMap(Double longitude, Double latitude) {
-		// TODO Auto-generated method stub
+		
+		//同时查询附近的车和店铺
 		TblCarExample example = new TblCarExample();
 		example.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 0.0001)
 				.andLatitudeLessThanOrEqualTo(latitude + 0.0001).andLongitudeGreaterThan(longitude - 0.0001)
 				.andLongitudeLessThanOrEqualTo(longitude + 0.0001);
 		List<TblCar> carList = carMapper.selectByExample(example);
-		if (!carList.isEmpty()) {
+		if (!carList.isEmpty()) 
+		{
 			return PytheResult.ok(carList);
 		}
-		return PytheResult.build(300, "附近无婴儿车");
+		else
+		{
+			return PytheResult.build(300, "附近无婴儿车");
+		}
+		
+		
 	}
 
 	@Override

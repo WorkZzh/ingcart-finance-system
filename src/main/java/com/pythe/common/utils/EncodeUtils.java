@@ -59,13 +59,11 @@ public class EncodeUtils {
     
     public static byte[] LOCK_KEY = {32,87,47,82,54,75,63,71,48,80,65,88,17,99,45,43};
 
+    //加密
 	public static String bluetoothEncrypt(String parameter) {
 		
 		byte sSrc[] = Base64.decodeBase64(parameter.getBytes());
-//		byte sSrc[] = {0x05, 0x01, 0x06,
-//						0x30, 0x30, 0x30, 0x30, 0x30, 0x30,
-//						0x00, 0x00, 0x00, 0x00,
-//						0x00, 0x00, 0x00};
+
 		
 		try{
 			SecretKeySpec skeySpec = new SecretKeySpec(LOCK_KEY, "AES");
@@ -75,6 +73,28 @@ public class EncodeUtils {
 			String encryptedStr = new String(Base64.encodeBase64(encrypted));
 			
 			return encryptedStr;
+		}catch(Exception ex){
+			System.out.println("==================> exception: " + ex);
+			return null;
+		}
+			
+
+	}  
+	
+	//解密
+	public static String bluetoothDecrypt(String parameter) {
+		
+		byte sSrc[] = Base64.decodeBase64(parameter.getBytes());
+
+		
+		try{
+			SecretKeySpec skeySpec = new SecretKeySpec(LOCK_KEY, "AES");
+			Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+			cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+			byte[] decrypted = cipher.doFinal(sSrc);
+			String decryptedStr = new String(Base64.encodeBase64(decrypted));
+			
+			return decryptedStr;
 		}catch(Exception ex){
 			System.out.println("==================> exception: " + ex);
 			return null;
