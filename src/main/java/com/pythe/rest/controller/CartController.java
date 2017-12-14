@@ -233,7 +233,7 @@ public class CartController {
 		
 		System.out.println("==========================>bluetooth: " + parameter);
 		String decryptedStr = EncodeUtils.bluetoothDecrypt(parameter);
-		System.out.println("==========================>bluetooth encrypt: " + decryptedStr);
+		System.out.println("==========================>bluetooth decrypt: " + decryptedStr);
 		
 		return decryptedStr;
 		
