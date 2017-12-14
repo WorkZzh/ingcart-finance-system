@@ -90,7 +90,6 @@ public class CartController {
 	
 	
 	//0为可用，1为已用，2为过时，3为取消
-
     @RequestMapping(value = "/coupon/select", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult selectCouponByCustomerId(	
@@ -220,6 +219,23 @@ public class CartController {
 		System.out.println("==========================>bluetooth encrypt: " + encryptedStr);
 		
 		return encryptedStr;
+		
+	}
+	
+	/**
+	 *蓝牙通信解密
+	 * @return
+	 */
+	@RequestMapping(value = "/bluetooth/decrypt", method = RequestMethod.POST)
+	@ResponseBody
+	public String bluetoothDecrypt(@RequestBody String parameter) throws Exception {
+
+		
+		System.out.println("==========================>bluetooth: " + parameter);
+		String decryptedStr = EncodeUtils.bluetoothDecrypt(parameter);
+		System.out.println("==========================>bluetooth encrypt: " + decryptedStr);
+		
+		return decryptedStr;
 		
 	}
 	

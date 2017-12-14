@@ -7,7 +7,9 @@
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="phone" property="phone" jdbcType="VARCHAR" />
-    <result column="manager" property="manager" jdbcType="VARCHAR" />
+    <result column="managerId" property="managerid" jdbcType="VARCHAR" />
+    <result column="identification" property="identification" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -68,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, name, status, address, phone, manager
+    id, name, status, address, phone, managerId, identification, created
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblDealerExample" >
     select
@@ -102,11 +104,11 @@
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblDealer" >
     insert into tbl_dealer (id, name, status, 
-      address, phone, manager
-      )
+      address, phone, managerId, 
+      identification, created)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
-      #{address,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{manager,jdbcType=VARCHAR}
-      )
+      #{address,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{managerid,jdbcType=VARCHAR}, 
+      #{identification,jdbcType=VARCHAR}, #{created,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblDealer" >
     insert into tbl_dealer
@@ -126,8 +128,14 @@
       <if test="phone != null" >
         phone,
       </if>
-      <if test="manager != null" >
-        manager,
+      <if test="managerid != null" >
+        managerId,
+      </if>
+      <if test="identification != null" >
+        identification,
+      </if>
+      <if test="created != null" >
+        created,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -146,8 +154,14 @@
       <if test="phone != null" >
         #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="manager != null" >
-        #{manager,jdbcType=VARCHAR},
+      <if test="managerid != null" >
+        #{managerid,jdbcType=VARCHAR},
+      </if>
+      <if test="identification != null" >
+        #{identification,jdbcType=VARCHAR},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -175,8 +189,14 @@
       <if test="record.phone != null" >
         phone = #{record.phone,jdbcType=VARCHAR},
       </if>
-      <if test="record.manager != null" >
-        manager = #{record.manager,jdbcType=VARCHAR},
+      <if test="record.managerid != null" >
+        managerId = #{record.managerid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.identification != null" >
+        identification = #{record.identification,jdbcType=VARCHAR},
+      </if>
+      <if test="record.created != null" >
+        created = #{record.created,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -190,7 +210,9 @@
       status = #{record.status,jdbcType=INTEGER},
       address = #{record.address,jdbcType=VARCHAR},
       phone = #{record.phone,jdbcType=VARCHAR},
-      manager = #{record.manager,jdbcType=VARCHAR}
+      managerId = #{record.managerid,jdbcType=VARCHAR},
+      identification = #{record.identification,jdbcType=VARCHAR},
+      created = #{record.created,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -210,8 +232,14 @@
       <if test="phone != null" >
         phone = #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="manager != null" >
-        manager = #{manager,jdbcType=VARCHAR},
+      <if test="managerid != null" >
+        managerId = #{managerid,jdbcType=VARCHAR},
+      </if>
+      <if test="identification != null" >
+        identification = #{identification,jdbcType=VARCHAR},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -222,7 +250,9 @@
       status = #{status,jdbcType=INTEGER},
       address = #{address,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
-      manager = #{manager,jdbcType=VARCHAR}
+      managerId = #{managerid,jdbcType=VARCHAR},
+      identification = #{identification,jdbcType=VARCHAR},
+      created = #{created,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -1,5 +1,7 @@
 package com.pythe.pojo;
 
+import java.util.Date;
+
 public class TblDealer {
     private String id;
 
@@ -11,7 +13,11 @@ public class TblDealer {
 
     private String phone;
 
-    private String manager;
+    private String managerid;
+
+    private String identification;
+
+    private Date created;
 
     public String getId() {
         return id;
@@ -53,11 +59,27 @@ public class TblDealer {
         this.phone = phone == null ? null : phone.trim();
     }
 
-    public String getManager() {
-        return manager;
+    public String getManagerid() {
+        return managerid;
     }
 
-    public void setManager(String manager) {
-        this.manager = manager == null ? null : manager.trim();
+    public void setManagerid(String managerid) {
+        this.managerid = managerid == null ? null : managerid.trim();
+    }
+
+    public String getIdentification() {
+        return identification;
+    }
+
+    public void setIdentification(String identification) {
+        this.identification = identification == null ? null : identification.trim();
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
     }
 }

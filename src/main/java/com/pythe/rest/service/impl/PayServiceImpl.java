@@ -173,7 +173,28 @@ public class PayServiceImpl implements PayService {
 		Double inAmount = customerInformation.getDouble("amount");
 		String out_trade_no = customerInformation.getString("out_trade_no");
 		String prepay_id = customerInformation.getString("prepay_id");
-		// 入账
+		//先改变amount的钱的金额
+		// 更新账户
+		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+		Double GIVING_ACCOUNT = null;
+		
+		if (50==inAmount) {
+			GIVING_ACCOUNT = 30d;
+			inAmount = inAmount+GIVING_ACCOUNT;
+			account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
+		}else if (100==inAmount) {
+			GIVING_ACCOUNT = 80d;
+			inAmount = inAmount+GIVING_ACCOUNT;
+			account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
+		}else if (200==inAmount) {
+			GIVING_ACCOUNT = 200d;
+			inAmount = inAmount+GIVING_ACCOUNT;
+			account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
+		}
+		
+		account.setAmount(account.getAmount() + inAmount);
+		account.setInAmount(account.getInAmount() + inAmount);
+		accountMapper.updateByPrimaryKey(account);
 
 		// 先更新账单
 		TblBill bill = new TblBill();
@@ -187,11 +208,8 @@ public class PayServiceImpl implements PayService {
 		bill.setCustomerId(customerId);
 		billMapper.insert(bill);
 
-		// 更新账户
-		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
-		account.setAmount(account.getAmount() + inAmount);
-		account.setInAmount(account.getInAmount() + inAmount);
-		accountMapper.updateByPrimaryKey(account);
+
+
 //		if (null != account) {
 //			account.setAmount(account.getAmount() + inAmount);
 //		account.setInAmount(account.getInAmount() + inAmount);
@@ -205,17 +223,19 @@ public class PayServiceImpl implements PayService {
 //			accountMapper.insert(record);
 //		}
 		
+		
+		
 		//充值成功时检查是否符合条件，符合则送赠品券
-		if(account.getOutAmount() == 0d && inAmount >= GIFT_COUPONS_THRESHOLD )
-		{
-			TblCoupon giftCoupon = new TblCoupon();
-			giftCoupon.setCode(FactoryUtils.getUUID());
-			giftCoupon.setCustomerId(customerId);
-			giftCoupon.setType(0);
-			giftCoupon.setStatus(0);
-			giftCoupon.setName("婴咖垫套");
-			couponMapper.insert(giftCoupon);
-		}
+//		if(account.getOutAmount() == 0d && inAmount >= GIFT_COUPONS_THRESHOLD )
+//		{
+//			TblCoupon giftCoupon = new TblCoupon();
+//			giftCoupon.setCode(FactoryUtils.getUUID());
+//			giftCoupon.setCustomerId(customerId);
+//			giftCoupon.setType(0);
+//			giftCoupon.setStatus(0);
+//			giftCoupon.setName("婴咖垫套");
+//			couponMapper.insert(giftCoupon);
+//		}
 
 		return PytheResult.ok("充值成功");
 	}
