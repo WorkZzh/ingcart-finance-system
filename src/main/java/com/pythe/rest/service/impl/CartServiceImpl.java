@@ -658,7 +658,7 @@ public class CartServiceImpl implements CartService {
 				byte[] sSrc = new byte[head.length + s.length + 3];  
 				System.arraycopy(head, 0, sSrc, 0, head.length);  
 			    System.arraycopy(s, 0, sSrc, head.length, s.length);
-			    
+			    System.out.println("============================> unlock frame: " + EncodeUtils.parseByte2HexStr(sSrc));
 				SecretKeySpec skeySpec = new SecretKeySpec(EncodeUtils.LOCK_KEY, "AES");
 				Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
 				cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
