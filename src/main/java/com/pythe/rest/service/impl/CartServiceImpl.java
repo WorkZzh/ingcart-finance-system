@@ -652,7 +652,7 @@ public class CartServiceImpl implements CartService {
 
 			
 			byte head[] = {05,01,06};
-			byte s[] = EncodeUtils.parseHexStr2Byte(carId+token);
+			byte s[] = EncodeUtils.parseHexStr2Byte(car.getLockPassword() + token);
 			
 			try{
 				byte[] sSrc = new byte[head.length + s.length + 3];  
