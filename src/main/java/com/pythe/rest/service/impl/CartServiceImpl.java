@@ -652,13 +652,13 @@ public class CartServiceImpl implements CartService {
 
 			
 			byte head[] = {05,01,06};
-			byte s[] = (carId+token).getBytes();
+			byte s[] = EncodeUtils.parseHexStr2Byte(carId+token);
 			
 			try{
 				byte[] sSrc = new byte[head.length + s.length + 3];  
 				System.arraycopy(head, 0, sSrc, 0, head.length);  
 			    System.arraycopy(s, 0, sSrc, head.length, s.length);
-
+			    
 				SecretKeySpec skeySpec = new SecretKeySpec(EncodeUtils.LOCK_KEY, "AES");
 				Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
 				cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
