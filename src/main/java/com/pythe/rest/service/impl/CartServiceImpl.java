@@ -668,7 +668,7 @@ public class CartServiceImpl implements CartService {
 				return PytheResult.ok(encryptedStr);
 			}catch(Exception ex){
 				System.out.println("==================> exception: " + ex);
-				return PytheResult.ok("异常错误，解密失败");
+				return PytheResult.build(400, "异常错误，解密失败");
 			}
 			
 	}
