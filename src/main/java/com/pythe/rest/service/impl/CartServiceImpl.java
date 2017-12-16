@@ -655,7 +655,7 @@ public class CartServiceImpl implements CartService {
 			byte s[] = (carId+token).getBytes();
 			
 			try{
-				byte[] sSrc = new byte[head.length + s.length];  
+				byte[] sSrc = new byte[head.length + s.length + 3];  
 				System.arraycopy(head, 0, sSrc, 0, head.length);  
 			    System.arraycopy(s, 0, sSrc, head.length, s.length);
 
