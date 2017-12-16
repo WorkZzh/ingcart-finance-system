@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.commons.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
+import com.pythe.common.utils.EncodeUtils;
 import com.pythe.common.utils.FactoryUtils;
 import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.common.utils.JsonUtils;
@@ -634,6 +639,38 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.build(300, "余额不足，前往充值",account.getAmount());
 		}
 
+	}
+
+	@Override
+	public PytheResult unLockEncodeByCartId(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		String carId = information.getString("carId");
+		String token = information.getString("token");
+		
+		TblCar car = carMapper.selectByPrimaryKey(carId);
+
+			
+			byte head[] = {05,01,06};
+			byte s[] = (carId+token).getBytes();
+			
+			try{
+				byte[] sSrc = new byte[head.length + s.length];  
+				System.arraycopy(head, 0, sSrc, 0, head.length);  
+			    System.arraycopy(s, 0, sSrc, head.length, s.length);
+
+				SecretKeySpec skeySpec = new SecretKeySpec(EncodeUtils.LOCK_KEY, "AES");
+				Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+				cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+				byte[] encrypted = cipher.doFinal(sSrc);
+				String encryptedStr = new String(Base64.encodeBase64(encrypted));
+				
+				return PytheResult.ok(encryptedStr);
+			}catch(Exception ex){
+				System.out.println("==================> exception: " + ex);
+				return PytheResult.ok("异常错误，解密失败");
+			}
+			
 	}
 
 }

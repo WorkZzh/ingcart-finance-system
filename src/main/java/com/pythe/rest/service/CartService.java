@@ -25,4 +25,6 @@ public interface CartService {
 
 	PytheResult deleteAppointmentByCustomerId(Long customerId);
 
+	PytheResult unLockEncodeByCartId(String parameters);
+
 }

@@ -23,6 +23,8 @@ public class TblCar {
 
     private String recordid;
 
+    private String lockPassword;
+
     public String getId() {
         return id;
     }
@@ -101,5 +103,13 @@ public class TblCar {
 
     public void setRecordid(String recordid) {
         this.recordid = recordid == null ? null : recordid.trim();
+    }
+
+    public String getLockPassword() {
+        return lockPassword;
+    }
+
+    public void setLockPassword(String lockPassword) {
+        this.lockPassword = lockPassword == null ? null : lockPassword.trim();
     }
 }

@@ -734,6 +734,76 @@ public class TblCarExample {
             addCriterion("recordId not between", value1, value2, "recordid");
             return (Criteria) this;
         }
+
+        public Criteria andLockPasswordIsNull() {
+            addCriterion("lock_password is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordIsNotNull() {
+            addCriterion("lock_password is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordEqualTo(String value) {
+            addCriterion("lock_password =", value, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordNotEqualTo(String value) {
+            addCriterion("lock_password <>", value, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordGreaterThan(String value) {
+            addCriterion("lock_password >", value, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordGreaterThanOrEqualTo(String value) {
+            addCriterion("lock_password >=", value, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordLessThan(String value) {
+            addCriterion("lock_password <", value, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordLessThanOrEqualTo(String value) {
+            addCriterion("lock_password <=", value, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordLike(String value) {
+            addCriterion("lock_password like", value, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordNotLike(String value) {
+            addCriterion("lock_password not like", value, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordIn(List<String> values) {
+            addCriterion("lock_password in", values, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordNotIn(List<String> values) {
+            addCriterion("lock_password not in", values, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordBetween(String value1, String value2) {
+            addCriterion("lock_password between", value1, value2, "lockPassword");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockPasswordNotBetween(String value1, String value2) {
+            addCriterion("lock_password not between", value1, value2, "lockPassword");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
