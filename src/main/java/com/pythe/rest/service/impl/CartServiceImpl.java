@@ -140,7 +140,7 @@ public class CartServiceImpl implements CartService {
 		if (account.getAmount() < EACH_HOUR_PRICE) {
 			return PytheResult.build(300, "余额不足前往充值",account.getAmount());
 		}
-
+		System.out.println("========================> carId: " + carId);
 		// 看看车的状态
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 		if (car == null) {
