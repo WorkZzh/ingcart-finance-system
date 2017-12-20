@@ -27,9 +27,9 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/use/unlock", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult unloke(@RequestBody String parameters) throws Exception {
+	public PytheResult unlock(@RequestBody String parameters) throws Exception {
 		try {
-			return service.unloke(parameters);
+			return service.unlock(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
@@ -178,23 +178,6 @@ public class CartController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-    
-    
-    /**
-     * 开锁加密
-     */
-	@RequestMapping(value = "/unlock/encode", method = RequestMethod.POST)
-	@ResponseBody
-	public PytheResult unLockEncodeByCartId(@RequestBody String parameters) throws Exception {
-
-		try {
-			return service.unLockEncodeByCartId(parameters);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
-    
     
     
     

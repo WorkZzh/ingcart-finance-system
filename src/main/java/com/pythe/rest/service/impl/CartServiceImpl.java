@@ -119,7 +119,7 @@ public class CartServiceImpl implements CartService {
 	private TblHoldRecordMapper holdRecordMapper;
 
 	@Override
-	public PytheResult unloke(String parameters) {
+	public PytheResult unlock(String parameters) {
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		final Long customerId = information.getLong("customerId");

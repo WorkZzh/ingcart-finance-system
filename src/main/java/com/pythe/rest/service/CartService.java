@@ -5,7 +5,7 @@ import com.pythe.common.pojo.PytheResult;
 public interface CartService {
 
 
-	PytheResult unloke(String parameters);
+	PytheResult unlock(String parameters);
 
 	PytheResult loke(String parameters);
 
