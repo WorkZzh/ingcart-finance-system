@@ -1,8 +1,10 @@
 package com.pythe.rest.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -93,6 +95,12 @@ public class CartServiceImpl implements CartService {
 	
 	@Value("${WX_NOTIFY_PAY_TEMPLATE_ID}")
 	private String WX_NOTIFY_PAY_TEMPLATE_ID;
+	
+	@Value("${GIFT_NOTIFY_TEMPLATE_ID}")
+	private String GIFT_NOTIFY_TEMPLATE_ID;
+	
+	@Value("${NOTIFY_PAY_TEMPLATE_ID}")
+	private String NOTIFY_PAY_TEMPLATE_ID;
 
 	
 	@Autowired
@@ -366,28 +374,35 @@ public class CartServiceImpl implements CartService {
 		System.out.println("notify===========>"+access_token);
 		//https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=ACCESS_TOKEN
 			
-			
-				
-	    SortedMap<String, Object> params = new TreeMap<String, Object>();
-	    //找出openid并发送
-		params.put("touser", customerMapper.selectByPrimaryKey(customerId).getOpenId());
-		params.put("template_id", WX_NOTIFY_PAY_TEMPLATE_ID);
-		System.out.println(formId);
-		params.put("form_id", formId);
+		JSONObject notifyParameters = new JSONObject();
 		
-		TreeMap<String, String> mimiprogram_value_map = new TreeMap<String, String>();
-		mimiprogram_value_map.put("appid", WX_APPID);
-		mimiprogram_value_map.put("pagepath","pages/index/index");
-		params.put("miniprogram", mimiprogram_value_map);
+		Map<String, Object> datas = new HashMap<String, Object>();
+
+		Map<String, String> keyValue1 = new HashMap<String, String>();
+		keyValue1.put("value", "￥" + String.valueOf(bill.getAmount()));
+		datas.put("keyword1", keyValue1);
 		
+		Map<String, String> keyValue2 = new HashMap<String, String>();
+		keyValue2.put("value", "总费用￥"+String.valueOf(bill.getAmount())+"，优惠￥"+String.valueOf(0d));
+		datas.put("keyword2", keyValue2);
+		
+		
+		Map<String, String> keyValue3 = new HashMap<String, String>();
+		keyValue3.put("value", String.valueOf(time) + "分钟");
+		datas.put("keyword3", keyValue3);
+		
+		notifyParameters.put("touser", customerMapper.selectByPrimaryKey(customerId).getOpenId());
+		notifyParameters.put("template_id",NOTIFY_PAY_TEMPLATE_ID);
+		notifyParameters.put("form_id", formId);
+		notifyParameters.put("page", "pages/index/index");
+		notifyParameters.put("data", datas);
+		notifyParameters.put("emphasis_keyword", "keyword1.DATA");
 
 		
-
-		
-		String params_json= JsonUtils.objectToJson(params);
+		String params_json= JsonUtils.objectToJson(notifyParameters);
 		System.out.println("### params to post =========================> " + params_json);
 		
-		String xw_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+access_token;
+		String xw_url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token;
 		String str = HttpClientUtil.doPostJson(xw_url, params_json);
 
 		System.out.println("!!!!!=======================>push pay info: " + str);
