@@ -219,7 +219,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public PytheResult loke(String parameters) {
+	public PytheResult lock(String parameters) {
 		// 更新记录位置
 		JSONObject information = JSONObject.parseObject(parameters);
 		final Double longitude = information.getDouble("longitude");

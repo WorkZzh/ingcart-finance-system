@@ -7,7 +7,7 @@ public interface CartService {
 
 	PytheResult unlock(String parameters);
 
-	PytheResult loke(String parameters);
+	PytheResult lock(String parameters);
 
 	PytheResult selectCouponByCustomerId(Long customerId);
 

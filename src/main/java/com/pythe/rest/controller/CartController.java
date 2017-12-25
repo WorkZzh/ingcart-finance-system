@@ -46,7 +46,7 @@ public class CartController {
 	public PytheResult lock(@RequestBody String parameters) throws Exception {
 
 		try {
-			return service.loke(parameters);
+			return service.lock(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
