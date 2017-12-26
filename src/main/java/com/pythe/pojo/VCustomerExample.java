@@ -865,76 +865,6 @@ public class VCustomerExample {
             return (Criteria) this;
         }
 
-        public Criteria andRecordIdIsNull() {
-            addCriterion("record_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdIsNotNull() {
-            addCriterion("record_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdEqualTo(String value) {
-            addCriterion("record_id =", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdNotEqualTo(String value) {
-            addCriterion("record_id <>", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdGreaterThan(String value) {
-            addCriterion("record_id >", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdGreaterThanOrEqualTo(String value) {
-            addCriterion("record_id >=", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdLessThan(String value) {
-            addCriterion("record_id <", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdLessThanOrEqualTo(String value) {
-            addCriterion("record_id <=", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdLike(String value) {
-            addCriterion("record_id like", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdNotLike(String value) {
-            addCriterion("record_id not like", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdIn(List<String> values) {
-            addCriterion("record_id in", values, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdNotIn(List<String> values) {
-            addCriterion("record_id not in", values, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdBetween(String value1, String value2) {
-            addCriterion("record_id between", value1, value2, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdNotBetween(String value1, String value2) {
-            addCriterion("record_id not between", value1, value2, "recordId");
-            return (Criteria) this;
-        }
-
         public Criteria andOpenIdIsNull() {
             addCriterion("open_id is null");
             return (Criteria) this;
@@ -1072,6 +1002,146 @@ public class VCustomerExample {
 
         public Criteria andUnionIdNotBetween(String value1, String value2) {
             addCriterion("union_id not between", value1, value2, "unionId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdIsNull() {
+            addCriterion("record_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdIsNotNull() {
+            addCriterion("record_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdEqualTo(String value) {
+            addCriterion("record_id =", value, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdNotEqualTo(String value) {
+            addCriterion("record_id <>", value, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdGreaterThan(String value) {
+            addCriterion("record_id >", value, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdGreaterThanOrEqualTo(String value) {
+            addCriterion("record_id >=", value, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdLessThan(String value) {
+            addCriterion("record_id <", value, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdLessThanOrEqualTo(String value) {
+            addCriterion("record_id <=", value, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdLike(String value) {
+            addCriterion("record_id like", value, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdNotLike(String value) {
+            addCriterion("record_id not like", value, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdIn(List<String> values) {
+            addCriterion("record_id in", values, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdNotIn(List<String> values) {
+            addCriterion("record_id not in", values, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdBetween(String value1, String value2) {
+            addCriterion("record_id between", value1, value2, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecordIdNotBetween(String value1, String value2) {
+            addCriterion("record_id not between", value1, value2, "recordId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdIsNull() {
+            addCriterion("device_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdIsNotNull() {
+            addCriterion("device_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdEqualTo(String value) {
+            addCriterion("device_id =", value, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdNotEqualTo(String value) {
+            addCriterion("device_id <>", value, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdGreaterThan(String value) {
+            addCriterion("device_id >", value, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdGreaterThanOrEqualTo(String value) {
+            addCriterion("device_id >=", value, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdLessThan(String value) {
+            addCriterion("device_id <", value, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdLessThanOrEqualTo(String value) {
+            addCriterion("device_id <=", value, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdLike(String value) {
+            addCriterion("device_id like", value, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdNotLike(String value) {
+            addCriterion("device_id not like", value, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdIn(List<String> values) {
+            addCriterion("device_id in", values, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdNotIn(List<String> values) {
+            addCriterion("device_id not in", values, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdBetween(String value1, String value2) {
+            addCriterion("device_id between", value1, value2, "deviceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIdNotBetween(String value1, String value2) {
+            addCriterion("device_id not between", value1, value2, "deviceId");
             return (Criteria) this;
         }
     }

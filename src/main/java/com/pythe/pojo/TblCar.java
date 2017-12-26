@@ -5,6 +5,8 @@ import java.util.Date;
 public class TblCar {
     private String id;
 
+    private String deviceId;
+
     private Double longitude;
 
     private Double latitude;
@@ -31,6 +33,14 @@ public class TblCar {
 
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId == null ? null : deviceId.trim();
     }
 
     public Double getLongitude() {

@@ -3,6 +3,7 @@
 <mapper namespace="com.pythe.mapper.TblCarMapper" >
   <resultMap id="BaseResultMap" type="com.pythe.pojo.TblCar" >
     <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
     <result column="longitude" property="longitude" jdbcType="DOUBLE" />
     <result column="latitude" property="latitude" jdbcType="DOUBLE" />
     <result column="status" property="status" jdbcType="INTEGER" />
@@ -73,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, longitude, latitude, status, level, description, starttime, endtime, user, recordId, 
-    lock_password
+    id, device_id, longitude, latitude, status, level, description, starttime, endtime, 
+    user, recordId, lock_password
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblCarExample" >
     select
@@ -107,20 +108,25 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblCar" >
-    insert into tbl_car (id, longitude, latitude, 
-      status, level, description, 
-      starttime, endtime, user, 
-      recordId, lock_password)
-    values (#{id,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, 
-      #{status,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, 
-      #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}, #{user,jdbcType=BIGINT}, 
-      #{recordid,jdbcType=VARCHAR}, #{lockPassword,jdbcType=VARCHAR})
+    insert into tbl_car (id, device_id, longitude, 
+      latitude, status, level, 
+      description, starttime, endtime, 
+      user, recordId, lock_password
+      )
+    values (#{id,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, 
+      #{latitude,jdbcType=DOUBLE}, #{status,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, 
+      #{description,jdbcType=VARCHAR}, #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}, 
+      #{user,jdbcType=BIGINT}, #{recordid,jdbcType=VARCHAR}, #{lockPassword,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblCar" >
     insert into tbl_car
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
+      </if>
+      <if test="deviceId != null" >
+        device_id,
       </if>
       <if test="longitude != null" >
         longitude,
@@ -156,6 +162,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null" >
+        #{deviceId,jdbcType=VARCHAR},
       </if>
       <if test="longitude != null" >
         #{longitude,jdbcType=DOUBLE},
@@ -201,6 +210,9 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
       </if>
+      <if test="record.deviceId != null" >
+        device_id = #{record.deviceId,jdbcType=VARCHAR},
+      </if>
       <if test="record.longitude != null" >
         longitude = #{record.longitude,jdbcType=DOUBLE},
       </if>
@@ -239,6 +251,7 @@
   <update id="updateByExample" parameterType="map" >
     update tbl_car
     set id = #{record.id,jdbcType=VARCHAR},
+      device_id = #{record.deviceId,jdbcType=VARCHAR},
       longitude = #{record.longitude,jdbcType=DOUBLE},
       latitude = #{record.latitude,jdbcType=DOUBLE},
       status = #{record.status,jdbcType=INTEGER},
@@ -256,6 +269,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.pythe.pojo.TblCar" >
     update tbl_car
     <set >
+      <if test="deviceId != null" >
+        device_id = #{deviceId,jdbcType=VARCHAR},
+      </if>
       <if test="longitude != null" >
         longitude = #{longitude,jdbcType=DOUBLE},
       </if>
@@ -291,7 +307,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.pythe.pojo.TblCar" >
     update tbl_car
-    set longitude = #{longitude,jdbcType=DOUBLE},
+    set device_id = #{deviceId,jdbcType=VARCHAR},
+      longitude = #{longitude,jdbcType=DOUBLE},
       latitude = #{latitude,jdbcType=DOUBLE},
       status = #{status,jdbcType=INTEGER},
       level = #{level,jdbcType=INTEGER},

@@ -688,4 +688,26 @@ public class CartServiceImpl implements CartService {
 			
 	}
 
+	@Override
+	public PytheResult recordDeviceInfo(String parameters) {
+		
+		JSONObject information = JSONObject.parseObject(parameters);
+		String carId = information.getString("carId");
+		String deviceId = information.getString("deviceId");
+		
+		TblCar car = carMapper.selectByPrimaryKey(carId);
+		if(car != null)
+		{
+			car.setDeviceId(deviceId);
+			carMapper.updateByPrimaryKey(car);
+			
+			return PytheResult.ok(car);
+		}
+		else
+		{
+			return PytheResult.build(400, "查无此车");
+		}
+		
+	}
+
 }

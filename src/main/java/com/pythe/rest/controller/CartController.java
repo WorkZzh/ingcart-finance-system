@@ -195,6 +195,22 @@ public class CartController {
 		}
 	}
 	
+	
+	/**
+	 *记录车锁的设备UUID
+	 * @return
+	 */
+	@RequestMapping(value = "/record/deviceInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult recordDeviceInfo(@RequestBody String parameters) throws Exception {
+
+		try {
+			return service.recordDeviceInfo(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 
     
 //    /**

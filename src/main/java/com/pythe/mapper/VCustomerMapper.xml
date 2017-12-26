@@ -14,9 +14,10 @@
     <result column="car_id" property="carId" jdbcType="VARCHAR" />
     <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
     <result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
-    <result column="record_id" property="recordId" jdbcType="VARCHAR" />
     <result column="open_id" property="openId" jdbcType="VARCHAR" />
     <result column="union_id" property="unionId" jdbcType="VARCHAR" />
+    <result column="record_id" property="recordId" jdbcType="VARCHAR" />
+    <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -78,7 +79,7 @@
   </sql>
   <sql id="Base_Column_List" >
     customer_id, phone_num, name, description, level, amount, in_amount, out_amount, 
-    car_status, car_id, start_time, stop_time, record_id, open_id, union_id
+    car_status, car_id, start_time, stop_time, open_id, union_id, record_id, device_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.VCustomerExample" >
     select
@@ -105,14 +106,14 @@
       description, level, amount, 
       in_amount, out_amount, car_status, 
       car_id, start_time, stop_time, 
-      record_id, open_id, union_id
-      )
+      open_id, union_id, record_id, 
+      device_id)
     values (#{customerId,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{description,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, #{amount,jdbcType=DOUBLE}, 
       #{inAmount,jdbcType=DOUBLE}, #{outAmount,jdbcType=DOUBLE}, #{carStatus,jdbcType=INTEGER}, 
       #{carId,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, 
-      #{recordId,jdbcType=VARCHAR}, #{openId,jdbcType=VARCHAR}, #{unionId,jdbcType=VARCHAR}
-      )
+      #{openId,jdbcType=VARCHAR}, #{unionId,jdbcType=VARCHAR}, #{recordId,jdbcType=VARCHAR}, 
+      #{deviceId,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.VCustomer" >
     insert into v_customer
@@ -153,14 +154,17 @@
       <if test="stopTime != null" >
         stop_time,
       </if>
-      <if test="recordId != null" >
-        record_id,
-      </if>
       <if test="openId != null" >
         open_id,
       </if>
       <if test="unionId != null" >
         union_id,
+      </if>
+      <if test="recordId != null" >
+        record_id,
+      </if>
+      <if test="deviceId != null" >
+        device_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -200,14 +204,17 @@
       <if test="stopTime != null" >
         #{stopTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="recordId != null" >
-        #{recordId,jdbcType=VARCHAR},
-      </if>
       <if test="openId != null" >
         #{openId,jdbcType=VARCHAR},
       </if>
       <if test="unionId != null" >
         #{unionId,jdbcType=VARCHAR},
+      </if>
+      <if test="recordId != null" >
+        #{recordId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null" >
+        #{deviceId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -256,14 +263,17 @@
       <if test="record.stopTime != null" >
         stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.recordId != null" >
-        record_id = #{record.recordId,jdbcType=VARCHAR},
-      </if>
       <if test="record.openId != null" >
         open_id = #{record.openId,jdbcType=VARCHAR},
       </if>
       <if test="record.unionId != null" >
         union_id = #{record.unionId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.recordId != null" >
+        record_id = #{record.recordId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deviceId != null" >
+        device_id = #{record.deviceId,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -284,9 +294,10 @@
       car_id = #{record.carId,jdbcType=VARCHAR},
       start_time = #{record.startTime,jdbcType=TIMESTAMP},
       stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
-      record_id = #{record.recordId,jdbcType=VARCHAR},
       open_id = #{record.openId,jdbcType=VARCHAR},
-      union_id = #{record.unionId,jdbcType=VARCHAR}
+      union_id = #{record.unionId,jdbcType=VARCHAR},
+      record_id = #{record.recordId,jdbcType=VARCHAR},
+      device_id = #{record.deviceId,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>

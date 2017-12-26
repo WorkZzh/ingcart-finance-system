@@ -27,4 +27,6 @@ public interface CartService {
 
 	PytheResult unLockEncodeByCartId(String parameters);
 
+	PytheResult recordDeviceInfo(String parameters);
+
 }

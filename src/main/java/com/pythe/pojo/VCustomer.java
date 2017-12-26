@@ -27,11 +27,13 @@ public class VCustomer {
 
     private Date stopTime;
 
-    private String recordId;
-
     private String openId;
 
     private String unionId;
+
+    private String recordId;
+
+    private String deviceId;
 
     public Long getCustomerId() {
         return customerId;
@@ -129,14 +131,6 @@ public class VCustomer {
         this.stopTime = stopTime;
     }
 
-    public String getRecordId() {
-        return recordId;
-    }
-
-    public void setRecordId(String recordId) {
-        this.recordId = recordId == null ? null : recordId.trim();
-    }
-
     public String getOpenId() {
         return openId;
     }
@@ -151,5 +145,21 @@ public class VCustomer {
 
     public void setUnionId(String unionId) {
         this.unionId = unionId == null ? null : unionId.trim();
+    }
+
+    public String getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(String recordId) {
+        this.recordId = recordId == null ? null : recordId.trim();
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId == null ? null : deviceId.trim();
     }
 }
