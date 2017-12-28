@@ -25,8 +25,6 @@ public class MaintenanceController {
       
     
     /**
-	 *支付控制器
-	 * @return
 	 */
 	@RequestMapping(value = "/use/callRepair", method = RequestMethod.POST)
 	@ResponseBody

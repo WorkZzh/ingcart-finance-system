@@ -14,11 +14,13 @@ import com.github.pagehelper.PageHelper;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.FactoryUtils;
+import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblFaultTypeMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
 import com.pythe.mapper.VAcountRecordMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBill;
+import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblFaultType;
 import com.pythe.pojo.TblFaultTypeExample;
 import com.pythe.pojo.TblMaintenance;
@@ -40,6 +42,9 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 	@Autowired
 	private VAcountRecordMapper aCountRecordMapper;
 	
+	@Autowired
+	private TblCarMapper carMapper;
+	
 	@Override
 	public PytheResult callRepair(String parameters) {
 		// TODO Auto-generated method stub
@@ -52,6 +57,13 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		Double latitude = information.getDouble("latitude");
 		String carId = information.getString("carId");
 		String description = information.getString("description");
+		
+		//看看车牌号是否存在
+		TblCar car = carMapper.selectByPrimaryKey(carId);
+		if (car==null) {
+			return PytheResult.build(400, "输入车牌号错误");
+		}
+		
 		
 		Integer type = 0;
 		TblFaultTypeExample faultTypeExample = new TblFaultTypeExample();
