@@ -5,6 +5,8 @@ import java.util.Date;
 public class TblCar {
     private String id;
 
+    private Long qrId;
+
     private String deviceId;
 
     private Double longitude;
@@ -33,6 +35,14 @@ public class TblCar {
 
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
+    }
+
+    public Long getQrId() {
+        return qrId;
+    }
+
+    public void setQrId(Long qrId) {
+        this.qrId = qrId;
     }
 
     public String getDeviceId() {

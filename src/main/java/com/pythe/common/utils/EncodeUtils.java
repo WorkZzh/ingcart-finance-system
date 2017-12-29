@@ -19,8 +19,8 @@ public class EncodeUtils {
 	
     public static void main(String[] args) {  
         
-    	
-         
+    	byte[] b = {0x06,0x07,(byte) 0xF4,(byte) 0xC7,0x13,0x4C,0x01,0x01,0x04,0x06,0x75,0x64,0x6B,(byte) 0xEE,0x0E};
+    	System.out.println(Base64.encodeBase64(b));
     }  
     
     public static String decode(String result){
