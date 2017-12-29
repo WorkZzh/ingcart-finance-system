@@ -148,7 +148,7 @@ public class CartServiceImpl implements CartService {
 		if (account.getAmount() < EACH_HOUR_PRICE) {
 			return PytheResult.build(300, "余额不足前往充值",account.getAmount());
 		}
-		System.out.println("========================> carId: " + carId);
+		//System.out.println("========================> carId: " + carId);
 		// 看看车的状态
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 		if (car == null) {
@@ -160,7 +160,6 @@ public class CartServiceImpl implements CartService {
 		case 1: {
 			return PytheResult.build(400, "此车正在使用中");
 		}
-
 		case 2: {
 			// 是否是该用户继续使用
 			if (car.getUser() != customerId) {
@@ -180,12 +179,12 @@ public class CartServiceImpl implements CartService {
 			TblHoldRecord holdRecord = new TblHoldRecord();
 			holdRecord.setStatus(1);
 			holdRecordMapper.updateByExampleSelective(holdRecord, example);
-
 			return PytheResult.ok("开锁成功");
 		}
 		case 3: {
 			return PytheResult.build(600, "此车有故障，请换车扫码");
 		}
+		
 		}
 
 		// 先更新车的时间和使用状态
