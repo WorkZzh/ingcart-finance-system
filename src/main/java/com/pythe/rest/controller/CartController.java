@@ -235,6 +235,22 @@ public class CartController {
 //	}
 //    
     
+	
+	/**
+	 *二维码ID换MAC
+	 * @return
+	 */
+	@RequestMapping(value = "/use/QR2MAC", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult qrToMac(@RequestBody String parameters) throws Exception {
+
+		try {
+			return service.qrToMac(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
     
 	
     /**

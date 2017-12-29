@@ -709,4 +709,24 @@ public class CartServiceImpl implements CartService {
 		
 	}
 
+	@Override
+	public PytheResult qrToMac(String parameters) {
+		JSONObject information = JSONObject.parseObject(parameters);
+		Long qrId = information.getLong("qrId");
+		
+		TblCarExample carExample = new TblCarExample();
+		carExample.createCriteria().andQrIdEqualTo(qrId);
+		List<TblCar> cars = carMapper.selectByExample(carExample);
+		
+		if(cars.isEmpty())
+		{
+			return PytheResult.build(400, "查无此车");
+		}
+		else
+		{
+			return PytheResult.ok(cars.get(0).getId());
+		}
+		
+	}
+
 }

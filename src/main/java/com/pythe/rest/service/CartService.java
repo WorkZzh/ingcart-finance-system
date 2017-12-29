@@ -29,4 +29,6 @@ public interface CartService {
 
 	PytheResult recordDeviceInfo(String parameters);
 
+	PytheResult qrToMac(String parameters);
+
 }
