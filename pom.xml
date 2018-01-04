@@ -75,7 +75,6 @@
 		
 	</dependencies>
 	
-	
 	<build>
 		<!-- 配置插件 -->
 		<plugins>

@@ -49,7 +49,6 @@ public class MessageServiceImpl implements MessageService{
 		String content = URLEncoder.encode(new String(MESSAGE_CONTENT_BASE.getBytes("iso8859-1"),"UTF-8")+verificationCode+new String(MESSAGE_CONTENT_SUPPLE.getBytes("iso8859-1"),"UTF-8"), "GBK");
 //	    String content =URLEncoder.encode("验证码为123456，您正在修改登录密码，请确认是本人操作。", "GBK"); 
 		String timestamp = DateUtils.formatTimeStampKey(new Date());
-		System.out.println(timestamp);
 		
 		message_json.put("apikey", MESSAGE_API_KEY);
 		message_json.put("mobile", mobile);

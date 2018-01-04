@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
@@ -14,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.FactoryUtils;
+import com.pythe.common.utils.JsonUtils;
 import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblFaultTypeMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
@@ -21,6 +23,7 @@ import com.pythe.mapper.VAcountRecordMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBill;
 import com.pythe.pojo.TblCar;
+import com.pythe.pojo.TblCarExample;
 import com.pythe.pojo.TblFaultType;
 import com.pythe.pojo.TblFaultTypeExample;
 import com.pythe.pojo.TblMaintenance;
@@ -32,9 +35,6 @@ import com.pythe.rest.service.MaintenanceService;
 
 @Service
 public class MaintenanceServiceImpl implements MaintenanceService{
-
-	@Autowired
-	private TblFaultTypeMapper faultTypeMapper;
 	
 	@Autowired
 	private TblMaintenanceMapper maintenanceMapper;
@@ -45,42 +45,55 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 	@Autowired
 	private TblCarMapper carMapper;
 	
+	// CAR
+	@Value("${CAR_MAINTENCE_STATUS}")
+	private Integer CAR_MAINTENCE_STATUS;
+	
+	
 	@Override
 	public PytheResult callRepair(String parameters) {
 		// TODO Auto-generated method stub
-		
-		
 		JSONObject information = JSONObject.parseObject(parameters);
 		Long customerId = information.getLong("customerId");
-		String typeStr = information.getString("type").trim();
+		JSONArray typeStr = information.getJSONArray("type");
 		Double longitude = information.getDouble("longitude");
 		Double latitude = information.getDouble("latitude");
-		String carId = information.getString("carId");
-		String description = information.getString("description");
+		Long qrId = information.getLong("qrId");
+		String annotation = information.getString("annotation");
 		
 		//看看车牌号是否存在
-		TblCar car = carMapper.selectByPrimaryKey(carId);
-		if (car==null) {
+		TblCarExample example  =  new TblCarExample();
+		example.createCriteria().andQrIdEqualTo(qrId);
+		List<TblCar> carList = carMapper.selectByExample(example);
+		if (carList.isEmpty()) {
 			return PytheResult.build(400, "输入车牌号错误");
 		}
 		
-		
-		Integer type = 0;
-		TblFaultTypeExample faultTypeExample = new TblFaultTypeExample();
-		faultTypeExample.createCriteria().andFaultEqualTo(typeStr);
-		List<TblFaultType> faultTypes = faultTypeMapper.selectByExample(faultTypeExample);
-		if(!faultTypes.isEmpty())
-		{
-			type = faultTypes.get(0).getType();
+		TblCar car = carList.get(0);
+		if(CAR_MAINTENCE_STATUS ==car.getStatus()){
+			return PytheResult.build(200, "报修成功");
 		}
+		
+		//改变报修的状态码
+		car.setStatus(CAR_MAINTENCE_STATUS);
+		carMapper.updateByPrimaryKey(car);
+		
+//		Integer type = 0;
+//		TblFaultTypeExample faultTypeExample = new TblFaultTypeExample();
+//		faultTypeExample.createCriteria().andFaultEqualTo(typeStr);
+//		List<TblFaultType> faultTypes = faultTypeMapper.selectByExample(faultTypeExample);
+//		if(!faultTypes.isEmpty())
+//		{
+//			type = faultTypes.get(0).getType();
+//		}
 		
 		TblMaintenance record =new TblMaintenance();
 		record.setCustomerId(customerId);
-		record.setCarId(carId);
+		record.setQrId(qrId);
 		record.setLongitude(longitude);
 		record.setLatitude(latitude);
-		record.setType(type);
-		record.setDescription(description);
+		record.setType(JsonUtils.objectToJson(typeStr));
+		record.setAnnotation(annotation);
 		record.setCallTime(new Date());
 		record.setStatus(0);
 		
@@ -100,7 +113,6 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		if (result.isEmpty()) {
 			PytheResult.ok("暂无任何行程记录");
 		}
-		
 		
 		String key =null;
 		LinkedList<JSONObject> list  =null;

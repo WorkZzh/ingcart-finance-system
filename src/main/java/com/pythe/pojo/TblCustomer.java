@@ -1,5 +1,7 @@
 package com.pythe.pojo;
 
+import java.util.Date;
+
 public class TblCustomer {
     private Long id;
 
@@ -14,6 +16,10 @@ public class TblCustomer {
     private String description;
 
     private Integer level;
+
+    private Date created;
+
+    private Integer type;
 
     public Long getId() {
         return id;
@@ -69,5 +75,21 @@ public class TblCustomer {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

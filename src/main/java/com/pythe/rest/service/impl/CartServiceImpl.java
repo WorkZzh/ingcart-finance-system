@@ -86,34 +86,31 @@ public class CartServiceImpl implements CartService {
 
 	@Value("${BILL_PAY_TYPE}")
 	private Integer BILL_PAY_TYPE;
-	
+
 	@Value("${WX_APPID}")
 	private String WX_APPID;
 
 	@Value("${WX_APPSECRET}")
 	private String WX_APPSECRET;
-	
+
 	@Value("${WX_NOTIFY_PAY_TEMPLATE_ID}")
 	private String WX_NOTIFY_PAY_TEMPLATE_ID;
-	
+
 	@Value("${GIFT_NOTIFY_TEMPLATE_ID}")
 	private String GIFT_NOTIFY_TEMPLATE_ID;
-	
+
 	@Value("${NOTIFY_PAY_TEMPLATE_ID}")
 	private String NOTIFY_PAY_TEMPLATE_ID;
 
-	
 	@Autowired
 	private TblCustomerMapper customerMapper;
 
 	@Autowired
 	private TblRecordMapper recordMapper;
 
-	
 	@Autowired
 	private TblStoreMapper storeMapper;
-	
-	
+
 	@Autowired
 	private TblBillMapper billMapper;
 
@@ -135,36 +132,11 @@ public class CartServiceImpl implements CartService {
 		final Double longitude = information.getDouble("longitude");
 		final Double latitude = information.getDouble("latitude");
 		final String recordId = FactoryUtils.getUUID();
-		// 判断用户是否被别的车占用
-		// TblCarExample example = new TblCarExample();
-		// example.createCriteria().andUserEqualTo(customerId);
-		// List<TblCar> list = carMapper.selectByExample(example);
-		// if (!list.isEmpty()) {
-		// return PytheResult.build(400, "");
-		// }
 
-		// 看看用户消费情况
-		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
-		if (account.getAmount() < EACH_HOUR_PRICE) {
-			return PytheResult.build(300, "余额不足前往充值",account.getAmount());
-		}
-		//System.out.println("========================> carId: " + carId);
-		// 看看车的状态
+		////1、车有被保留，能成功的情况。
 		TblCar car = carMapper.selectByPrimaryKey(carId);
-		if (car == null) {
-			PytheResult.build(100, "该车信息尚未录入，暂无法使用");
-		}
 
-		Integer status = car.getStatus();
-		switch (status) {
-		case 1: {
-			return PytheResult.build(400, "此车正在使用中");
-		}
-		case 2: {
-			// 是否是该用户继续使用
-			if (car.getUser() != customerId) {
-				return PytheResult.build(500, "抱歉，该车已被预约保留");
-			}
+		if (2 == car.getStatus()) {
 			// 是，解除状态，将状态变为使用状态
 			car.setLatitude(latitude);
 			car.setLongitude(longitude);
@@ -181,12 +153,9 @@ public class CartServiceImpl implements CartService {
 			holdRecordMapper.updateByExampleSelective(holdRecord, example);
 			return PytheResult.ok("开锁成功");
 		}
-		case 3: {
-			return PytheResult.build(600, "此车有故障，请换车扫码");
-		}
 		
-		}
-
+		
+		//2、车没有被保留，能成功的情况。
 		// 先更新车的时间和使用状态
 		car.setLatitude(latitude);
 		car.setLongitude(longitude);
@@ -195,23 +164,16 @@ public class CartServiceImpl implements CartService {
 		car.setRecordid(recordId);
 		car.setStatus(CAR_USER_STATUS);
 		carMapper.updateByPrimaryKey(car);
-
 		// 记录登记
 		// 在运行时候先，推荐完要将原来的推荐信号给制空
-
-		new Thread() {
-			@Override
-			public void run() {
-				TblRecord record = new TblRecord();
-				record.setId(recordId);
-				record.setCustomerId(customerId);
-				record.setLongitdeStart(longitude);
-				record.setLatitudeStart(latitude);
-				record.setCarId(carId);
-				record.setStartTime(new Date());
-				recordMapper.insert(record);
-			}
-		}.start();
+		TblRecord record = new TblRecord();
+		record.setId(recordId);
+		record.setCustomerId(customerId);
+		record.setLongitdeStart(longitude);
+		record.setLatitudeStart(latitude);
+		record.setCarId(carId);
+		record.setStartTime(new Date());
+		recordMapper.insert(record);
 		JSONObject object = new JSONObject();
 		object.put("recordId", recordId);
 		return PytheResult.build(200, "开锁成功", object);
@@ -259,13 +221,13 @@ public class CartServiceImpl implements CartService {
 	public PytheResult selectCartPositionByMap(Double longitude, Double latitude) {
 		// TODO Auto-generated method stub
 		LinkedList<JSONObject> list = new LinkedList<JSONObject>();
-		
+
 		TblCarExample example = new TblCarExample();
-		example.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 0.0001)
-				.andLatitudeLessThanOrEqualTo(latitude + 0.0001).andLongitudeGreaterThan(longitude - 0.0001)
-				.andLongitudeLessThanOrEqualTo(longitude + 0.0001);
+		example.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 2)
+				.andLatitudeLessThanOrEqualTo(latitude + 2).andLongitudeGreaterThan(longitude - 2)
+				.andLongitudeLessThanOrEqualTo(longitude + 2);
 		List<TblCar> carList = carMapper.selectByExample(example);
-		for (TblCar car: carList) {
+		for (TblCar car : carList) {
 			JSONObject json = new JSONObject();
 			json.put("id", car.getId());
 			json.put("latitude", car.getLatitude());
@@ -273,13 +235,13 @@ public class CartServiceImpl implements CartService {
 			json.put("type", 0);
 			list.add(json);
 		}
-		
-		TblStoreExample storeExample = new TblStoreExample();
-		storeExample.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 0.0001)
-		.andLatitudeLessThanOrEqualTo(latitude + 0.0001).andLongitudeGreaterThan(longitude - 0.0001)
-		.andLongitudeLessThanOrEqualTo(longitude + 0.0001);
 
-		List<TblStore> storeList= storeMapper.selectByExample(storeExample);
+		TblStoreExample storeExample = new TblStoreExample();
+		storeExample.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 2)
+				.andLatitudeLessThanOrEqualTo(latitude + 2).andLongitudeGreaterThan(longitude - 2)
+				.andLongitudeLessThanOrEqualTo(longitude + 2);
+
+		List<TblStore> storeList = storeMapper.selectByExample(storeExample);
 		for (TblStore store : storeList) {
 			JSONObject json = new JSONObject();
 			json.put("id", store.getId());
@@ -293,8 +255,7 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.ok(list);
 		}
 		return PytheResult.build(300, "附近无婴儿车");
-		
-		
+
 	}
 
 	@Override
@@ -303,7 +264,7 @@ public class CartServiceImpl implements CartService {
 		final String recordId = information.getString("recordId");
 		String carId = information.getString("carId");
 		final Long customerId = information.getLong("customerId");
-		
+
 		final String formId = information.getString("formId");
 
 		// 更新车的位置和使用情况和结束时间
@@ -360,57 +321,47 @@ public class CartServiceImpl implements CartService {
 				billMapper.insert(bill);
 			}
 		}.start();
-		
-	
-		
-		
-		//微信服务通知推送支付结果
+
+		// 微信服务通知推送支付结果
 		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential" + "&appid=" + WX_APPID
-			+"&secret=" + WX_APPSECRET;
+				+ "&secret=" + WX_APPSECRET;
 		String result = HttpClientUtil.doGet(url, null);
 		System.out.println(result);
 		String access_token = JSONObject.parseObject(result).getString("access_token");
-		System.out.println("notify===========>"+access_token);
-		//https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=ACCESS_TOKEN
-			
+		System.out.println("notify===========>" + access_token);
+		// https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=ACCESS_TOKEN
+
 		JSONObject notifyParameters = new JSONObject();
-		
+
 		Map<String, Object> datas = new HashMap<String, Object>();
 
 		Map<String, String> keyValue1 = new HashMap<String, String>();
 		keyValue1.put("value", "￥" + String.valueOf(bill.getAmount()));
 		datas.put("keyword1", keyValue1);
-		
+
 		Map<String, String> keyValue2 = new HashMap<String, String>();
-		keyValue2.put("value", "总费用￥"+String.valueOf(bill.getAmount())+"，优惠￥"+String.valueOf(0d));
+		keyValue2.put("value", "总费用￥" + String.valueOf(bill.getAmount()) + "，优惠￥" + String.valueOf(0d));
 		datas.put("keyword2", keyValue2);
-		
-		
+
 		Map<String, String> keyValue3 = new HashMap<String, String>();
 		keyValue3.put("value", String.valueOf(time) + "分钟");
 		datas.put("keyword3", keyValue3);
-		
+
 		notifyParameters.put("touser", customerMapper.selectByPrimaryKey(customerId).getOpenId());
-		notifyParameters.put("template_id",NOTIFY_PAY_TEMPLATE_ID);
+		notifyParameters.put("template_id", NOTIFY_PAY_TEMPLATE_ID);
 		notifyParameters.put("form_id", formId);
 		notifyParameters.put("page", "pages/index/index");
 		notifyParameters.put("data", datas);
 		notifyParameters.put("emphasis_keyword", "keyword1.DATA");
 
-		
-		String params_json= JsonUtils.objectToJson(notifyParameters);
+		String params_json = JsonUtils.objectToJson(notifyParameters);
 		System.out.println("### params to post =========================> " + params_json);
-		
-		String xw_url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token;
+
+		String xw_url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token;
 		String str = HttpClientUtil.doPostJson(xw_url, params_json);
 
 		System.out.println("!!!!!=======================>push pay info: " + str);
-		//微信服务通知推送支付结果
-		
-		
-		
-		
-		
+		// 微信服务通知推送支付结果
 
 		// 看看更新后的账单是否为正数，如果是，证明扣费成功
 		if (account.getAmount() > 0) {
@@ -419,7 +370,7 @@ public class CartServiceImpl implements CartService {
 			json.put("time", time);
 			return PytheResult.build(100, "支付成功", json);
 		} else {
-			return PytheResult.build(300, "余额不足，前往充值",account.getAmount());
+			return PytheResult.build(300, "余额不足，前往充值", account.getAmount());
 		}
 	}
 
@@ -523,7 +474,7 @@ public class CartServiceImpl implements CartService {
 			new Thread() {
 				@Override
 				public void run() {
-					if (account.getAmount() <EACH_HOUR_PRICE) {
+					if (account.getAmount() < EACH_HOUR_PRICE) {
 						bill.setStatus(NOT_PAY_STATUS);
 					} else {
 						bill.setStatus(PAY_TYPE);
@@ -539,7 +490,7 @@ public class CartServiceImpl implements CartService {
 				json.put("time", time);
 				return PytheResult.build(100, "预约过期，自动结算", json);
 			} else {
-				return PytheResult.build(300, "余额不足，前往充值",account.getAmount());
+				return PytheResult.build(300, "余额不足，前往充值", account.getAmount());
 			}
 
 		}
@@ -650,7 +601,7 @@ public class CartServiceImpl implements CartService {
 			json.put("time", time);
 			return PytheResult.build(200, "支付成功", json);
 		} else {
-			return PytheResult.build(300, "余额不足，前往充值",account.getAmount());
+			return PytheResult.build(300, "余额不足，前往充值", account.getAmount());
 		}
 
 	}
@@ -661,72 +612,116 @@ public class CartServiceImpl implements CartService {
 		JSONObject information = JSONObject.parseObject(parameters);
 		String carId = information.getString("carId");
 		String token = information.getString("token");
-		
+
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 
-			
-			byte head[] = {05,01,06};
-			byte s[] = EncodeUtils.parseHexStr2Byte(car.getLockPassword() + token);
-			
-			try{
-				byte[] sSrc = new byte[head.length + s.length + 3];  
-				System.arraycopy(head, 0, sSrc, 0, head.length);  
-			    System.arraycopy(s, 0, sSrc, head.length, s.length);
-			    System.out.println("============================> unlock frame: " + EncodeUtils.parseByte2HexStr(sSrc));
-				SecretKeySpec skeySpec = new SecretKeySpec(EncodeUtils.LOCK_KEY, "AES");
-				Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
-				cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-				byte[] encrypted = cipher.doFinal(sSrc);
-				String encryptedStr = new String(Base64.encodeBase64(encrypted));
-				
-				return PytheResult.ok(encryptedStr);
-			}catch(Exception ex){
-				System.out.println("==================> exception: " + ex);
-				return PytheResult.build(400, "异常错误，解密失败");
-			}
-			
+		byte head[] = { 05, 01, 06 };
+		byte s[] = EncodeUtils.parseHexStr2Byte(car.getLockPassword() + token);
+
+		try {
+			byte[] sSrc = new byte[head.length + s.length + 3];
+			System.arraycopy(head, 0, sSrc, 0, head.length);
+			System.arraycopy(s, 0, sSrc, head.length, s.length);
+			System.out.println("============================> unlock frame: " + EncodeUtils.parseByte2HexStr(sSrc));
+			SecretKeySpec skeySpec = new SecretKeySpec(EncodeUtils.LOCK_KEY, "AES");
+			Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+			cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+			byte[] encrypted = cipher.doFinal(sSrc);
+			String encryptedStr = new String(Base64.encodeBase64(encrypted));
+
+			return PytheResult.ok(encryptedStr);
+		} catch (Exception ex) {
+			System.out.println("==================> exception: " + ex);
+			return PytheResult.build(400, "异常错误，解密失败");
+		}
+
 	}
 
 	@Override
 	public PytheResult recordDeviceInfo(String parameters) {
-		
+
 		JSONObject information = JSONObject.parseObject(parameters);
 		String carId = information.getString("carId");
 		String deviceId = information.getString("deviceId");
-		
+
 		TblCar car = carMapper.selectByPrimaryKey(carId);
-		if(car != null)
-		{
+		if (car != null) {
 			car.setDeviceId(deviceId);
 			carMapper.updateByPrimaryKey(car);
-			
+
 			return PytheResult.ok(car);
-		}
-		else
-		{
+		} else {
 			return PytheResult.build(400, "查无此车");
 		}
-		
+
 	}
 
 	@Override
 	public PytheResult qrToMac(String parameters) {
 		JSONObject information = JSONObject.parseObject(parameters);
 		Long qrId = information.getLong("qrId");
-		
+
 		TblCarExample carExample = new TblCarExample();
 		carExample.createCriteria().andQrIdEqualTo(qrId);
 		List<TblCar> cars = carMapper.selectByExample(carExample);
-		
-		if(cars.isEmpty())
-		{
+
+		if (cars.isEmpty()) {
 			return PytheResult.build(400, "查无此车");
-		}
-		else
-		{
+		} else {
 			return PytheResult.ok(cars.get(0).getId());
 		}
-		
+
 	}
+
+	@Override
+	public PytheResult prepareUnlock(Long customerId, String carId) {
+		// TODO Auto-generated method stub
+		// 看看用户消费情况
+
+		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+
+		if (account.getAmount() < EACH_HOUR_PRICE) {
+			return PytheResult.build(300, "余额不足前往充值", account.getAmount());
+		}
+		// 看看车的状态
+		TblCar car = carMapper.selectByPrimaryKey(carId);
+		if (car == null) {
+			PytheResult.build(100, "该车信息尚未录入，暂无法使用");
+		}
+
+		Integer status = car.getStatus();
+		switch (status) {
+		case 1: {
+			return PytheResult.build(400, "此车正在使用中");
+		}
+		case 2: {
+			// 是否是该用户继续使用
+			if (car.getUser() != customerId) {
+				return PytheResult.build(500, "抱歉，该车已被预约保留");
+			}
+			break;
+			// // 是，解除状态，将状态变为使用状态
+			// car.setLatitude(latitude);
+			// car.setLongitude(longitude);
+			// car.setUser(customerId);
+			// // car.setRecordid(recordId); 因为第一次开锁时候就已经记录的该车属于那条记录
+			// car.setStatus(CAR_USER_STATUS);
+			// carMapper.updateByPrimaryKey(car);
+			//
+			// // 将锁的计时器释放掉
+			// TblHoldRecordExample example = new TblHoldRecordExample();
+			// example.createCriteria().andCustomerIdEqualTo(customerId).andCarIdEqualTo(carId).andStatusEqualTo(0);
+			// TblHoldRecord holdRecord = new TblHoldRecord();
+			// holdRecord.setStatus(1);
+			// holdRecordMapper.updateByExampleSelective(holdRecord, example);
+			// return PytheResult.ok("开锁成功");
+		}
+		case 3: {
+			return PytheResult.build(600, "此车有故障，请换车扫码");
+		}
+		}
+		return PytheResult.ok("车安全检测通过，请放心使用");
+	}
+
 
 }

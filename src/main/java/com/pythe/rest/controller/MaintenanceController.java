@@ -23,9 +23,6 @@ public class MaintenanceController {
 	@Autowired  
     private MaintenanceService service;  
       
-    
-    /**
-	 */
 	@RequestMapping(value = "/use/callRepair", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult callRepair(@RequestBody String parameters) throws Exception {
@@ -38,7 +35,6 @@ public class MaintenanceController {
 		}
 	}
     
-	
 	//历史行程
     @RequestMapping(value = "/user/trip", method = RequestMethod.GET)
 	@ResponseBody

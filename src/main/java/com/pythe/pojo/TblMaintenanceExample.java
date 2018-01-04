@@ -225,73 +225,63 @@ public class TblMaintenanceExample {
             return (Criteria) this;
         }
 
-        public Criteria andCarIdIsNull() {
-            addCriterion("car_id is null");
+        public Criteria andQrIdIsNull() {
+            addCriterion("qr_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdIsNotNull() {
-            addCriterion("car_id is not null");
+        public Criteria andQrIdIsNotNull() {
+            addCriterion("qr_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdEqualTo(String value) {
-            addCriterion("car_id =", value, "carId");
+        public Criteria andQrIdEqualTo(Long value) {
+            addCriterion("qr_id =", value, "qrId");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdNotEqualTo(String value) {
-            addCriterion("car_id <>", value, "carId");
+        public Criteria andQrIdNotEqualTo(Long value) {
+            addCriterion("qr_id <>", value, "qrId");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdGreaterThan(String value) {
-            addCriterion("car_id >", value, "carId");
+        public Criteria andQrIdGreaterThan(Long value) {
+            addCriterion("qr_id >", value, "qrId");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdGreaterThanOrEqualTo(String value) {
-            addCriterion("car_id >=", value, "carId");
+        public Criteria andQrIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("qr_id >=", value, "qrId");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdLessThan(String value) {
-            addCriterion("car_id <", value, "carId");
+        public Criteria andQrIdLessThan(Long value) {
+            addCriterion("qr_id <", value, "qrId");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdLessThanOrEqualTo(String value) {
-            addCriterion("car_id <=", value, "carId");
+        public Criteria andQrIdLessThanOrEqualTo(Long value) {
+            addCriterion("qr_id <=", value, "qrId");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdLike(String value) {
-            addCriterion("car_id like", value, "carId");
+        public Criteria andQrIdIn(List<Long> values) {
+            addCriterion("qr_id in", values, "qrId");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdNotLike(String value) {
-            addCriterion("car_id not like", value, "carId");
+        public Criteria andQrIdNotIn(List<Long> values) {
+            addCriterion("qr_id not in", values, "qrId");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdIn(List<String> values) {
-            addCriterion("car_id in", values, "carId");
+        public Criteria andQrIdBetween(Long value1, Long value2) {
+            addCriterion("qr_id between", value1, value2, "qrId");
             return (Criteria) this;
         }
 
-        public Criteria andCarIdNotIn(List<String> values) {
-            addCriterion("car_id not in", values, "carId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCarIdBetween(String value1, String value2) {
-            addCriterion("car_id between", value1, value2, "carId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCarIdNotBetween(String value1, String value2) {
-            addCriterion("car_id not between", value1, value2, "carId");
+        public Criteria andQrIdNotBetween(Long value1, Long value2) {
+            addCriterion("qr_id not between", value1, value2, "qrId");
             return (Criteria) this;
         }
 
@@ -305,52 +295,62 @@ public class TblMaintenanceExample {
             return (Criteria) this;
         }
 
-        public Criteria andTypeEqualTo(Integer value) {
+        public Criteria andTypeEqualTo(String value) {
             addCriterion("type =", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotEqualTo(Integer value) {
+        public Criteria andTypeNotEqualTo(String value) {
             addCriterion("type <>", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeGreaterThan(Integer value) {
+        public Criteria andTypeGreaterThan(String value) {
             addCriterion("type >", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeGreaterThanOrEqualTo(Integer value) {
+        public Criteria andTypeGreaterThanOrEqualTo(String value) {
             addCriterion("type >=", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeLessThan(Integer value) {
+        public Criteria andTypeLessThan(String value) {
             addCriterion("type <", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeLessThanOrEqualTo(Integer value) {
+        public Criteria andTypeLessThanOrEqualTo(String value) {
             addCriterion("type <=", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeIn(List<Integer> values) {
+        public Criteria andTypeLike(String value) {
+            addCriterion("type like", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotLike(String value) {
+            addCriterion("type not like", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIn(List<String> values) {
             addCriterion("type in", values, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotIn(List<Integer> values) {
+        public Criteria andTypeNotIn(List<String> values) {
             addCriterion("type not in", values, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeBetween(Integer value1, Integer value2) {
+        public Criteria andTypeBetween(String value1, String value2) {
             addCriterion("type between", value1, value2, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotBetween(Integer value1, Integer value2) {
+        public Criteria andTypeNotBetween(String value1, String value2) {
             addCriterion("type not between", value1, value2, "type");
             return (Criteria) this;
         }
@@ -415,76 +415,6 @@ public class TblMaintenanceExample {
             return (Criteria) this;
         }
 
-        public Criteria andDescriptionIsNull() {
-            addCriterion("description is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionIsNotNull() {
-            addCriterion("description is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionEqualTo(String value) {
-            addCriterion("description =", value, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionNotEqualTo(String value) {
-            addCriterion("description <>", value, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionGreaterThan(String value) {
-            addCriterion("description >", value, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionGreaterThanOrEqualTo(String value) {
-            addCriterion("description >=", value, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionLessThan(String value) {
-            addCriterion("description <", value, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionLessThanOrEqualTo(String value) {
-            addCriterion("description <=", value, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionLike(String value) {
-            addCriterion("description like", value, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionNotLike(String value) {
-            addCriterion("description not like", value, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionIn(List<String> values) {
-            addCriterion("description in", values, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionNotIn(List<String> values) {
-            addCriterion("description not in", values, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionBetween(String value1, String value2) {
-            addCriterion("description between", value1, value2, "description");
-            return (Criteria) this;
-        }
-
-        public Criteria andDescriptionNotBetween(String value1, String value2) {
-            addCriterion("description not between", value1, value2, "description");
-            return (Criteria) this;
-        }
-
         public Criteria andCallTimeIsNull() {
             addCriterion("call_time is null");
             return (Criteria) this;
@@ -542,66 +472,6 @@ public class TblMaintenanceExample {
 
         public Criteria andCallTimeNotBetween(Date value1, Date value2) {
             addCriterion("call_time not between", value1, value2, "callTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdIsNull() {
-            addCriterion("handle_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdIsNotNull() {
-            addCriterion("handle_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdEqualTo(Long value) {
-            addCriterion("handle_id =", value, "handleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdNotEqualTo(Long value) {
-            addCriterion("handle_id <>", value, "handleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdGreaterThan(Long value) {
-            addCriterion("handle_id >", value, "handleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("handle_id >=", value, "handleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdLessThan(Long value) {
-            addCriterion("handle_id <", value, "handleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdLessThanOrEqualTo(Long value) {
-            addCriterion("handle_id <=", value, "handleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdIn(List<Long> values) {
-            addCriterion("handle_id in", values, "handleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdNotIn(List<Long> values) {
-            addCriterion("handle_id not in", values, "handleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdBetween(Long value1, Long value2) {
-            addCriterion("handle_id between", value1, value2, "handleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHandleIdNotBetween(Long value1, Long value2) {
-            addCriterion("handle_id not between", value1, value2, "handleId");
             return (Criteria) this;
         }
 

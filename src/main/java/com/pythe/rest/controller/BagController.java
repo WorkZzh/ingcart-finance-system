@@ -18,12 +18,9 @@ public class BagController {
 	@Autowired  
     private BagService service;  
       
-    
-
 	@RequestMapping(value = "/mai/bag", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult buyBag(@RequestBody String parameters) throws Exception {
-
 		try {
 			return service.maiBag(parameters);
 		} catch (Exception e) {
@@ -33,12 +30,10 @@ public class BagController {
 	}
 	
 			
-	@RequestMapping(value = "/store/location", method = RequestMethod.GET)
+	@RequestMapping(value = "/store/detail", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult selectStoreLocation(@RequestParam(required = true,value = "storeId") String storeId) {
-		
 		try {
-			
 			return service.selectStoreLocation(storeId);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -47,8 +42,16 @@ public class BagController {
 	}
 	
 	
-	
-	
+	@RequestMapping(value = "/combo/detail", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectComboDetailList() {
+		try {
+			return service.selectComboDetailList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 	
 	
   

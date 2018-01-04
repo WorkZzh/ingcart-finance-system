@@ -22,7 +22,6 @@ public class CustomerController {
 	
 	/**
 	 * 微信信息请求
-	 * 
 	 * @return
 	 * @throws Exception
 	 */
@@ -30,7 +29,6 @@ public class CustomerController {
 	@ResponseBody
 	public PytheResult updateRequest(@RequestParam(required = true, value = "code") String code) {
 		try {
-
 			return (customerService.wxSessionRequest(code));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -54,6 +52,10 @@ public class CustomerController {
 		}
 	}
 	
+	
+	
+	
+	
 	/**
 	 * 客户注册
 	 * @return
@@ -71,7 +73,6 @@ public class CustomerController {
 	}
 	
 	
-	
 	/**
 	 * 查询用户个人信息查询
 	 * @return
@@ -80,14 +81,12 @@ public class CustomerController {
 	@ResponseBody
 	public PytheResult selectPersonalImformationByCustomerId(@RequestParam(required = true, value = "customerId") Long customerId) {
 		try {
-
 			return (customerService.selectPersonalImformationByCustomerId(customerId));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
 	
 	/**
 	 * 使用赠品券，领取赠品
@@ -97,7 +96,6 @@ public class CustomerController {
 	@ResponseBody
 	public PytheResult receiveGift(@RequestBody String parameters) {
 		try {
-
 			return (customerService.receiveGift(parameters));
 		} catch (Exception e) {
 			e.printStackTrace();

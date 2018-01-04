@@ -7,21 +7,19 @@ public class TblMaintenance {
 
     private Long customerId;
 
-    private String carId;
+    private Long qrId;
 
-    private Integer type;
+    private String type;
 
     private Integer status;
 
-    private String description;
-
     private Date callTime;
-
-    private Long handleId;
 
     private Double longitude;
 
     private Double latitude;
+
+    private String annotation;
 
     public Long getId() {
         return id;
@@ -39,20 +37,20 @@ public class TblMaintenance {
         this.customerId = customerId;
     }
 
-    public String getCarId() {
-        return carId;
+    public Long getQrId() {
+        return qrId;
     }
 
-    public void setCarId(String carId) {
-        this.carId = carId == null ? null : carId.trim();
+    public void setQrId(Long qrId) {
+        this.qrId = qrId;
     }
 
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setType(String type) {
+        this.type = type == null ? null : type.trim();
     }
 
     public Integer getStatus() {
@@ -63,28 +61,12 @@ public class TblMaintenance {
         this.status = status;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
-    }
-
     public Date getCallTime() {
         return callTime;
     }
 
     public void setCallTime(Date callTime) {
         this.callTime = callTime;
-    }
-
-    public Long getHandleId() {
-        return handleId;
-    }
-
-    public void setHandleId(Long handleId) {
-        this.handleId = handleId;
     }
 
     public Double getLongitude() {
@@ -101,5 +83,13 @@ public class TblMaintenance {
 
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
+    }
+
+    public String getAnnotation() {
+        return annotation;
+    }
+
+    public void setAnnotation(String annotation) {
+        this.annotation = annotation == null ? null : annotation.trim();
     }
 }

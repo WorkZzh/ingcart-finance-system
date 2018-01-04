@@ -1,9 +1,7 @@
 package com.pythe.rest.service;
 
-import java.util.List;
 
 import com.pythe.common.pojo.PytheResult;
-import com.pythe.pojo.TblCustomer;
 
 
 public interface CustomerService  {
@@ -14,9 +12,13 @@ public interface CustomerService  {
 
 	PytheResult wxSessionRequest(String code);
 
-	PytheResult selectPersonalImformationByCustomerId(Long customerId);
+//	PytheResult selectPersonalImformationByCustomerId(Long customerId);
 
 	PytheResult receiveGift(String parameters);
+
+	PytheResult selectPersonalImformationByCustomerId(Long customerId);
+
+//	PytheResult userLoginByVerificationCode(String parameters);
     
 	
 	

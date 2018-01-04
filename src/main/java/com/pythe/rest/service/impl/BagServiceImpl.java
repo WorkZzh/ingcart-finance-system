@@ -17,12 +17,15 @@ import com.pythe.common.utils.JsonUtils;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblBagRecordMapper;
 import com.pythe.mapper.TblBillMapper;
+import com.pythe.mapper.TblComboMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblDealerMapper;
 import com.pythe.mapper.TblStoreMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBagRecord;
 import com.pythe.pojo.TblBill;
+import com.pythe.pojo.TblCombo;
+import com.pythe.pojo.TblComboExample;
 import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblStore;
 import com.pythe.pojo.TblStoreExample;
@@ -57,6 +60,9 @@ public class BagServiceImpl implements BagService {
 	
 	@Autowired
 	private TblDealerMapper dealerMapper;
+	
+	@Autowired
+	private TblComboMapper comboMapper;
 	
 	
 	// BILL
@@ -173,5 +179,20 @@ public class BagServiceImpl implements BagService {
 		TblStore store = storeMapper.selectByPrimaryKey(storeId);
 		return PytheResult.ok(store);
 	}
+
+
+	@Override
+	public PytheResult selectComboDetailList() {
+		// TODO Auto-generated method stub
+		TblComboExample example = new TblComboExample();
+		example.createCriteria().andStatusEqualTo(1);
+		List<TblCombo> comboList = comboMapper.selectByExample(example);
+		if (comboList.isEmpty()) {
+			PytheResult.build(400, "暂无优惠套餐");
+		}
+		return PytheResult.ok(comboList);
+	}
+
+
 
 }

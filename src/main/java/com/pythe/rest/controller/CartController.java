@@ -22,6 +22,27 @@ public class CartController {
 	private CartService service;
 	
     /**
+	 *开锁检测
+	 * @return
+	 * localhost:8084/rest/unlock/prepare?customerId=9&carId=C8:FD:19:92:17:29
+	 */
+    @RequestMapping(value = "/unlock/prepare", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult prepareUnlock(
+			@RequestParam(required = true,value = "customerId") Long customerId,
+			@RequestParam(required = true,value = "carId") String carId
+			) throws Exception {
+		try {
+			return service.prepareUnlock(customerId,carId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
+    /**
 	 *开锁
 	 * @return
 	 */
@@ -53,7 +74,6 @@ public class CartController {
 		}
 	}
 	
-	
     /**
 	 *确认结算
 	 * @return
@@ -61,7 +81,6 @@ public class CartController {
 	@RequestMapping(value = "/use/computeFee", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult computeFee(@RequestBody String parameters) throws Exception {
-
 		try {
 			return service.computeFee(parameters);
 		} catch (Exception e) {
@@ -110,13 +129,12 @@ public class CartController {
 	 *显示共享车位置
 	 * @return
 	 */
-    @RequestMapping(value = "/map/carShow", method = RequestMethod.GET)
+    @RequestMapping(value = "/map/show", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult selectCartPositionByMap
 	(@RequestParam(required = true,value = "longitude") Double longitude,
 			@RequestParam(required = true,value = "latitude") Double latitude
 			) {
-
 		try {
 			return service.selectCartPositionByMap(longitude,latitude);
 		} catch (Exception e) {
@@ -215,7 +233,6 @@ public class CartController {
 		}
 	}
 
-    
 //    /**
 //	 *解密
 //	 * @return
@@ -243,7 +260,6 @@ public class CartController {
 	@RequestMapping(value = "/use/QR2MAC", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult qrToMac(@RequestBody String parameters) throws Exception {
-
 		try {
 			return service.qrToMac(parameters);
 		} catch (Exception e) {
@@ -261,7 +277,6 @@ public class CartController {
 	@ResponseBody
 	public String bluetoothEncrypt(@RequestBody String parameter) throws Exception {
 
-		
 		System.out.println("==========================>bluetooth: " + parameter);
 		String encryptedStr = EncodeUtils.bluetoothEncrypt(parameter);
 		System.out.println("==========================>bluetooth encrypt: " + encryptedStr);

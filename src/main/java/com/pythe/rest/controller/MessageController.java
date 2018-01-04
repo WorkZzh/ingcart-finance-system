@@ -31,8 +31,6 @@ public class MessageController {
 	@RequestMapping(value = "/message/verification", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult singleSend(@RequestBody String parameters) throws Exception {
-		System.out.println("mobile" + parameters);
-		parameters = URLDecoder.decode(parameters, "UTF-8");
 
 		try {
 			return service.singleSend(parameters);

@@ -31,4 +31,6 @@ public interface CartService {
 
 	PytheResult qrToMac(String parameters);
 
+	PytheResult prepareUnlock(Long customerId, String carId);
+
 }

@@ -9,6 +9,9 @@ public interface BagService {
 
 	PytheResult selectStoreLocation(String storeId);
 
+	PytheResult selectComboDetailList();
+
+
 
 	
 
