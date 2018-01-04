@@ -163,6 +163,7 @@ public class CustomerServiceImpl implements CustomerService {
 		example.createCriteria().andCustomerIdEqualTo(customerId);
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
 		if (!customerList.isEmpty()) {
+			System.out.println("====================================> normal update !!!");
 			return PytheResult.ok(customerList.get(0));
 		}
 		

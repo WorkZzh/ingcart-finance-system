@@ -3,6 +3,11 @@ package com.pythe.common.utils;
 import java.io.ByteArrayOutputStream;
 import java.util.Random;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.commons.codec.binary.Base64;
+
 /**
  * 采用MD5加密解密
  * @author tfq
@@ -87,6 +92,29 @@ public class DecodeUtils {
     	return new String(buf.toByteArray());
     }
     
+    
+    public static byte[] LOCK_KEY = {32,87,47,82,54,75,63,71,48,80,65,88,17,99,45,43};
    
+    //解密
+  	public static String bluetoothDecrypt(String content, String lockKeyStr) {
+  		
+  		byte sSrc[] = Base64.decodeBase64(content.getBytes());
+  		String[] hexArray = lockKeyStr.split(",");
+  		
+  		try{
+  			SecretKeySpec skeySpec = new SecretKeySpec(NumberUtils.parseHexArray2ByteArray(hexArray), "AES");
+  			Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+  			cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+  			byte[] decrypted = cipher.doFinal(sSrc);
+  			String decryptedStr = new String(Base64.encodeBase64(decrypted));
+  			
+  			return decryptedStr;
+  		}catch(Exception ex){
+  			System.out.println("==================> exception: " + ex);
+  			return null;
+  		}
+  			
 
+  	}  
+  	
 }

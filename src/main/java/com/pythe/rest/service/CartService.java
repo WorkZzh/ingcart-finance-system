@@ -33,4 +33,8 @@ public interface CartService {
 
 	PytheResult prepareUnlock(Long customerId, String carId);
 
+	String bluetoothEncrypt(String parameter);
+
+	String bluetoothDecrypt(String parameter);
+
 }

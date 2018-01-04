@@ -3,18 +3,19 @@
 <mapper namespace="com.pythe.mapper.TblCarMapper" >
   <resultMap id="BaseResultMap" type="com.pythe.pojo.TblCar" >
     <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="qr_id" property="qrId" jdbcType="BIGINT" />
-    <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
-    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
-    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
-    <result column="status" property="status" jdbcType="INTEGER" />
-    <result column="level" property="level" jdbcType="INTEGER" />
     <result column="description" property="description" jdbcType="VARCHAR" />
-    <result column="starttime" property="starttime" jdbcType="TIMESTAMP" />
+    <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
     <result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
-    <result column="user" property="user" jdbcType="BIGINT" />
-    <result column="recordId" property="recordid" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="lock_key" property="lockKey" jdbcType="VARCHAR" />
     <result column="lock_password" property="lockPassword" jdbcType="VARCHAR" />
+    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
+    <result column="qr_id" property="qrId" jdbcType="BIGINT" />
+    <result column="recordId" property="recordid" jdbcType="VARCHAR" />
+    <result column="starttime" property="starttime" jdbcType="TIMESTAMP" />
+    <result column="user" property="user" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -75,8 +76,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, qr_id, device_id, longitude, latitude, status, level, description, starttime, 
-    endtime, user, recordId, lock_password
+    id, description, device_id, endtime, latitude, level, lock_key, lock_password, longitude, 
+    qr_id, recordId, starttime, user, status
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblCarExample" >
     select
@@ -109,16 +110,16 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblCar" >
-    insert into tbl_car (id, qr_id, device_id, 
-      longitude, latitude, status, 
-      level, description, starttime, 
-      endtime, user, recordId, 
-      lock_password)
-    values (#{id,jdbcType=VARCHAR}, #{qrId,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, 
-      #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, #{status,jdbcType=INTEGER}, 
-      #{level,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{starttime,jdbcType=TIMESTAMP}, 
-      #{endtime,jdbcType=TIMESTAMP}, #{user,jdbcType=BIGINT}, #{recordid,jdbcType=VARCHAR}, 
-      #{lockPassword,jdbcType=VARCHAR})
+    insert into tbl_car (id, description, device_id, 
+      endtime, latitude, level, 
+      lock_key, lock_password, longitude, 
+      qr_id, recordId, starttime, 
+      user, status)
+    values (#{id,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, 
+      #{endtime,jdbcType=TIMESTAMP}, #{latitude,jdbcType=DOUBLE}, #{level,jdbcType=INTEGER}, 
+      #{lockKey,jdbcType=VARCHAR}, #{lockPassword,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, 
+      #{qrId,jdbcType=BIGINT}, #{recordid,jdbcType=VARCHAR}, #{starttime,jdbcType=TIMESTAMP}, 
+      #{user,jdbcType=BIGINT}, #{status,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblCar" >
     insert into tbl_car
@@ -126,82 +127,88 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="qrId != null" >
-        qr_id,
+      <if test="description != null" >
+        description,
       </if>
       <if test="deviceId != null" >
         device_id,
       </if>
-      <if test="longitude != null" >
-        longitude,
+      <if test="endtime != null" >
+        endtime,
       </if>
       <if test="latitude != null" >
         latitude,
       </if>
-      <if test="status != null" >
-        status,
-      </if>
       <if test="level != null" >
         level,
       </if>
-      <if test="description != null" >
-        description,
+      <if test="lockKey != null" >
+        lock_key,
       </if>
-      <if test="starttime != null" >
-        starttime,
+      <if test="lockPassword != null" >
+        lock_password,
       </if>
-      <if test="endtime != null" >
-        endtime,
+      <if test="longitude != null" >
+        longitude,
       </if>
-      <if test="user != null" >
-        user,
+      <if test="qrId != null" >
+        qr_id,
       </if>
       <if test="recordid != null" >
         recordId,
       </if>
-      <if test="lockPassword != null" >
-        lock_password,
+      <if test="starttime != null" >
+        starttime,
+      </if>
+      <if test="user != null" >
+        user,
+      </if>
+      <if test="status != null" >
+        status,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="qrId != null" >
-        #{qrId,jdbcType=BIGINT},
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
       </if>
       <if test="deviceId != null" >
         #{deviceId,jdbcType=VARCHAR},
       </if>
-      <if test="longitude != null" >
-        #{longitude,jdbcType=DOUBLE},
+      <if test="endtime != null" >
+        #{endtime,jdbcType=TIMESTAMP},
       </if>
       <if test="latitude != null" >
         #{latitude,jdbcType=DOUBLE},
       </if>
-      <if test="status != null" >
-        #{status,jdbcType=INTEGER},
-      </if>
       <if test="level != null" >
         #{level,jdbcType=INTEGER},
       </if>
-      <if test="description != null" >
-        #{description,jdbcType=VARCHAR},
+      <if test="lockKey != null" >
+        #{lockKey,jdbcType=VARCHAR},
       </if>
-      <if test="starttime != null" >
-        #{starttime,jdbcType=TIMESTAMP},
+      <if test="lockPassword != null" >
+        #{lockPassword,jdbcType=VARCHAR},
       </if>
-      <if test="endtime != null" >
-        #{endtime,jdbcType=TIMESTAMP},
+      <if test="longitude != null" >
+        #{longitude,jdbcType=DOUBLE},
       </if>
-      <if test="user != null" >
-        #{user,jdbcType=BIGINT},
+      <if test="qrId != null" >
+        #{qrId,jdbcType=BIGINT},
       </if>
       <if test="recordid != null" >
         #{recordid,jdbcType=VARCHAR},
       </if>
-      <if test="lockPassword != null" >
-        #{lockPassword,jdbcType=VARCHAR},
+      <if test="starttime != null" >
+        #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="user != null" >
+        #{user,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -217,41 +224,44 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
       </if>
-      <if test="record.qrId != null" >
-        qr_id = #{record.qrId,jdbcType=BIGINT},
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
       </if>
       <if test="record.deviceId != null" >
         device_id = #{record.deviceId,jdbcType=VARCHAR},
       </if>
-      <if test="record.longitude != null" >
-        longitude = #{record.longitude,jdbcType=DOUBLE},
+      <if test="record.endtime != null" >
+        endtime = #{record.endtime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.latitude != null" >
         latitude = #{record.latitude,jdbcType=DOUBLE},
       </if>
-      <if test="record.status != null" >
-        status = #{record.status,jdbcType=INTEGER},
-      </if>
       <if test="record.level != null" >
         level = #{record.level,jdbcType=INTEGER},
       </if>
-      <if test="record.description != null" >
-        description = #{record.description,jdbcType=VARCHAR},
+      <if test="record.lockKey != null" >
+        lock_key = #{record.lockKey,jdbcType=VARCHAR},
       </if>
-      <if test="record.starttime != null" >
-        starttime = #{record.starttime,jdbcType=TIMESTAMP},
+      <if test="record.lockPassword != null" >
+        lock_password = #{record.lockPassword,jdbcType=VARCHAR},
       </if>
-      <if test="record.endtime != null" >
-        endtime = #{record.endtime,jdbcType=TIMESTAMP},
+      <if test="record.longitude != null" >
+        longitude = #{record.longitude,jdbcType=DOUBLE},
       </if>
-      <if test="record.user != null" >
-        user = #{record.user,jdbcType=BIGINT},
+      <if test="record.qrId != null" >
+        qr_id = #{record.qrId,jdbcType=BIGINT},
       </if>
       <if test="record.recordid != null" >
         recordId = #{record.recordid,jdbcType=VARCHAR},
       </if>
-      <if test="record.lockPassword != null" >
-        lock_password = #{record.lockPassword,jdbcType=VARCHAR},
+      <if test="record.starttime != null" >
+        starttime = #{record.starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.user != null" >
+        user = #{record.user,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -261,18 +271,19 @@
   <update id="updateByExample" parameterType="map" >
     update tbl_car
     set id = #{record.id,jdbcType=VARCHAR},
-      qr_id = #{record.qrId,jdbcType=BIGINT},
-      device_id = #{record.deviceId,jdbcType=VARCHAR},
-      longitude = #{record.longitude,jdbcType=DOUBLE},
-      latitude = #{record.latitude,jdbcType=DOUBLE},
-      status = #{record.status,jdbcType=INTEGER},
-      level = #{record.level,jdbcType=INTEGER},
       description = #{record.description,jdbcType=VARCHAR},
-      starttime = #{record.starttime,jdbcType=TIMESTAMP},
+      device_id = #{record.deviceId,jdbcType=VARCHAR},
       endtime = #{record.endtime,jdbcType=TIMESTAMP},
-      user = #{record.user,jdbcType=BIGINT},
+      latitude = #{record.latitude,jdbcType=DOUBLE},
+      level = #{record.level,jdbcType=INTEGER},
+      lock_key = #{record.lockKey,jdbcType=VARCHAR},
+      lock_password = #{record.lockPassword,jdbcType=VARCHAR},
+      longitude = #{record.longitude,jdbcType=DOUBLE},
+      qr_id = #{record.qrId,jdbcType=BIGINT},
       recordId = #{record.recordid,jdbcType=VARCHAR},
-      lock_password = #{record.lockPassword,jdbcType=VARCHAR}
+      starttime = #{record.starttime,jdbcType=TIMESTAMP},
+      user = #{record.user,jdbcType=BIGINT},
+      status = #{record.status,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -280,59 +291,63 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.pythe.pojo.TblCar" >
     update tbl_car
     <set >
-      <if test="qrId != null" >
-        qr_id = #{qrId,jdbcType=BIGINT},
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
       </if>
       <if test="deviceId != null" >
         device_id = #{deviceId,jdbcType=VARCHAR},
       </if>
-      <if test="longitude != null" >
-        longitude = #{longitude,jdbcType=DOUBLE},
+      <if test="endtime != null" >
+        endtime = #{endtime,jdbcType=TIMESTAMP},
       </if>
       <if test="latitude != null" >
         latitude = #{latitude,jdbcType=DOUBLE},
       </if>
-      <if test="status != null" >
-        status = #{status,jdbcType=INTEGER},
-      </if>
       <if test="level != null" >
         level = #{level,jdbcType=INTEGER},
       </if>
-      <if test="description != null" >
-        description = #{description,jdbcType=VARCHAR},
+      <if test="lockKey != null" >
+        lock_key = #{lockKey,jdbcType=VARCHAR},
       </if>
-      <if test="starttime != null" >
-        starttime = #{starttime,jdbcType=TIMESTAMP},
+      <if test="lockPassword != null" >
+        lock_password = #{lockPassword,jdbcType=VARCHAR},
       </if>
-      <if test="endtime != null" >
-        endtime = #{endtime,jdbcType=TIMESTAMP},
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=DOUBLE},
       </if>
-      <if test="user != null" >
-        user = #{user,jdbcType=BIGINT},
+      <if test="qrId != null" >
+        qr_id = #{qrId,jdbcType=BIGINT},
       </if>
       <if test="recordid != null" >
         recordId = #{recordid,jdbcType=VARCHAR},
       </if>
-      <if test="lockPassword != null" >
-        lock_password = #{lockPassword,jdbcType=VARCHAR},
+      <if test="starttime != null" >
+        starttime = #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="user != null" >
+        user = #{user,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.pythe.pojo.TblCar" >
     update tbl_car
-    set qr_id = #{qrId,jdbcType=BIGINT},
+    set description = #{description,jdbcType=VARCHAR},
       device_id = #{deviceId,jdbcType=VARCHAR},
-      longitude = #{longitude,jdbcType=DOUBLE},
-      latitude = #{latitude,jdbcType=DOUBLE},
-      status = #{status,jdbcType=INTEGER},
-      level = #{level,jdbcType=INTEGER},
-      description = #{description,jdbcType=VARCHAR},
-      starttime = #{starttime,jdbcType=TIMESTAMP},
       endtime = #{endtime,jdbcType=TIMESTAMP},
-      user = #{user,jdbcType=BIGINT},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      level = #{level,jdbcType=INTEGER},
+      lock_key = #{lockKey,jdbcType=VARCHAR},
+      lock_password = #{lockPassword,jdbcType=VARCHAR},
+      longitude = #{longitude,jdbcType=DOUBLE},
+      qr_id = #{qrId,jdbcType=BIGINT},
       recordId = #{recordid,jdbcType=VARCHAR},
-      lock_password = #{lockPassword,jdbcType=VARCHAR}
+      starttime = #{starttime,jdbcType=TIMESTAMP},
+      user = #{user,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

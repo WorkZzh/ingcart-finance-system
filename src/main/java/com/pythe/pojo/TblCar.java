@@ -5,29 +5,31 @@ import java.util.Date;
 public class TblCar {
     private String id;
 
-    private Long qrId;
+    private String description;
 
     private String deviceId;
 
-    private Double longitude;
+    private Date endtime;
 
     private Double latitude;
 
-    private Integer status;
-
     private Integer level;
 
-    private String description;
+    private String lockKey;
 
-    private Date starttime;
+    private String lockPassword;
 
-    private Date endtime;
+    private Double longitude;
 
-    private Long user;
+    private Long qrId;
 
     private String recordid;
 
-    private String lockPassword;
+    private Date starttime;
+
+    private Long user;
+
+    private Integer status;
 
     public String getId() {
         return id;
@@ -35,54 +37,6 @@ public class TblCar {
 
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
-    }
-
-    public Long getQrId() {
-        return qrId;
-    }
-
-    public void setQrId(Long qrId) {
-        this.qrId = qrId;
-    }
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId == null ? null : deviceId.trim();
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getLevel() {
-        return level;
-    }
-
-    public void setLevel(Integer level) {
-        this.level = level;
     }
 
     public String getDescription() {
@@ -93,12 +47,12 @@ public class TblCar {
         this.description = description == null ? null : description.trim();
     }
 
-    public Date getStarttime() {
-        return starttime;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setStarttime(Date starttime) {
-        this.starttime = starttime;
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId == null ? null : deviceId.trim();
     }
 
     public Date getEndtime() {
@@ -109,12 +63,52 @@ public class TblCar {
         this.endtime = endtime;
     }
 
-    public Long getUser() {
-        return user;
+    public Double getLatitude() {
+        return latitude;
     }
 
-    public void setUser(Long user) {
-        this.user = user;
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public String getLockKey() {
+        return lockKey;
+    }
+
+    public void setLockKey(String lockKey) {
+        this.lockKey = lockKey == null ? null : lockKey.trim();
+    }
+
+    public String getLockPassword() {
+        return lockPassword;
+    }
+
+    public void setLockPassword(String lockPassword) {
+        this.lockPassword = lockPassword == null ? null : lockPassword.trim();
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Long getQrId() {
+        return qrId;
+    }
+
+    public void setQrId(Long qrId) {
+        this.qrId = qrId;
     }
 
     public String getRecordid() {
@@ -125,11 +119,27 @@ public class TblCar {
         this.recordid = recordid == null ? null : recordid.trim();
     }
 
-    public String getLockPassword() {
-        return lockPassword;
+    public Date getStarttime() {
+        return starttime;
     }
 
-    public void setLockPassword(String lockPassword) {
-        this.lockPassword = lockPassword == null ? null : lockPassword.trim();
+    public void setStarttime(Date starttime) {
+        this.starttime = starttime;
+    }
+
+    public Long getUser() {
+        return user;
+    }
+
+    public void setUser(Long user) {
+        this.user = user;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

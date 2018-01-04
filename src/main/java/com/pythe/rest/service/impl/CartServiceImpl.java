@@ -20,10 +20,12 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
+import com.pythe.common.utils.DecodeUtils;
 import com.pythe.common.utils.EncodeUtils;
 import com.pythe.common.utils.FactoryUtils;
 import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.common.utils.JsonUtils;
+import com.pythe.common.utils.NumberUtils;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblBillMapper;
 import com.pythe.mapper.TblCarMapper;
@@ -616,14 +618,18 @@ public class CartServiceImpl implements CartService {
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 
 		byte head[] = { 05, 01, 06 };
-		byte s[] = EncodeUtils.parseHexStr2Byte(car.getLockPassword() + token);
+		byte passwordBytes[] = NumberUtils.parseHexArray2ByteArray(car.getLockPassword().split(","));
+		byte tokenBytes[] = NumberUtils.parseHexStr2Byte(token);
+		byte[] s = new byte[passwordBytes.length + tokenBytes.length];
+		System.arraycopy(passwordBytes, 0, s, 0, passwordBytes.length);
+		System.arraycopy(tokenBytes, 0, s, passwordBytes.length, tokenBytes.length);
 
 		try {
 			byte[] sSrc = new byte[head.length + s.length + 3];
 			System.arraycopy(head, 0, sSrc, 0, head.length);
 			System.arraycopy(s, 0, sSrc, head.length, s.length);
-			System.out.println("============================> unlock frame: " + EncodeUtils.parseByte2HexStr(sSrc));
-			SecretKeySpec skeySpec = new SecretKeySpec(EncodeUtils.LOCK_KEY, "AES");
+			System.out.println("============================> unlock frame: " + NumberUtils.parseByteArray2HexArray(sSrc));
+			SecretKeySpec skeySpec = new SecretKeySpec(NumberUtils.parseHexArray2ByteArray(car.getLockKey().split(",")), "AES");
 			Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
 			cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
 			byte[] encrypted = cipher.doFinal(sSrc);
@@ -721,6 +727,32 @@ public class CartServiceImpl implements CartService {
 		}
 		}
 		return PytheResult.ok("车安全检测通过，请放心使用");
+	}
+
+	@Override
+	public String bluetoothEncrypt(String parameter) {
+		
+		JSONObject j = JSONObject.parseObject(parameter);
+		String id = j.getString("carId");
+		String content = j.getString("content");
+		
+		TblCar car = carMapper.selectByPrimaryKey(id);
+		String encryptedStr = EncodeUtils.bluetoothEncrypt(content, car.getLockKey());
+		
+		return encryptedStr;
+	}
+
+	@Override
+	public String bluetoothDecrypt(String parameter) {
+		
+		JSONObject j = JSONObject.parseObject(parameter);
+		String id = j.getString("carId");
+		String content = j.getString("content");
+		
+		TblCar car = carMapper.selectByPrimaryKey(id);
+		String decryptedStr = DecodeUtils.bluetoothDecrypt(content, car.getLockKey());
+		
+		return decryptedStr;
 	}
 
 

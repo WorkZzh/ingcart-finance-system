@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.EncodeUtils;
 import com.pythe.common.utils.ExceptionUtil;
@@ -276,9 +277,10 @@ public class CartController {
 	@RequestMapping(value = "/bluetooth/encrypt", method = RequestMethod.POST)
 	@ResponseBody
 	public String bluetoothEncrypt(@RequestBody String parameter) throws Exception {
+		
 
 		System.out.println("==========================>bluetooth: " + parameter);
-		String encryptedStr = EncodeUtils.bluetoothEncrypt(parameter);
+		String encryptedStr = service.bluetoothEncrypt(parameter);
 		System.out.println("==========================>bluetooth encrypt: " + encryptedStr);
 		
 		return encryptedStr;
@@ -295,7 +297,7 @@ public class CartController {
 
 		
 		System.out.println("==========================>bluetooth: " + parameter);
-		String decryptedStr = EncodeUtils.bluetoothDecrypt(parameter);
+		String decryptedStr = service.bluetoothDecrypt(parameter);
 		System.out.println("==========================>bluetooth decrypt: " + decryptedStr);
 		
 		return decryptedStr;
