@@ -674,7 +674,7 @@ public class CartServiceImpl implements CartService {
 		if (cars.isEmpty()) {
 			return PytheResult.build(400, "查无此车");
 		} else {
-			return PytheResult.ok(cars.get(0).getId());
+			return PytheResult.ok(cars.get(0));
 		}
 
 	}
@@ -753,6 +753,38 @@ public class CartServiceImpl implements CartService {
 		String decryptedStr = DecodeUtils.bluetoothDecrypt(content, car.getLockKey());
 		
 		return decryptedStr;
+	}
+
+	@Override
+	public PytheResult managerLock(String parameters) {
+		// 更新记录位置
+		JSONObject information = JSONObject.parseObject(parameters);
+		final Double longitude = information.getDouble("longitude");
+		final Double latitude = information.getDouble("latitude");
+		String carId = information.getString("carId");
+		final String recordId = information.getString("recordId");
+
+		// 车信息
+		TblCar car = carMapper.selectByPrimaryKey(carId);
+		car.setLatitude(latitude);
+		car.setLongitude(longitude);
+		car.setUser(null);
+		car.setStatus(CAR_FREE_STATUS);
+		car.setEndtime(new Date());
+		carMapper.updateByPrimaryKey(car);
+
+		// 更新记录信息
+		new Thread() {
+			@Override
+			public void run() {
+				TblRecord line = recordMapper.selectByPrimaryKey(recordId);
+				line.setLongitudeStop(longitude);
+				line.setLatitudeStop(latitude);
+				line.setStopTime(new Date());
+				recordMapper.updateByPrimaryKey(line);
+			}
+		}.start();
+		return PytheResult.ok("关锁成功");
 	}
 
 

@@ -65,7 +65,6 @@ public class NumberUtils {
             byte[] result = new byte[hexArray.length];
             for (int i = 0;i< hexArray.length; i++) 
             {
-            	
                 result[i] = (byte) Integer.parseInt(hexArray[i], 10);;
             }
             return result;

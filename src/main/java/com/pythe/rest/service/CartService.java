@@ -37,4 +37,6 @@ public interface CartService {
 
 	String bluetoothDecrypt(String parameter);
 
+	PytheResult managerLock(String parameters);
+
 }

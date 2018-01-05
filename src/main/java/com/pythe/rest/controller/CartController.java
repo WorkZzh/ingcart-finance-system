@@ -76,6 +76,22 @@ public class CartController {
 	}
 	
     /**
+	 *关锁
+	 * @return
+	 */
+	@RequestMapping(value = "/manager/lock", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult managerLock(@RequestBody String parameters) throws Exception {
+
+		try {
+			return service.managerLock(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+    /**
 	 *确认结算
 	 * @return
 	 */

@@ -29,6 +29,7 @@ import com.pythe.mapper.VCustomerMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblCoupon;
 import com.pythe.pojo.TblCustomer;
+import com.pythe.pojo.TblCustomerExample;
 import com.pythe.pojo.TblSession;
 import com.pythe.pojo.TblVerification;
 import com.pythe.pojo.TblVerificationExample;
@@ -98,21 +99,48 @@ public class CustomerServiceImpl implements CustomerService {
 		example2.createCriteria().andPhoneNumEqualTo(phoneNum);
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example2);
 		
-		if (!customerList.isEmpty()) {
-			return PytheResult.ok(customerList.get(0));
-		}
 		
-		
-		TblCustomer newCustomer = new TblCustomer();
 		String openId = null;
+		String unionId = null;
 		if (type == 0) {
 			openId = customerInformation.getString("openId");
-			String unionId = customerInformation.getString("unionId");
-			newCustomer.setUnionId(unionId);
+			unionId = customerInformation.getString("unionId");
 		}else{
 			openId = FactoryUtils.getUUID();
 		}
 		
+		//管理员临时使用逻辑，获得管理员权限
+		if (!customerList.isEmpty()) {
+			VCustomer tmpCustomer = customerList.get(0);
+			if (1 != tmpCustomer.getLevel()) {
+				if (type !=0) {
+					return PytheResult.ok(tmpCustomer);
+				}
+				return PytheResult.build(202, "抱歉，小程序暂供管理员使用，如需使用请下载APP");
+			}else{
+				TblCustomer record = new TblCustomer();
+				record.setOpenId(openId);
+				record.setCreated(new Date());
+				TblCustomerExample example3 = new TblCustomerExample();
+				example3.createCriteria().andPhoneNumEqualTo(phoneNum);
+				customerMapper.updateByExampleSelective(record, example3);
+				
+				TblAccount newAccount = new TblAccount();
+				newAccount.setCustomerId(tmpCustomer.getCustomerId());
+				newAccount.setAmount(100000000d);
+				newAccount.setLevel(1);
+				newAccount.setInAmount(100000000d);
+				newAccount.setOutAmount(0d);
+				newAccount.setGivingAmount(0d);
+				accountMapper.insert(newAccount);
+				return PytheResult.ok("管理员验证成功");
+			} 
+		}
+		
+		
+		TblCustomer newCustomer = new TblCustomer();
+
+		newCustomer.setUnionId(unionId);
 		newCustomer.setLevel(0);
 		newCustomer.setOpenId(openId);
 		newCustomer.setName(phoneNum.substring(0, 3) + "••••" + phoneNum.substring(7));
@@ -129,6 +157,7 @@ public class CustomerServiceImpl implements CustomerService {
 		newAccount.setLevel(0);
 		newAccount.setInAmount(0d);
 		newAccount.setOutAmount(0d);
+		newAccount.setGivingAmount(0d);
 		accountMapper.insert(newAccount);
 
 		return PytheResult.ok(customer);
