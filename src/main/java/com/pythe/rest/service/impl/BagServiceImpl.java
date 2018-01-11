@@ -135,7 +135,7 @@ public class BagServiceImpl implements BagService {
 		String result = HttpClientUtil.doGet(url, null);
 		System.out.println(result);
 		String access_token = JSONObject.parseObject(result).getString("access_token");
-		System.out.println("=====================>"+access_token);
+		//System.out.println("=====================>"+access_token);
 		
 		JSONObject notifyParameters = new JSONObject();
 		
@@ -167,7 +167,7 @@ public class BagServiceImpl implements BagService {
 		String xw_url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token;
 		String str = HttpClientUtil.doPostJson(xw_url, JsonUtils.objectToJson(notifyParameters));
 		
-		System.out.println("===================> notify template result: " + str);
+		//System.out.println("===================> notify template result: " + str);
 		
 		return PytheResult.ok("记录成功");
 	}

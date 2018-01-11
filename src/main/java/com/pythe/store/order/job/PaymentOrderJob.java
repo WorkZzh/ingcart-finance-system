@@ -70,7 +70,6 @@ public class PaymentOrderJob extends QuartzJobBean {
 
 	    			// 更新停止时间和停止位置和记录用的钱
 	    			int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
-	    			System.out.println("========>时间"+time);
 	    			Double amount = null;
 	    			if (time % 30 == 0) {
 	    				amount = Math.floor(time / 30) * EACH_HOUR_PRICE;
@@ -97,6 +96,13 @@ public class PaymentOrderJob extends QuartzJobBean {
 	    			account.setOutAmount(account.getOutAmount() - amount);
 	    			applicationContext.getBean(TblAccountMapper.class).updateByPrimaryKey(account);
 
+	    			// 更新车的位置和使用情况和结束时间
+	    			//让车处于空闲状态，让后续的人可以使用
+	    			car.setStatus(CAR_FREE_STATUS);
+	    			//将停止的时间作为最终时间更新
+	    			car.setUser(null);
+	    			applicationContext.getBean(TblCarMapper.class).updateByPrimaryKey(car);
+	    			
 	    			// 更新流水
 					final TblBill bill = new TblBill();
 					bill.setId(billId);
@@ -119,12 +125,7 @@ public class PaymentOrderJob extends QuartzJobBean {
 	    			}.start();
 	    			
 	    			
-	    			// 更新车的位置和使用情况和结束时间
-	    			//让车处于空闲状态，让后续的人可以使用
-	    			car.setStatus(CAR_FREE_STATUS);
-	    			//将停止的时间作为最终时间更新
-	    			car.setUser(null);
-	    			applicationContext.getBean(TblCarMapper.class).updateByPrimaryKey(car);
+
 
 				}
 	    }

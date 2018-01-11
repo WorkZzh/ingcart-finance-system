@@ -156,7 +156,6 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.ok("开锁成功");
 		}
 		
-		
 		//2、车没有被保留，能成功的情况。
 		// 先更新车的时间和使用状态
 		car.setLatitude(latitude);
@@ -227,7 +226,8 @@ public class CartServiceImpl implements CartService {
 		TblCarExample example = new TblCarExample();
 		example.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 2)
 				.andLatitudeLessThanOrEqualTo(latitude + 2).andLongitudeGreaterThan(longitude - 2)
-				.andLongitudeLessThanOrEqualTo(longitude + 2);
+				.andLongitudeLessThanOrEqualTo(longitude + 2)
+				.andStatusEqualTo(CAR_FREE_STATUS);
 		List<TblCar> carList = carMapper.selectByExample(example);
 		for (TblCar car : carList) {
 			JSONObject json = new JSONObject();
@@ -328,9 +328,8 @@ public class CartServiceImpl implements CartService {
 		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential" + "&appid=" + WX_APPID
 				+ "&secret=" + WX_APPSECRET;
 		String result = HttpClientUtil.doGet(url, null);
-		System.out.println(result);
 		String access_token = JSONObject.parseObject(result).getString("access_token");
-		System.out.println("notify===========>" + access_token);
+		//System.out.println("notify===========>" + access_token);
 		// https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=ACCESS_TOKEN
 
 		JSONObject notifyParameters = new JSONObject();
@@ -357,12 +356,12 @@ public class CartServiceImpl implements CartService {
 		notifyParameters.put("emphasis_keyword", "keyword1.DATA");
 
 		String params_json = JsonUtils.objectToJson(notifyParameters);
-		System.out.println("### params to post =========================> " + params_json);
+		//System.out.println("### params to post =========================> " + params_json);
 
 		String xw_url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token;
 		String str = HttpClientUtil.doPostJson(xw_url, params_json);
 
-		System.out.println("!!!!!=======================>push pay info: " + str);
+		//System.out.println("!!!!!=======================>push pay info: " + str);
 		// 微信服务通知推送支付结果
 
 		// 看看更新后的账单是否为正数，如果是，证明扣费成功
@@ -370,7 +369,7 @@ public class CartServiceImpl implements CartService {
 			JSONObject json = new JSONObject();
 			json.put("price", amount.intValue());
 			json.put("time", time);
-			return PytheResult.build(100, "支付成功", json);
+			return PytheResult.build(200, "支付成功", json);
 		} else {
 			return PytheResult.build(300, "余额不足，前往充值", account.getAmount());
 		}
@@ -490,7 +489,7 @@ public class CartServiceImpl implements CartService {
 				JSONObject json = new JSONObject();
 				json.put("price", amount.intValue());
 				json.put("time", time);
-				return PytheResult.build(100, "预约过期，自动结算", json);
+				return PytheResult.build(200, "预约过期，自动结算", json);
 			} else {
 				return PytheResult.build(300, "余额不足，前往充值", account.getAmount());
 			}
@@ -516,6 +515,10 @@ public class CartServiceImpl implements CartService {
 		json.put("time", time / 1000 / 60);
 		return PytheResult.ok(json);
 	}
+	
+	
+	
+	
 
 	@Override
 	public PytheResult deleteAppointmentByCustomerId(Long customerId) {
@@ -654,12 +657,10 @@ public class CartServiceImpl implements CartService {
 		if (car != null) {
 			car.setDeviceId(deviceId);
 			carMapper.updateByPrimaryKey(car);
-
 			return PytheResult.ok(car);
 		} else {
 			return PytheResult.build(400, "查无此车");
 		}
-
 	}
 
 	@Override
@@ -681,19 +682,30 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public PytheResult prepareUnlock(Long customerId, String carId) {
-		// TODO Auto-generated method stub
+		
+		//判断该用户是否占用了某台车
+		TblCarExample example = new TblCarExample();
+		example.createCriteria().andUserEqualTo(customerId);
+		List<TblCar> carList = carMapper.selectByExample(example);
+		if (!carList.isEmpty()) {
+			return PytheResult.build(202,"抱歉，一个帐号只能使用一台车");
+		}
+		
 		// 看看用户消费情况
-
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
 
 		if (account.getAmount() < EACH_HOUR_PRICE) {
 			return PytheResult.build(300, "余额不足前往充值", account.getAmount());
 		}
+		
 		// 看看车的状态
 		TblCar car = carMapper.selectByPrimaryKey(carId);
+		
+		
 		if (car == null) {
 			PytheResult.build(100, "该车信息尚未录入，暂无法使用");
 		}
+		
 
 		Integer status = car.getStatus();
 		switch (status) {
@@ -729,6 +741,7 @@ public class CartServiceImpl implements CartService {
 		return PytheResult.ok("车安全检测通过，请放心使用");
 	}
 
+	
 	@Override
 	public String bluetoothEncrypt(String parameter) {
 		
@@ -787,5 +800,64 @@ public class CartServiceImpl implements CartService {
 		return PytheResult.ok("关锁成功");
 	}
 
+	@Override
+	public PytheResult macSwitchKey(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		String id = information.getString("mac_id");
 
+		TblCar car = carMapper.selectByPrimaryKey(id);
+
+		if (car==null) {
+			return PytheResult.build(400, "查无此车");
+		} else {
+			return PytheResult.ok(car);
+		}
+	}
+
+	@Override
+	public PytheResult prepareUnlockGyQrId(Long customerId, Long qrId) {
+		//判断该用户是否占用了某台车
+		TblCarExample example = new TblCarExample();
+		example.createCriteria().andUserEqualTo(customerId);
+		List<TblCar> carList = carMapper.selectByExample(example);
+		if (!carList.isEmpty()) {
+			return PytheResult.build(202,"抱歉，一个帐号只能使用一台车");
+		}
+		
+		// 看看用户消费情况
+		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+
+		if (account.getAmount() < EACH_HOUR_PRICE) {
+			return PytheResult.build(300, "余额不足前往充值", account.getAmount());
+		}
+		
+		// 看看车的状态
+		TblCarExample example2 = new TblCarExample();
+		example2.createCriteria().andQrIdEqualTo(qrId);
+		List<TblCar> carList2 = carMapper.selectByExample(example2);
+		
+		if (carList2.isEmpty()) {
+			PytheResult.build(100, "该车信息尚未录入，暂无法使用");
+		}
+		TblCar car = carList2.get(0);
+
+		Integer status = car.getStatus();
+		switch (status) {
+		case 1: {
+			return PytheResult.build(400, "此车正在使用中");
+		}
+		case 2: {
+			// 是否是该用户继续使用
+			if (car.getUser() != customerId) {
+				return PytheResult.build(500, "抱歉，该车已被预约保留");
+			}
+			break;
+		}
+		case 3: {
+			return PytheResult.build(600, "此车有故障，请换车扫码");
+		}
+		}
+		return PytheResult.ok("车安全检测通过，请放心使用");
+	}
 }

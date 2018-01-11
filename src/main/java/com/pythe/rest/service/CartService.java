@@ -39,4 +39,9 @@ public interface CartService {
 
 	PytheResult managerLock(String parameters);
 
+	PytheResult macSwitchKey(String parameters);
+
+	PytheResult prepareUnlockGyQrId(Long customerId, Long qrId);
+
+
 }

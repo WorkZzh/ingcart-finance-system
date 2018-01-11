@@ -40,6 +40,23 @@ public class PayController {
 	}
 	
 	
+	  /**
+		 *APP充值下单
+		 * @return
+		 */
+		@RequestMapping(value = "/app/account/charge", method = RequestMethod.POST)
+		@ResponseBody
+		public PytheResult chargeForAccountInApp(@RequestBody String parameters) throws Exception {
+
+			try {
+				return service.chargeForAccountInApp(parameters);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+			}
+		}
+		
+	
     /**
 	 *微信确认
 	 * @return

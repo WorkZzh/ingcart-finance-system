@@ -8,6 +8,8 @@ public interface PayService {
 
 	PytheResult wxChargeConfirm(String parameters) throws Exception;
 
+	PytheResult chargeForAccountInApp(String parameters) throws Exception;
+
 
 	
 }

@@ -1,25 +1,15 @@
 package com.pythe.rest.service.impl;
 
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.FactoryUtils;
 import com.pythe.common.utils.HttpClientUtil;
-import com.pythe.common.utils.JsonUtils;
-import com.pythe.common.utils.Xml2JsonUtil;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblCouponMapper;
 import com.pythe.mapper.TblCustomerMapper;
@@ -94,58 +84,58 @@ public class CustomerServiceImpl implements CustomerService {
 			return PytheResult.build(400, "验证码错误或过期");
 		}
 		
-		//登录就是注册，在登录里面可以立即注册的哦
-		VCustomerExample example2 = new VCustomerExample();
-		example2.createCriteria().andPhoneNumEqualTo(phoneNum);
-		List<VCustomer> customerList = vCustomerMapper.selectByExample(example2);
-		
-		
+
 		String openId = null;
 		String unionId = null;
 		if (type == 0) {
 			openId = customerInformation.getString("openId");
 			unionId = customerInformation.getString("unionId");
+			VCustomerExample example5 = new VCustomerExample();
+			example5.createCriteria().andPhoneNumEqualTo(phoneNum).andLevelEqualTo(1);
+			List<VCustomer> customerList2 = vCustomerMapper.selectByExample(example5);
+			if (customerList2.isEmpty()) {
+				return PytheResult.build(202, "抱歉，小程序暂供管理员使用，如需使用请下载APP");
+			}
+			TblCustomer record = new TblCustomer();
+			record.setOpenId(openId);
+			record.setCreated(new Date());
+			TblCustomerExample example3 = new TblCustomerExample();
+			example3.createCriteria().andPhoneNumEqualTo(phoneNum);
+			customerMapper.updateByExampleSelective(record, example3);
+			
+			TblAccount newAccount = new TblAccount();
+			newAccount.setCustomerId(customerList2.get(0).getCustomerId());
+			newAccount.setAmount(100000000d);
+			newAccount.setLevel(1);
+			newAccount.setInAmount(100000000d);
+			newAccount.setOutAmount(0d);
+			newAccount.setGivingAmount(0d);
+			accountMapper.insert(newAccount);
+			return PytheResult.ok("管理员验证成功");
 		}else{
 			openId = FactoryUtils.getUUID();
 		}
 		
+		//非管理员的验证流程
+		VCustomerExample example2 = new VCustomerExample();
+		example2.createCriteria().andPhoneNumEqualTo(phoneNum);
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example2);
+		
 		//管理员临时使用逻辑，获得管理员权限
 		if (!customerList.isEmpty()) {
 			VCustomer tmpCustomer = customerList.get(0);
-			if (1 != tmpCustomer.getLevel()) {
-				if (type !=0) {
-					return PytheResult.ok(tmpCustomer);
-				}
-				return PytheResult.build(202, "抱歉，小程序暂供管理员使用，如需使用请下载APP");
-			}else{
-				TblCustomer record = new TblCustomer();
-				record.setOpenId(openId);
-				record.setCreated(new Date());
-				TblCustomerExample example3 = new TblCustomerExample();
-				example3.createCriteria().andPhoneNumEqualTo(phoneNum);
-				customerMapper.updateByExampleSelective(record, example3);
-				
-				TblAccount newAccount = new TblAccount();
-				newAccount.setCustomerId(tmpCustomer.getCustomerId());
-				newAccount.setAmount(100000000d);
-				newAccount.setLevel(1);
-				newAccount.setInAmount(100000000d);
-				newAccount.setOutAmount(0d);
-				newAccount.setGivingAmount(0d);
-				accountMapper.insert(newAccount);
-				return PytheResult.ok("管理员验证成功");
-			} 
-		}
+			return PytheResult.ok(tmpCustomer);
+		} 
 		
 		
 		TblCustomer newCustomer = new TblCustomer();
-
 		newCustomer.setUnionId(unionId);
 		newCustomer.setLevel(0);
 		newCustomer.setOpenId(openId);
 		newCustomer.setName(phoneNum.substring(0, 3) + "••••" + phoneNum.substring(7));
 		newCustomer.setPhoneNum(phoneNum);
 		newCustomer.setCreated(new Date());
+		newCustomer.setType(type);
 		customerMapper.insert(newCustomer);
 		
 		List<VCustomer> customers = vCustomerMapper.selectByExample(example2);
@@ -159,7 +149,6 @@ public class CustomerServiceImpl implements CustomerService {
 		newAccount.setOutAmount(0d);
 		newAccount.setGivingAmount(0d);
 		accountMapper.insert(newAccount);
-
 		return PytheResult.ok(customer);
 	}
 

@@ -874,6 +874,76 @@ public class TblStoreExample {
             addCriterion("dealer_id not between", value1, value2, "dealerId");
             return (Criteria) this;
         }
+
+        public Criteria andStoreHoursIsNull() {
+            addCriterion("store_hours is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursIsNotNull() {
+            addCriterion("store_hours is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursEqualTo(String value) {
+            addCriterion("store_hours =", value, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursNotEqualTo(String value) {
+            addCriterion("store_hours <>", value, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursGreaterThan(String value) {
+            addCriterion("store_hours >", value, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursGreaterThanOrEqualTo(String value) {
+            addCriterion("store_hours >=", value, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursLessThan(String value) {
+            addCriterion("store_hours <", value, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursLessThanOrEqualTo(String value) {
+            addCriterion("store_hours <=", value, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursLike(String value) {
+            addCriterion("store_hours like", value, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursNotLike(String value) {
+            addCriterion("store_hours not like", value, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursIn(List<String> values) {
+            addCriterion("store_hours in", values, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursNotIn(List<String> values) {
+            addCriterion("store_hours not in", values, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursBetween(String value1, String value2) {
+            addCriterion("store_hours between", value1, value2, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreHoursNotBetween(String value1, String value2) {
+            addCriterion("store_hours not between", value1, value2, "storeHours");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

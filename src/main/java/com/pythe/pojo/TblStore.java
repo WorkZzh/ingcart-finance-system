@@ -27,6 +27,8 @@ public class TblStore {
 
     private String dealerId;
 
+    private String storeHours;
+
     public String getId() {
         return id;
     }
@@ -121,5 +123,13 @@ public class TblStore {
 
     public void setDealerId(String dealerId) {
         this.dealerId = dealerId == null ? null : dealerId.trim();
+    }
+
+    public String getStoreHours() {
+        return storeHours;
+    }
+
+    public void setStoreHours(String storeHours) {
+        this.storeHours = storeHours == null ? null : storeHours.trim();
     }
 }

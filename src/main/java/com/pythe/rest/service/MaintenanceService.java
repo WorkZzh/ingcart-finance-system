@@ -13,5 +13,8 @@ public interface MaintenanceService {
 	PytheResult selectTripBillByCustomerId(Long customerId, Integer pageNum, Integer pageSize);
 
 
+	PytheResult recordMaintenance(String parameter);
+
+
 	
 }

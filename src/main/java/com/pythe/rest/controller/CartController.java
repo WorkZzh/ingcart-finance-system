@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
-import com.pythe.common.utils.EncodeUtils;
 import com.pythe.common.utils.ExceptionUtil;
 import com.pythe.rest.service.CartService;
 
@@ -40,6 +38,28 @@ public class CartController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+    
+    
+    
+    /**
+	 *开锁检测_IOS
+	 * @return
+	 * localhost:8084/rest/unlock/prepare?customerId=9&carId=C8:FD:19:92:17:29
+	 */
+    @RequestMapping(value = "/qr/unlock/prepare", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult prepareUnlockGyQrId(
+			@RequestParam(required = true,value = "customerId") Long customerId,
+			@RequestParam(required = true,value = "qrId") Long qrId
+			) throws Exception {
+		try {
+			return service.prepareUnlockGyQrId(customerId,qrId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
 	
 	
 	
@@ -66,7 +86,6 @@ public class CartController {
 	@RequestMapping(value = "/use/lock", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult lock(@RequestBody String parameters) throws Exception {
-
 		try {
 			return service.lock(parameters);
 		} catch (Exception e) {
@@ -76,7 +95,7 @@ public class CartController {
 	}
 	
     /**
-	 *关锁
+	 *管理员关锁
 	 * @return
 	 */
 	@RequestMapping(value = "/manager/lock", method = RequestMethod.POST)
@@ -93,7 +112,6 @@ public class CartController {
 	
     /**
 	 *确认结算
-	 * @return
 	 */
 	@RequestMapping(value = "/use/computeFee", method = RequestMethod.POST)
 	@ResponseBody
@@ -233,7 +251,6 @@ public class CartController {
 		}
 	}
 	
-	
 	/**
 	 *记录车锁的设备UUID
 	 * @return
@@ -241,7 +258,6 @@ public class CartController {
 	@RequestMapping(value = "/record/deviceInfo", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult recordDeviceInfo(@RequestBody String parameters) throws Exception {
-
 		try {
 			return service.recordDeviceInfo(parameters);
 		} catch (Exception e) {
@@ -286,6 +302,22 @@ public class CartController {
 	}
     
 	
+	/**
+	 *通过Mac来得到密钥
+	 * @return
+	 */
+	@RequestMapping(value = "/switch/key", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult macSwitchKey(@RequestBody String parameters) throws Exception {
+		try {
+			return service.macSwitchKey(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
     /**
 	 *蓝牙通信加密
 	 * @return
@@ -303,22 +335,32 @@ public class CartController {
 		
 	}
 	
+
+	
+	
+	
+	
 	/**
-	 *蓝牙通信解密
+	 *
 	 * @return
 	 */
 	@RequestMapping(value = "/bluetooth/decrypt", method = RequestMethod.POST)
 	@ResponseBody
 	public String bluetoothDecrypt(@RequestBody String parameter) throws Exception {
 
-		
 		System.out.println("==========================>bluetooth: " + parameter);
 		String decryptedStr = service.bluetoothDecrypt(parameter);
 		System.out.println("==========================>bluetooth decrypt: " + decryptedStr);
 		
-		return decryptedStr;
-		
+		return decryptedStr;	
 	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 }

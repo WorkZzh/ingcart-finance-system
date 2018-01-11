@@ -1144,6 +1144,66 @@ public class VCustomerExample {
             addCriterion("device_id not between", value1, value2, "deviceId");
             return (Criteria) this;
         }
+
+        public Criteria andQrIdIsNull() {
+            addCriterion("qr_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdIsNotNull() {
+            addCriterion("qr_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdEqualTo(Long value) {
+            addCriterion("qr_id =", value, "qrId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdNotEqualTo(Long value) {
+            addCriterion("qr_id <>", value, "qrId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdGreaterThan(Long value) {
+            addCriterion("qr_id >", value, "qrId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("qr_id >=", value, "qrId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdLessThan(Long value) {
+            addCriterion("qr_id <", value, "qrId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdLessThanOrEqualTo(Long value) {
+            addCriterion("qr_id <=", value, "qrId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdIn(List<Long> values) {
+            addCriterion("qr_id in", values, "qrId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdNotIn(List<Long> values) {
+            addCriterion("qr_id not in", values, "qrId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdBetween(Long value1, Long value2) {
+            addCriterion("qr_id between", value1, value2, "qrId");
+            return (Criteria) this;
+        }
+
+        public Criteria andQrIdNotBetween(Long value1, Long value2) {
+            addCriterion("qr_id not between", value1, value2, "qrId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

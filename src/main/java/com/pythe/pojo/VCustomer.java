@@ -35,6 +35,8 @@ public class VCustomer {
 
     private String deviceId;
 
+    private Long qrId;
+
     public Long getCustomerId() {
         return customerId;
     }
@@ -161,5 +163,13 @@ public class VCustomer {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId == null ? null : deviceId.trim();
+    }
+
+    public Long getQrId() {
+        return qrId;
+    }
+
+    public void setQrId(Long qrId) {
+        this.qrId = qrId;
     }
 }

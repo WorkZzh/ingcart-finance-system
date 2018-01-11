@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.ExceptionUtil;
 import com.pythe.rest.service.MaintenanceService;
@@ -50,6 +51,21 @@ public class MaintenanceController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+    
+    
+	
+	/**
+	 * 维修记录录入成功
+	 * @return
+	 */
+	@RequestMapping(value = "/record/maintenance", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult recordMaintenance(@RequestBody String parameter) throws Exception {
+		return service.recordMaintenance(parameter);
+	}
+	
+	
+
     
     
 }  
