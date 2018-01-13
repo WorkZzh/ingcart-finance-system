@@ -313,27 +313,25 @@ public class PayServiceImpl implements PayService {
 		String timeStamp = String.valueOf(System.currentTimeMillis());
 
 		params2.put("appid", appid);
-		params2.put("partnerid", mch_id );
-		params2.put("prepayid", prepay_id );
-		
 		params2.put("noncestr", nonce_str2);
-		
 		params2.put("package", "Sign=WXPay" );
-//		params2.put("signType", signType);
+		params2.put("partnerid", mch_id );
+		params2.put("prepayid", prepay_id );	
 		params2.put("timestamp", timeStamp);
 		params2.put("sign", signr);
 		
 		String signB = "";// 签名(该签名本应使用微信商户平台的API证书中的密匙key,但此处使用的是微信公众号的密匙APP_SECRET)
 		signB = FactoryUtils.getSign(params2, WX_KEY);
 
-		strJson.put("prepayId", prepay_id);
-		strJson.put("paySign", signB);
-		strJson.put("timeStamp", timeStamp);
-		strJson.put("nonceStr", nonce_str2);
-		strJson.put("out_trade_no", out_trade_no);
+		JSONObject returnObject = new JSONObject();
+		returnObject.put("prepay_id", prepay_id);
+		returnObject.put("paySign", signB);
+		returnObject.put("timeStamp", timeStamp);
+		returnObject.put("nonceStr", nonce_str2);
+		returnObject.put("out_trade_no", out_trade_no);
 		
 
-		return PytheResult.ok(strJson.toString());
+		return PytheResult.ok(returnObject);
 	}
 
 }
