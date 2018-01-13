@@ -57,7 +57,8 @@ public class PayServiceImpl implements PayService {
 	@Value("${APP_APPSECRET}")
 	private String APP_APPSECRET;
 	
-	
+	@Value("${APP_MCH_ID}")
+	private String APP_MCH_ID;
 	
 	@Value("${GIFT_COUPONS_THRESHOLD}")
 	private double GIFT_COUPONS_THRESHOLD;
@@ -252,10 +253,10 @@ public class PayServiceImpl implements PayService {
 	public PytheResult chargeForAccountInApp(String prepayment_imforamtion) throws Exception {
 		// TODO Auto-generated method stub
 		String appid = APP_APPID;// appid
-		String mch_id = WX_MCH_ID;// 微信支付商户号
+		String mch_id = APP_MCH_ID;// 微信支付商户号
 		String nonce_str = FactoryUtils.getUUID();// 随机码
 		
-		//prepayment_imforamtion = DecodeUtils.decode(prepayment_imforamtion);
+//		prepayment_imforamtion = DecodeUtils.decode(prepayment_imforamtion);
 		JSONObject json = JSONObject.parseObject(prepayment_imforamtion);
 		String body = json.getString("body");// 商品描述
 		String out_trade_no = System.currentTimeMillis() + "" + new java.util.Random().nextInt(8);// 商品订单号
@@ -269,7 +270,7 @@ public class PayServiceImpl implements PayService {
 		String notify_url = json.getString("notify_url");// 回调函数
 		// String sessionId
 		// =JSONObject.parseObject(prepayment_imforamtion).getString("sessionId");
-		String openid = json.getString("openId");
+		
 
 		SortedMap<String, String> params = new TreeMap<String, String>();
 		params.put("appid", appid);
@@ -277,7 +278,7 @@ public class PayServiceImpl implements PayService {
 		params.put("mch_id", mch_id);
 		params.put("nonce_str", nonce_str);
 		params.put("notify_url", notify_url);
-		params.put("openid", openid);
+		
 		params.put("out_trade_no", out_trade_no);
 		params.put("product_id", product_id);
 		params.put("spbill_create_ip", spbill_create_ip);
@@ -290,48 +291,49 @@ public class PayServiceImpl implements PayService {
 		sign = FactoryUtils.getSign(params, WX_KEY);
 		// 参数xml化
 		String xmlParams = FactoryUtils.parseString2Xml(params, sign);
+		
 		// 判断返回码
 		String str = "";
 		String xw_url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 		str = HttpClientUtil.doPostJson(xw_url, xmlParams);
 		
-		System.out.println("===========>str"+str);
+		System.out.println(str);
 		
-		return PytheResult.ok(str);
+		
 		
 		// 2第二步签名
-//		JSONObject strJson = Xml2JsonUtil.xml2Json(str);
-//		
-//		String prepay_id = strJson.getString("prepay_id");
-//		String signr = strJson.getString("sign");
-//		String nonce_str2 = FactoryUtils.getUUID();
-//		String signType = "MD5";
-//		SortedMap<String, String> params2 = new TreeMap<String, String>();
-//		
-//		String timeStamp = String.valueOf(System.currentTimeMillis());
-//
-//		params2.put("appid", appid);
-//		params2.put("partnerid", mch_id );
-//		params2.put("prepayid", prepay_id );
-//		
-//		params2.put("noncestr", nonce_str2);
-//		
-//		params2.put("package", "Sign=WXPay" );
-////		params2.put("signType", signType);
-//		params2.put("timestamp", timeStamp);
-//		params2.put("sign", signr);
-//		
-//		String signB = "";// 签名(该签名本应使用微信商户平台的API证书中的密匙key,但此处使用的是微信公众号的密匙APP_SECRET)
-//		signB = FactoryUtils.getSign(params2, WX_KEY);
-//
-//		
-//		strJson.put("paySign", signB);
-//		strJson.put("timeStamp", timeStamp);
-//		strJson.put("nonceStr", nonce_str2);
-//		strJson.put("out_trade_no", out_trade_no);
-//		
-//
-//		return PytheResult.ok(strJson.toString());
+		JSONObject strJson = Xml2JsonUtil.xml2Json(str);
+		
+		String prepay_id = strJson.getString("prepay_id");
+		String signr = strJson.getString("sign");
+		String nonce_str2 = FactoryUtils.getUUID();
+		String signType = "MD5";
+		SortedMap<String, String> params2 = new TreeMap<String, String>();
+		
+		String timeStamp = String.valueOf(System.currentTimeMillis());
+
+		params2.put("appid", appid);
+		params2.put("partnerid", mch_id );
+		params2.put("prepayid", prepay_id );
+		
+		params2.put("noncestr", nonce_str2);
+		
+		params2.put("package", "Sign=WXPay" );
+//		params2.put("signType", signType);
+		params2.put("timestamp", timeStamp);
+		params2.put("sign", signr);
+		
+		String signB = "";// 签名(该签名本应使用微信商户平台的API证书中的密匙key,但此处使用的是微信公众号的密匙APP_SECRET)
+		signB = FactoryUtils.getSign(params2, WX_KEY);
+
+		strJson.put("prepayId", prepay_id);
+		strJson.put("paySign", signB);
+		strJson.put("timeStamp", timeStamp);
+		strJson.put("nonceStr", nonce_str2);
+		strJson.put("out_trade_no", out_trade_no);
+		
+
+		return PytheResult.ok(strJson.toString());
 	}
 
 }
