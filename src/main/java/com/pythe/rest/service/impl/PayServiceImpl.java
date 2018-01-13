@@ -310,7 +310,7 @@ public class PayServiceImpl implements PayService {
 		String signType = "MD5";
 		SortedMap<String, String> params2 = new TreeMap<String, String>();
 		
-		String timeStamp = String.valueOf(System.currentTimeMillis());
+		String timeStamp = String.valueOf(System.currentTimeMillis()/1000);
 
 		params2.put("appid", appid);
 		params2.put("noncestr", nonce_str2);
