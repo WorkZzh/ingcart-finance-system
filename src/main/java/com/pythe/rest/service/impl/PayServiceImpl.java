@@ -388,7 +388,7 @@ public class PayServiceImpl implements PayService {
 				TblBillExample billExample = new TblBillExample();
 				billExample.createCriteria().andOutTradeNoEqualTo(outTradeNo);
 				TblBill originalBill =  billMapper.selectByExample(billExample).get(0);
-				if(originalBill.getAmount()*100 == Double.valueOf(totalFee))
+				if(originalBill.getAmount()*100 == Double.valueOf(totalFee) && originalBill.getStatus().equals(NOT_PAY_STATUS))
 				{
 					System.out.println("============================> charge fee !!! " + totalFee);
 					originalBill.setStatus(PAY_STATUS);
