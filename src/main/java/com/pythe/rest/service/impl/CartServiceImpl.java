@@ -365,13 +365,16 @@ public class CartServiceImpl implements CartService {
 		// 微信服务通知推送支付结果
 
 		// 看看更新后的账单是否为正数，如果是，证明扣费成功
+		JSONObject json = new JSONObject();
+		json.put("price", amount.intValue());
+		json.put("time", time);
+		json.put("amount", account.getAmount());
 		if (account.getAmount() > 0) {
-			JSONObject json = new JSONObject();
-			json.put("price", amount.intValue());
-			json.put("time", time);
+			
 			return PytheResult.build(200, "支付成功", json);
 		} else {
-			return PytheResult.build(300, "余额不足，前往充值", account.getAmount());
+			
+			return PytheResult.build(300, "余额不足，前往充值", json);
 		}
 	}
 
