@@ -1,5 +1,7 @@
 package com.pythe.rest.service;
 
+import org.dom4j.DocumentException;
+
 import com.pythe.common.pojo.PytheResult;
 
 public interface PayService {
@@ -9,6 +11,8 @@ public interface PayService {
 	PytheResult wxChargeConfirm(String parameters) throws Exception;
 
 	PytheResult chargeForAccountInApp(String parameters) throws Exception;
+
+	PytheResult wxChargeConfirmInApp(String parameters) throws Exception;
 
 
 	

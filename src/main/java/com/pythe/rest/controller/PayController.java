@@ -72,6 +72,23 @@ public class PayController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	/**
+	 *app微信支付确认
+	 * @return
+	 */
+	@RequestMapping(value = "/app/account/wxChargeConfirm", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult wxChargeConfirmInApp(@RequestBody String parameters) throws Exception {
+
+		try {
+			return service.wxChargeConfirmInApp(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
     
     
     

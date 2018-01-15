@@ -20,6 +20,7 @@ import com.pythe.mapper.TblBillMapper;
 import com.pythe.mapper.TblCouponMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBill;
+import com.pythe.pojo.TblBillExample;
 import com.pythe.pojo.TblCoupon;
 import com.pythe.rest.service.PayService;
 
@@ -83,6 +84,9 @@ public class PayServiceImpl implements PayService {
 		
 		prepayment_imforamtion = DecodeUtils.decode(prepayment_imforamtion);
 		JSONObject json = JSONObject.parseObject(prepayment_imforamtion);
+		
+		Long customerId = json.getLong("customerId");
+		
 		String body = json.getString("body");// 商品描述
 		String out_trade_no = System.currentTimeMillis() + "" + new java.util.Random().nextInt(8);// 商品订单号
 		String product_id = FactoryUtils.getUUID();// 商品编号
@@ -168,6 +172,19 @@ public class PayServiceImpl implements PayService {
 		strJson.put("out_trade_no", out_trade_no);
 		// strJson.put("package", "prepay_id="+prepay_id);
 		// strJson.put("signType", "signType");
+		
+		// 插入账单，设置未确定支付结果状态，等待微信支付回调确认再更新
+		TblBill bill = new TblBill();
+		bill.setId(FactoryUtils.getUUID());
+		bill.setAmount(json.getDouble("total_fee"));
+		bill.setType(BILL_CHARGE_TYPE);
+		bill.setOutTradeNo(out_trade_no);
+		bill.setPrepayId(prepay_id);
+		bill.setStatus(NOT_PAY_STATUS);
+		bill.setTime(new Date());
+		bill.setCustomerId(customerId);
+		billMapper.insert(bill);
+						
 
 		return PytheResult.ok(strJson.toString());
 
@@ -258,6 +275,7 @@ public class PayServiceImpl implements PayService {
 		
 //		prepayment_imforamtion = DecodeUtils.decode(prepayment_imforamtion);
 		JSONObject json = JSONObject.parseObject(prepayment_imforamtion);
+		Long customerId = json.getLong("customerId");
 		String body = json.getString("body");// 商品描述
 		String out_trade_no = System.currentTimeMillis() + "" + new java.util.Random().nextInt(8);// 商品订单号
 		String product_id = FactoryUtils.getUUID();// 商品编号
@@ -330,8 +348,81 @@ public class PayServiceImpl implements PayService {
 		returnObject.put("nonceStr", nonce_str2);
 		returnObject.put("out_trade_no", out_trade_no);
 		
+		
+		// 插入账单，设置未确定支付结果状态，等待微信支付回调确认再更新
+		TblBill bill = new TblBill();
+		bill.setId(FactoryUtils.getUUID());
+		bill.setAmount(json.getDouble("total_fee"));
+		bill.setType(BILL_CHARGE_TYPE);
+		bill.setOutTradeNo(out_trade_no);
+		bill.setPrepayId(prepay_id);
+		bill.setStatus(NOT_PAY_STATUS);
+		bill.setTime(new Date());
+		bill.setCustomerId(customerId);
+		billMapper.insert(bill);
+		
 
 		return PytheResult.ok(returnObject);
+	}
+
+	@Override
+	public PytheResult wxChargeConfirmInApp(String parameters) throws Exception {
+		
+		JSONObject strJson = Xml2JsonUtil.xml2Json(parameters);
+		String tradeType = strJson.getString("trade_type");
+		String appId = strJson.getString("appid");
+		String mchId = strJson.getString("mch_id");
+		String outTradeNo = strJson.getString("out_trade_no");
+		String resultCode = strJson.getString("result_code");
+		String returnCode = strJson.getString("return_code");
+		String transactionId = strJson.getString("transaction_id");
+		String totalFee = strJson.getString("total_fee");
+		
+		if(returnCode.equals("SUCCESS") && resultCode.equals("SUCCESS"))
+		{
+			System.out.println("============================> accept return !!! " + returnCode + " && " + resultCode);
+			
+			if(appId.equals(APP_APPID) && mchId.equals(APP_MCH_ID))
+			{
+				System.out.println("=============================> match !!!!!!!!!!!!");
+				TblBillExample billExample = new TblBillExample();
+				billExample.createCriteria().andOutTradeNoEqualTo(outTradeNo);
+				TblBill originalBill =  billMapper.selectByExample(billExample).get(0);
+				if(originalBill.getAmount()*100 == Double.valueOf(totalFee))
+				{
+					System.out.println("============================> charge fee !!! " + totalFee);
+					originalBill.setStatus(PAY_STATUS);
+					billMapper.updateByPrimaryKey(originalBill);
+					
+					//更新充值支付账单状态后，继续更新账户信息、优惠券信息等等
+					Double inAmount = originalBill.getAmount();
+					TblAccount account = accountMapper.selectByPrimaryKey(originalBill.getCustomerId());
+					Double GIVING_ACCOUNT = null;
+					
+					if (50==inAmount) {
+						GIVING_ACCOUNT = 30d;
+						inAmount = inAmount+GIVING_ACCOUNT;
+						account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
+					}else if (100==inAmount) {
+						GIVING_ACCOUNT = 80d;
+						inAmount = inAmount+GIVING_ACCOUNT;
+						account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
+					}else if (200==inAmount) {
+						GIVING_ACCOUNT = 200d;
+						inAmount = inAmount+GIVING_ACCOUNT;
+						account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
+					}
+					
+					account.setAmount(account.getAmount() + inAmount);
+					account.setInAmount(account.getInAmount() + inAmount);
+					accountMapper.updateByPrimaryKey(account);
+					
+					return PytheResult.ok("已更新账户状态");
+				}
+			}
+		}
+		
+		return null;
 	}
 
 }

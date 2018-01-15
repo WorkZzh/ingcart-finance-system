@@ -444,6 +444,76 @@ public class TblVersionExample {
             addCriterion("type not between", value1, value2, "type");
             return (Criteria) this;
         }
+
+        public Criteria andDownloadAddressIsNull() {
+            addCriterion("download_address is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressIsNotNull() {
+            addCriterion("download_address is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressEqualTo(String value) {
+            addCriterion("download_address =", value, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressNotEqualTo(String value) {
+            addCriterion("download_address <>", value, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressGreaterThan(String value) {
+            addCriterion("download_address >", value, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressGreaterThanOrEqualTo(String value) {
+            addCriterion("download_address >=", value, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressLessThan(String value) {
+            addCriterion("download_address <", value, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressLessThanOrEqualTo(String value) {
+            addCriterion("download_address <=", value, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressLike(String value) {
+            addCriterion("download_address like", value, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressNotLike(String value) {
+            addCriterion("download_address not like", value, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressIn(List<String> values) {
+            addCriterion("download_address in", values, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressNotIn(List<String> values) {
+            addCriterion("download_address not in", values, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressBetween(String value1, String value2) {
+            addCriterion("download_address between", value1, value2, "downloadAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownloadAddressNotBetween(String value1, String value2) {
+            addCriterion("download_address not between", value1, value2, "downloadAddress");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

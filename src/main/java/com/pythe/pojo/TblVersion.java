@@ -13,6 +13,8 @@ public class TblVersion {
 
     private String type;
 
+    private String downloadAddress;
+
     private String description;
 
     public String getApikey() {
@@ -53,6 +55,14 @@ public class TblVersion {
 
     public void setType(String type) {
         this.type = type == null ? null : type.trim();
+    }
+
+    public String getDownloadAddress() {
+        return downloadAddress;
+    }
+
+    public void setDownloadAddress(String downloadAddress) {
+        this.downloadAddress = downloadAddress == null ? null : downloadAddress.trim();
     }
 
     public String getDescription() {
