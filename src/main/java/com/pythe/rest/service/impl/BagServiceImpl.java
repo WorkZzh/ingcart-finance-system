@@ -24,9 +24,11 @@ import com.pythe.mapper.TblStoreMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBagRecord;
 import com.pythe.pojo.TblBill;
+import com.pythe.pojo.TblBillExample;
 import com.pythe.pojo.TblCombo;
 import com.pythe.pojo.TblComboExample;
 import com.pythe.pojo.TblCustomer;
+import com.pythe.pojo.TblDealer;
 import com.pythe.pojo.TblStore;
 import com.pythe.pojo.TblStoreExample;
 import com.pythe.rest.service.BagService;
@@ -87,6 +89,12 @@ public class BagServiceImpl implements BagService {
 		String out_trade_no = information.getString("out_trade_no");
 		String prepay_id = information.getString("prepay_id");
 		
+		TblDealer dealer = dealerMapper.selectByPrimaryKey(dealerId);
+		if(dealer == null)
+		{
+			return PytheResult.build(400, "不存在此分销商");
+		}
+		
 		TblStore store = null;
 		// 更新卡券使用情况
 		TblStoreExample example = new TblStoreExample();
@@ -110,7 +118,16 @@ public class BagServiceImpl implements BagService {
 		
 		//更新账单记录
 		final TblAccount account = accountMapper.selectByPrimaryKey(customerId);
-		// 先更新账单
+		//先查是否已付款
+		TblBillExample billExample = new TblBillExample();
+		billExample.createCriteria().andOutTradeNoEqualTo(out_trade_no).andStatusEqualTo(PAY_STATUS);
+		List<TblBill> payBills = billMapper.selectByExample(billExample);
+		if(payBills.isEmpty())
+		{
+			return PytheResult.build(500, "尚未付款");
+		}
+				
+		//再更新账单
 		TblBill bill = new TblBill();
 		bill.setId(FactoryUtils.getUUID());
 		bill.setAmount(GIVE_BAG_MONEY);
