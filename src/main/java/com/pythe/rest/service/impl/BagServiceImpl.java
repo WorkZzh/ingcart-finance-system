@@ -130,42 +130,42 @@ public class BagServiceImpl implements BagService {
 		
 		
 		//向消费用户发送服务通知
-		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential" + "&appid=" + WX_APPID
-				+"&secret=" + WX_APPSECRET;
-		String result = HttpClientUtil.doGet(url, null);
-		System.out.println(result);
-		String access_token = JSONObject.parseObject(result).getString("access_token");
-		//System.out.println("=====================>"+access_token);
-		
-		JSONObject notifyParameters = new JSONObject();
-		
-		Map<String, Object> datas = new HashMap<String, Object>();
-
-		Map<String, String> keyValue1 = new HashMap<String, String>();
-		keyValue1.put("value", "￥38.00");
-		datas.put("keyword1", keyValue1);
-		
-		Map<String, String> keyValue2 = new HashMap<String, String>();
-		keyValue2.put("value", dealerMapper.selectByPrimaryKey(dealerId).getName());
-		datas.put("keyword2", keyValue2);
-		
-		Map<String, String> keyValue3 = new HashMap<String, String>();
-		keyValue3.put("value", "价值￥68的垫套，￥20预存费用");
-		datas.put("keyword3", keyValue3);
-		
-		Map<String, String> keyValue4 = new HashMap<String, String>();
-		keyValue4.put("value", bill.getTime().toString());
-		datas.put("keyword4", keyValue4);
-		
-		notifyParameters.put("touser", customerMapper.selectByPrimaryKey(customerId).getOpenId());
-		notifyParameters.put("template_id",GIFT_NOTIFY_TEMPLATE_ID);
-		notifyParameters.put("form_id", bill.getPrepayId());
-		notifyParameters.put("page", "pages/index/index");
-		notifyParameters.put("data", datas);
-		notifyParameters.put("emphasis_keyword", "keyword1.DATA");
-		
-		String xw_url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token;
-		String str = HttpClientUtil.doPostJson(xw_url, JsonUtils.objectToJson(notifyParameters));
+//		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential" + "&appid=" + WX_APPID
+//				+"&secret=" + WX_APPSECRET;
+//		String result = HttpClientUtil.doGet(url, null);
+//		System.out.println(result);
+//		String access_token = JSONObject.parseObject(result).getString("access_token");
+//		//System.out.println("=====================>"+access_token);
+//		
+//		JSONObject notifyParameters = new JSONObject();
+//		
+//		Map<String, Object> datas = new HashMap<String, Object>();
+//
+//		Map<String, String> keyValue1 = new HashMap<String, String>();
+//		keyValue1.put("value", "￥38.00");
+//		datas.put("keyword1", keyValue1);
+//		
+//		Map<String, String> keyValue2 = new HashMap<String, String>();
+//		keyValue2.put("value", dealerMapper.selectByPrimaryKey(dealerId).getName());
+//		datas.put("keyword2", keyValue2);
+//		
+//		Map<String, String> keyValue3 = new HashMap<String, String>();
+//		keyValue3.put("value", "价值￥68的垫套，￥20预存费用");
+//		datas.put("keyword3", keyValue3);
+//		
+//		Map<String, String> keyValue4 = new HashMap<String, String>();
+//		keyValue4.put("value", bill.getTime().toString());
+//		datas.put("keyword4", keyValue4);
+//		
+//		notifyParameters.put("touser", customerMapper.selectByPrimaryKey(customerId).getOpenId());
+//		notifyParameters.put("template_id",GIFT_NOTIFY_TEMPLATE_ID);
+//		notifyParameters.put("form_id", bill.getPrepayId());
+//		notifyParameters.put("page", "pages/index/index");
+//		notifyParameters.put("data", datas);
+//		notifyParameters.put("emphasis_keyword", "keyword1.DATA");
+//		
+//		String xw_url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+access_token;
+//		String str = HttpClientUtil.doPostJson(xw_url, JsonUtils.objectToJson(notifyParameters));
 		
 		//System.out.println("===================> notify template result: " + str);
 		

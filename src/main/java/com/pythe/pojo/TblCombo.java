@@ -15,6 +15,8 @@ public class TblCombo {
 
     private Date stoped;
 
+    private Double price;
+
     public Long getComboId() {
         return comboId;
     }
@@ -61,5 +63,13 @@ public class TblCombo {
 
     public void setStoped(Date stoped) {
         this.stoped = stoped;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }
