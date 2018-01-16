@@ -82,7 +82,7 @@ public class BagServiceImpl implements BagService {
 
 	@Override
 	public PytheResult maiBag(String parameters) {
-		// TODO Auto-generated method stub
+		
 		JSONObject information = JSONObject.parseObject(parameters);
 		Long customerId = information.getLong("customerId");
 		String dealerId = information.getString("dealerId");
@@ -186,7 +186,11 @@ public class BagServiceImpl implements BagService {
 		
 		//System.out.println("===================> notify template result: " + str);
 		
-		return PytheResult.ok("记录成功");
+		JSONObject purchaseInfo = new JSONObject();
+		purchaseInfo.put("finishTime", System.currentTimeMillis());
+		purchaseInfo.put("bill", payBills.get(0));
+		
+		return PytheResult.ok(purchaseInfo);
 	}
 
 
