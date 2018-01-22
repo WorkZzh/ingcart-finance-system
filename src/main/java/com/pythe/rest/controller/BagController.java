@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.ExceptionUtil;
+import com.pythe.rest.service.ActivityService;
 import com.pythe.rest.service.BagService;
 import com.pythe.rest.service.MaintenanceService;
 
@@ -17,6 +18,8 @@ public class BagController {
 
 	@Autowired  
     private BagService service;  
+	
+	
       
 	@RequestMapping(value = "/mai/bag", method = RequestMethod.POST)
 	@ResponseBody
@@ -47,6 +50,23 @@ public class BagController {
 	public PytheResult selectComboDetailList() {
 		try {
 			return service.selectComboDetailList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
+	
+	@Autowired  
+    private ActivityService activityService;
+	
+	@RequestMapping(value = "/query/activity", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult queryActivity(@RequestBody String parameters) throws Exception {
+		try {
+			return activityService.queryActivity(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
