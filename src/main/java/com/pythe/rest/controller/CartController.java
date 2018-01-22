@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.ExceptionUtil;
@@ -61,6 +63,18 @@ public class CartController {
 	}
     
 	
+    /**
+	 *开锁
+	 * @return
+	 */
+	@RequestMapping(value = "/unlock", method = RequestMethod.GET)
+	@ResponseBody
+	public RedirectView outsideUnlock(@RequestParam(required = true,value = "id") Long id) throws Exception {
+		ModelAndView mv = new ModelAndView(new RedirectView("https://pythe.cn/download.html"));
+		RedirectView rv = new RedirectView("https://pythe.cn/download.html"+"?id="+id);
+		
+		return rv;
+	}
 	
 	
     /**
