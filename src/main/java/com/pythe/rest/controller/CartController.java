@@ -43,6 +43,7 @@ public class CartController {
     
     
     
+    
     /**
 	 *开锁检测_IOS
 	 * @return
@@ -62,20 +63,19 @@ public class CartController {
 		}
 	}
     
-	
+    
     /**
 	 *开锁
 	 * @return
 	 */
 	@RequestMapping(value = "/unlock", method = RequestMethod.GET)
 	@ResponseBody
-	public RedirectView outsideUnlock(@RequestParam(required = true,value = "id") Long id) throws Exception {
-		ModelAndView mv = new ModelAndView(new RedirectView("https://pythe.cn/download.html"));
-		RedirectView rv = new RedirectView("https://pythe.cn/download.html"+"?id="+id);
-		
-		return rv;
+	public ModelAndView outsideUnlock(@RequestParam(required = true,value = "id") Long id) throws Exception {
+		ModelAndView mv = new ModelAndView(new RedirectView("https://wx.ingcart.com/source/todownload.html"));
+		//RedirectView rv = new RedirectView("https://wx.ingcart.com/source/todownload.html");
+		//RedirectView rv = new RedirectView("https://wx.ingcart.com/source/todownload.html");
+		return mv;
 	}
-	
 	
     /**
 	 *开锁
@@ -93,9 +93,11 @@ public class CartController {
 	}
 	
 	
+	
+	
+	
     /**
 	 *关锁
-	 * @return
 	 */
 	@RequestMapping(value = "/use/lock", method = RequestMethod.POST)
 	@ResponseBody
@@ -108,14 +110,29 @@ public class CartController {
 		}
 	}
 	
+	
+	/**
+	 * 开锁失败后，需要重置车的状态并删除记录
+	 */
+	@RequestMapping(value = "/unlock/false/reset", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult unlockFalseReset(@RequestBody String parameters) throws Exception {
+		try {
+			return service.unlockFalseReset(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
     /**
 	 *管理员关锁
-	 * @return
 	 */
 	@RequestMapping(value = "/manager/lock", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult managerLock(@RequestBody String parameters) throws Exception {
-
 		try {
 			return service.managerLock(parameters);
 		} catch (Exception e) {
@@ -176,7 +193,6 @@ public class CartController {
     
     /**
 	 *显示共享车位置
-	 * @return
 	 */
     @RequestMapping(value = "/map/show", method = RequestMethod.GET)
 	@ResponseBody
@@ -341,9 +357,9 @@ public class CartController {
 	public String bluetoothEncrypt(@RequestBody String parameter) throws Exception {
 		
 
-		System.out.println("==========================>bluetooth: " + parameter);
+		//System.out.println("==========================>bluetooth: " + parameter);
 		String encryptedStr = service.bluetoothEncrypt(parameter);
-		System.out.println("==========================>bluetooth encrypt: " + encryptedStr);
+		//System.out.println("==========================>bluetooth encrypt: " + encryptedStr);
 		
 		return encryptedStr;
 		
@@ -362,9 +378,9 @@ public class CartController {
 	@ResponseBody
 	public String bluetoothDecrypt(@RequestBody String parameter) throws Exception {
 
-		System.out.println("==========================>bluetooth: " + parameter);
+		//System.out.println("==========================>bluetooth: " + parameter);
 		String decryptedStr = service.bluetoothDecrypt(parameter);
-		System.out.println("==========================>bluetooth decrypt: " + decryptedStr);
+		//System.out.println("==========================>bluetooth decrypt: " + decryptedStr);
 		
 		return decryptedStr;	
 	}

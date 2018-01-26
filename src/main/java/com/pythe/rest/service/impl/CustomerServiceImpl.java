@@ -83,7 +83,6 @@ public class CustomerServiceImpl implements CustomerService {
 		if (!verification_info.getVerificationCode().equals(verificationCode)) {
 			return PytheResult.build(400, "验证码错误或过期");
 		}
-		
 
 		String openId = null;
 		String unionId = null;
@@ -96,6 +95,7 @@ public class CustomerServiceImpl implements CustomerService {
 			if (customerList2.isEmpty()) {
 				return PytheResult.build(202, "抱歉，小程序暂供管理员使用，如需使用请下载APP");
 			}
+			
 			TblCustomer record = new TblCustomer();
 			record.setOpenId(openId);
 			record.setCreated(new Date());
@@ -124,9 +124,11 @@ public class CustomerServiceImpl implements CustomerService {
 		//管理员临时使用逻辑，获得管理员权限
 		if (!customerList.isEmpty()) {
 			VCustomer tmpCustomer = customerList.get(0);
+			if (type.equals(0)) {
+				return PytheResult.build(400, "该用户已为管理员，请换用微信小程序使用");
+			}
 			return PytheResult.ok(tmpCustomer);
 		} 
-		
 		
 		TblCustomer newCustomer = new TblCustomer();
 		newCustomer.setUnionId(unionId);
@@ -138,8 +140,13 @@ public class CustomerServiceImpl implements CustomerService {
 		newCustomer.setType(type);
 		customerMapper.insert(newCustomer);
 		
+
+		
+		
 		List<VCustomer> customers = vCustomerMapper.selectByExample(example2);
 		VCustomer customer = customers.get(0);
+		customer.setAmount(0.0);
+		
 		
 		TblAccount newAccount = new TblAccount();
 		newAccount.setCustomerId(customer.getCustomerId());
@@ -149,6 +156,7 @@ public class CustomerServiceImpl implements CustomerService {
 		newAccount.setOutAmount(0d);
 		newAccount.setGivingAmount(0d);
 		accountMapper.insert(newAccount);
+
 		return PytheResult.ok(customer);
 	}
 

@@ -52,6 +52,9 @@ public class PayServiceImpl implements PayService {
 	@Value("${WX_MCH_ID}")
 	private String WX_MCH_ID;
 	
+	@Value("${WX_PAY_CONFIRM_NOTIFY_URL}")
+	private String WX_PAY_CONFIRM_NOTIFY_URL;
+	
 	@Value("${APP_APPID}")
 	private String APP_APPID;
 	
@@ -95,7 +98,7 @@ public class PayServiceImpl implements PayService {
 																	// 分
 		// String time_start = getCurrTime();// 交易起始时间(订单生成时间非必须)
 		String trade_type = json.getString("trade_type");// 公众号支付
-		String notify_url = json.getString("notify_url");// 回调函数
+		String notify_url = WX_PAY_CONFIRM_NOTIFY_URL;// 回调函数
 		// String sessionId
 		// =JSONObject.parseObject(prepayment_imforamtion).getString("sessionId");
 		String openid = json.getString("openId");

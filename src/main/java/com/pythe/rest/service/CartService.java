@@ -43,5 +43,7 @@ public interface CartService {
 
 	PytheResult prepareUnlockGyQrId(Long customerId, Long qrId);
 
+	PytheResult unlockFalseReset(String parameters);
+
 
 }

@@ -135,11 +135,11 @@ public class CartServiceImpl implements CartService {
 		final Double latitude = information.getDouble("latitude");
 		final String recordId = FactoryUtils.getUUID();
 
-		////1、车有被保留，能成功的情况。
+		//1、车有被保留，能成功的情况。
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 
 		if (2 == car.getStatus()) {
-			// 是，解除状态，将状态变为使用状态
+			//是，解除状态，将状态变为使用状态
 			car.setLatitude(latitude);
 			car.setLongitude(longitude);
 			car.setUser(customerId);
@@ -189,6 +189,7 @@ public class CartServiceImpl implements CartService {
 		String carId = information.getString("carId");
 		final String recordId = information.getString("recordId");
 
+		
 		// 车信息
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 		car.setLatitude(latitude);
@@ -237,7 +238,6 @@ public class CartServiceImpl implements CartService {
 			json.put("type", 0);
 			list.add(json);
 		}
-
 		TblStoreExample storeExample = new TblStoreExample();
 		storeExample.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 2)
 				.andLatitudeLessThanOrEqualTo(latitude + 2).andLongitudeGreaterThan(longitude - 2)
@@ -861,6 +861,29 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.build(600, "此车有故障，请换车扫码");
 		}
 		}
-		return PytheResult.ok("车安全检测通过，请放心使用");
+		return PytheResult.build(200,"车安全检测通过，请放心使用", car.getId());
+	}
+
+	@Override
+	public PytheResult unlockFalseReset(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		Long qrId = information.getLong("qrId");
+		final String recordId = information.getString("recordId");
+
+		// 车信息
+		TblCarExample example = new TblCarExample();
+		example.createCriteria().andQrIdEqualTo(qrId);
+		List<TblCar> carList = carMapper.selectByExample(example);
+		if (carList.isEmpty()) {
+			PytheResult.build(400, "该车不存在");
+		}
+		
+		TblCar car = carList.get(0);
+		car.setStatus(CAR_FREE_STATUS);
+		car.setUser(null);
+		carMapper.updateByPrimaryKey(car);
+		recordMapper.deleteByPrimaryKey(recordId);
+		return PytheResult.ok("重置成功");
 	}
 }

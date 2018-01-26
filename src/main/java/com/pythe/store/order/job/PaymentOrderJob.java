@@ -117,16 +117,8 @@ public class PaymentOrderJob extends QuartzJobBean {
 					} else {
 						bill.setStatus(PAY_TYPE);
 					}
-	    			new Thread() {
-	    				@Override
-	    				public void run() {
-	    					applicationContext.getBean(TblBillMapper.class).insert(bill);
-	    				}
-	    			}.start();
-	    			
-	    			
 
-
+					applicationContext.getBean(TblBillMapper.class).insert(bill);
 				}
 	    }
         

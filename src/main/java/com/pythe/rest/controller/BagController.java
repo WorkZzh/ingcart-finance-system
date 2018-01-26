@@ -58,7 +58,6 @@ public class BagController {
 	
 	
 	
-	
 	@Autowired  
     private ActivityService activityService;
 	

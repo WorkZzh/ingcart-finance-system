@@ -46,6 +46,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>pythe-share-car</servlet-name>
-    <url-pattern>/rest/*</url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
 </web-app>
