@@ -303,4 +303,12 @@
       bill_id = #{billId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  
+      <select id="selectPreRecordPrimaryKey" resultMap="BaseResultMap"> 
+      
+       SELECT * FROM tbl_record WHERE customer_id=#{0} AND car_id= #{1} ORDER BY START_time DESC LIMIT 1
+	</select>
+  
+
+  
 </mapper>

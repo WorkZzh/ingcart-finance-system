@@ -544,6 +544,66 @@ public class TblComboExample {
             addCriterion("price not between", value1, value2, "price");
             return (Criteria) this;
         }
+
+        public Criteria andGivingIsNull() {
+            addCriterion("giving is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingIsNotNull() {
+            addCriterion("giving is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingEqualTo(Double value) {
+            addCriterion("giving =", value, "giving");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingNotEqualTo(Double value) {
+            addCriterion("giving <>", value, "giving");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingGreaterThan(Double value) {
+            addCriterion("giving >", value, "giving");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingGreaterThanOrEqualTo(Double value) {
+            addCriterion("giving >=", value, "giving");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingLessThan(Double value) {
+            addCriterion("giving <", value, "giving");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingLessThanOrEqualTo(Double value) {
+            addCriterion("giving <=", value, "giving");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingIn(List<Double> values) {
+            addCriterion("giving in", values, "giving");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingNotIn(List<Double> values) {
+            addCriterion("giving not in", values, "giving");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingBetween(Double value1, Double value2) {
+            addCriterion("giving between", value1, value2, "giving");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingNotBetween(Double value1, Double value2) {
+            addCriterion("giving not between", value1, value2, "giving");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

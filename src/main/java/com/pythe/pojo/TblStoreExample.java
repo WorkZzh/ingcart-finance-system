@@ -805,76 +805,6 @@ public class TblStoreExample {
             return (Criteria) this;
         }
 
-        public Criteria andDealerIdIsNull() {
-            addCriterion("dealer_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdIsNotNull() {
-            addCriterion("dealer_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdEqualTo(String value) {
-            addCriterion("dealer_id =", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdNotEqualTo(String value) {
-            addCriterion("dealer_id <>", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdGreaterThan(String value) {
-            addCriterion("dealer_id >", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdGreaterThanOrEqualTo(String value) {
-            addCriterion("dealer_id >=", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdLessThan(String value) {
-            addCriterion("dealer_id <", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdLessThanOrEqualTo(String value) {
-            addCriterion("dealer_id <=", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdLike(String value) {
-            addCriterion("dealer_id like", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdNotLike(String value) {
-            addCriterion("dealer_id not like", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdIn(List<String> values) {
-            addCriterion("dealer_id in", values, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdNotIn(List<String> values) {
-            addCriterion("dealer_id not in", values, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdBetween(String value1, String value2) {
-            addCriterion("dealer_id between", value1, value2, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdNotBetween(String value1, String value2) {
-            addCriterion("dealer_id not between", value1, value2, "dealerId");
-            return (Criteria) this;
-        }
-
         public Criteria andStoreHoursIsNull() {
             addCriterion("store_hours is null");
             return (Criteria) this;
@@ -942,6 +872,76 @@ public class TblStoreExample {
 
         public Criteria andStoreHoursNotBetween(String value1, String value2) {
             addCriterion("store_hours not between", value1, value2, "storeHours");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIsNull() {
+            addCriterion("dealer is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIsNotNull() {
+            addCriterion("dealer is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerEqualTo(String value) {
+            addCriterion("dealer =", value, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerNotEqualTo(String value) {
+            addCriterion("dealer <>", value, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerGreaterThan(String value) {
+            addCriterion("dealer >", value, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerGreaterThanOrEqualTo(String value) {
+            addCriterion("dealer >=", value, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerLessThan(String value) {
+            addCriterion("dealer <", value, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerLessThanOrEqualTo(String value) {
+            addCriterion("dealer <=", value, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerLike(String value) {
+            addCriterion("dealer like", value, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerNotLike(String value) {
+            addCriterion("dealer not like", value, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerIn(List<String> values) {
+            addCriterion("dealer in", values, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerNotIn(List<String> values) {
+            addCriterion("dealer not in", values, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerBetween(String value1, String value2) {
+            addCriterion("dealer between", value1, value2, "dealer");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealerNotBetween(String value1, String value2) {
+            addCriterion("dealer not between", value1, value2, "dealer");
             return (Criteria) this;
         }
     }

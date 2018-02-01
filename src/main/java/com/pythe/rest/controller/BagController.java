@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.ExceptionUtil;
 import com.pythe.rest.service.ActivityService;
@@ -18,7 +21,8 @@ public class BagController {
 
 	@Autowired  
     private BagService service;  
-	
+	@Autowired  
+    private ActivityService activityService;
 	
       
 	@RequestMapping(value = "/mai/bag", method = RequestMethod.POST)
@@ -58,9 +62,7 @@ public class BagController {
 	
 	
 	
-	@Autowired  
-    private ActivityService activityService;
-	
+
 	@RequestMapping(value = "/query/activity", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult queryActivity(@RequestBody String parameters) throws Exception {
@@ -72,6 +74,41 @@ public class BagController {
 		}
 	}
 	
+	
+	@RequestMapping(value = "/insert/store/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult insertStore(@RequestBody String parameters) throws Exception {
+		try {
+			return service.insertStore(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	@RequestMapping(value = "/update/store/goods/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult updateStoreGoods(@RequestBody String parameters) throws Exception {
+		try {
+			return service.updateStoreGoods(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+    /**
+	 *布套
+	 * @return
+	 */
+	@RequestMapping(value = "/bag", method = RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView bag(@RequestParam(required = true,value = "id") String id) throws Exception {
+		ModelAndView mv = new ModelAndView(new RedirectView("https://wx.ingcart.com/source/todownload.html"));
+		return mv;
+	}
 	
   
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.FactoryUtils;
 import com.pythe.mapper.TblAccountMapper;
@@ -67,15 +68,26 @@ public class PaymentOrderJob extends QuartzJobBean {
 	    		
 	    		   final String  recordId  = car.getRecordid();
 
-
 	    			// 更新停止时间和停止位置和记录用的钱
 	    			int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
 	    			Double amount = null;
-	    			if (time % 30 == 0) {
-	    				amount = Math.floor(time / 30) * EACH_HOUR_PRICE;
-	    			} else {
-	    				amount = (Math.floor(time / 30) + 1) * EACH_HOUR_PRICE;
+	    			// 处理Bug如果钱是负数就说明用户报的时间不对
+	    			if (time<0) {
+	    				PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
 	    			}
+	    			
+	    			int tmp = time -2;
+	    			if (tmp>0) {
+	    				// 前2分钟不算钱,所以这里要减去2
+	    				if (time % 30 == 0) {
+	    					amount = Math.floor(tmp / 30);
+	    				} else {
+	    					amount = (Math.floor(tmp / 30) + 1);
+	    				}
+	    			}else{
+	    				amount = 0d;
+	    			}
+	    			amount = EACH_HOUR_PRICE* amount;
 	    			
 	    			final String billId = FactoryUtils.getUUID();
 	    			new Thread() {
@@ -88,7 +100,6 @@ public class PaymentOrderJob extends QuartzJobBean {
 	    				}
 	    			}.start();
 
-	    			
 	    			final Long customerId = car.getUser();
 	    			// 生成账单
 	    			final TblAccount account = applicationContext.getBean(TblAccountMapper.class).selectByPrimaryKey(customerId);
@@ -101,6 +112,8 @@ public class PaymentOrderJob extends QuartzJobBean {
 	    			car.setStatus(CAR_FREE_STATUS);
 	    			//将停止的时间作为最终时间更新
 	    			car.setUser(null);
+	    			car.setStarttime(null);
+	    			car.setEndtime(null);
 	    			applicationContext.getBean(TblCarMapper.class).updateByPrimaryKey(car);
 	    			
 	    			// 更新流水

@@ -45,5 +45,9 @@ public interface CartService {
 
 	PytheResult unlockFalseReset(String parameters);
 
+	PytheResult urgentUnlock(String parameters);
+
+	PytheResult urgentUnlockByClient(String parameters);
+
 
 }

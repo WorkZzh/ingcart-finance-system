@@ -21,7 +21,6 @@ public class DateUtils {
 	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	public static final SimpleDateFormat DATE_FORMAT_Hour_Minue = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
-	
 	public static final SimpleDateFormat HOUR_MINUE_FORMAT = new SimpleDateFormat("HH:mm");
 	
 	public static final SimpleDateFormat DATEKEY_FORMAT = new SimpleDateFormat("yyyyMMdd");
@@ -256,6 +255,9 @@ public class DateUtils {
 	public static String formatTime(Date date) {
 		return TIME_FORMAT.format(date);
 	}
+	
+	
+	
 	
 	/**
 	 * 格式化时间（yyyyMMddHHmmss）

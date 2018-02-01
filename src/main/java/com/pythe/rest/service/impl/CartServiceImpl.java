@@ -33,6 +33,7 @@ import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblHoldRecordMapper;
 import com.pythe.mapper.TblRecordMapper;
 import com.pythe.mapper.TblStoreMapper;
+import com.pythe.mapper.VCustomerMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBill;
 import com.pythe.pojo.TblBillExample;
@@ -46,6 +47,8 @@ import com.pythe.pojo.TblRecord;
 import com.pythe.pojo.TblRecordExample;
 import com.pythe.pojo.TblStore;
 import com.pythe.pojo.TblStoreExample;
+import com.pythe.pojo.VCustomer;
+import com.pythe.pojo.VCustomerExample;
 import com.pythe.rest.service.CartService;
 import com.pythe.rest.service.PayService;
 
@@ -104,8 +107,9 @@ public class CartServiceImpl implements CartService {
 	@Value("${NOTIFY_PAY_TEMPLATE_ID}")
 	private String NOTIFY_PAY_TEMPLATE_ID;
 
+
 	@Autowired
-	private TblCustomerMapper customerMapper;
+	private VCustomerMapper vCustomerMapper;
 
 	@Autowired
 	private TblRecordMapper recordMapper;
@@ -129,17 +133,17 @@ public class CartServiceImpl implements CartService {
 	public PytheResult unlock(String parameters) {
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
-		final Long customerId = information.getLong("customerId");
-		final String carId = information.getString("carId");
-		final Double longitude = information.getDouble("longitude");
-		final Double latitude = information.getDouble("latitude");
-		final String recordId = FactoryUtils.getUUID();
+		Long customerId = information.getLong("customerId");
+		String carId = information.getString("carId");
+		Double longitude = information.getDouble("longitude");
+		Double latitude = information.getDouble("latitude");
+		String recordId = FactoryUtils.getUUID();
 
-		//1、车有被保留，能成功的情况。
+		// 1、车有被保留，能成功的情况。
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 
 		if (2 == car.getStatus()) {
-			//是，解除状态，将状态变为使用状态
+			// 是，解除状态，将状态变为使用状态
 			car.setLatitude(latitude);
 			car.setLongitude(longitude);
 			car.setUser(customerId);
@@ -155,8 +159,8 @@ public class CartServiceImpl implements CartService {
 			holdRecordMapper.updateByExampleSelective(holdRecord, example);
 			return PytheResult.ok("开锁成功");
 		}
-		
-		//2、车没有被保留，能成功的情况。
+
+		// 2、车没有被保留，能成功的情况。
 		// 先更新车的时间和使用状态
 		car.setLatitude(latitude);
 		car.setLongitude(longitude);
@@ -184,12 +188,11 @@ public class CartServiceImpl implements CartService {
 	public PytheResult lock(String parameters) {
 		// 更新记录位置
 		JSONObject information = JSONObject.parseObject(parameters);
-		final Double longitude = information.getDouble("longitude");
-		final Double latitude = information.getDouble("latitude");
+		Double longitude = information.getDouble("longitude");
+		Double latitude = information.getDouble("latitude");
 		String carId = information.getString("carId");
-		final String recordId = information.getString("recordId");
+		String recordId = information.getString("recordId");
 
-		
 		// 车信息
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 		car.setLatitude(latitude);
@@ -200,16 +203,12 @@ public class CartServiceImpl implements CartService {
 		carMapper.updateByPrimaryKey(car);
 
 		// 更新记录信息
-		new Thread() {
-			@Override
-			public void run() {
-				TblRecord line = recordMapper.selectByPrimaryKey(recordId);
-				line.setLongitudeStop(longitude);
-				line.setLatitudeStop(latitude);
-				line.setStopTime(new Date());
-				recordMapper.updateByPrimaryKey(line);
-			}
-		}.start();
+		TblRecord line = recordMapper.selectByPrimaryKey(recordId);
+		line.setLongitudeStop(longitude);
+		line.setLatitudeStop(latitude);
+		line.setStopTime(new Date());
+		recordMapper.updateByPrimaryKey(line);
+
 		return PytheResult.ok("关锁成功");
 	}
 
@@ -227,8 +226,7 @@ public class CartServiceImpl implements CartService {
 		TblCarExample example = new TblCarExample();
 		example.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 2)
 				.andLatitudeLessThanOrEqualTo(latitude + 2).andLongitudeGreaterThan(longitude - 2)
-				.andLongitudeLessThanOrEqualTo(longitude + 2)
-				.andStatusEqualTo(CAR_FREE_STATUS);
+				.andLongitudeLessThanOrEqualTo(longitude + 2).andStatusEqualTo(CAR_FREE_STATUS);
 		List<TblCar> carList = carMapper.selectByExample(example);
 		for (TblCar car : carList) {
 			JSONObject json = new JSONObject();
@@ -239,9 +237,9 @@ public class CartServiceImpl implements CartService {
 			list.add(json);
 		}
 		TblStoreExample storeExample = new TblStoreExample();
-		storeExample.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 2)
-				.andLatitudeLessThanOrEqualTo(latitude + 2).andLongitudeGreaterThan(longitude - 2)
-				.andLongitudeLessThanOrEqualTo(longitude + 2);
+		storeExample.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 1)
+				.andLatitudeLessThanOrEqualTo(latitude + 1).andLongitudeGreaterThan(longitude - 1)
+				.andLongitudeLessThanOrEqualTo(longitude + 1);
 
 		List<TblStore> storeList = storeMapper.selectByExample(storeExample);
 		for (TblStore store : storeList) {
@@ -263,48 +261,57 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public PytheResult computeFee(String parameters) {
 		JSONObject information = JSONObject.parseObject(parameters);
-		final String recordId = information.getString("recordId");
+		String recordId = information.getString("recordId");
 		String carId = information.getString("carId");
-		final Long customerId = information.getLong("customerId");
+		Long customerId = information.getLong("customerId");
 
-		final String formId = information.getString("formId");
+		// final String formId = information.getString("formId");
 
 		// 更新车的位置和使用情况和结束时间
 		// 让车处于空闲状态，让后续的人可以使用
+
 		TblCar car = carMapper.selectByPrimaryKey(carId);
+		// 更新停止时间和停止位置和记录用的钱
+		int time = DateUtils.minusForPartHour(new Date(), car.getStarttime());
+		Double amount = null;
+		// 处理Bug如果钱是负数就说明用户报的时间不对
+		if (time<0) {
+			return PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
+		}
+		
+		int tmp = time -2;
+		if (tmp>0) {
+			// 前2分钟不算钱,所以这里要减去2
+			if (time % 30 == 0) {
+				amount = Math.floor(tmp / 30);
+			} else {
+				amount = (Math.floor(tmp / 30) + 1);
+			}
+		}else{
+			amount = 0d;
+		}
+		amount = EACH_HOUR_PRICE* amount;
+
 		car.setStatus(CAR_FREE_STATUS);
-		car.setEndtime(new Date());
+		car.setEndtime(null);
 		car.setUser(null);
+		car.setStarttime(null);
 		carMapper.updateByPrimaryKey(car);
 
-		// 更新停止时间和停止位置和记录用的钱
-		int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
-		Double amount = null;
-		if (time % 30 == 0) {
-			amount = Math.floor(time / 30) * EACH_HOUR_PRICE;
-		} else {
-			amount = (Math.floor(time / 30) + 1) * EACH_HOUR_PRICE;
-		}
-
-		final String billId = FactoryUtils.getUUID();
-		new Thread() {
-			@Override
-			public void run() {
-				TblRecord line = recordMapper.selectByPrimaryKey(recordId);
-				line.setStopTime(new Date());
-				line.setBillId(billId);
-				recordMapper.updateByPrimaryKey(line);
-			}
-		}.start();
+		String billId = FactoryUtils.getUUID();
+		TblRecord line = recordMapper.selectByPrimaryKey(recordId);
+		line.setStopTime(new Date());
+		line.setBillId(billId);
+		recordMapper.updateByPrimaryKey(line);
 
 		// 生成账单
-		final TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
 		account.setAmount(account.getAmount() - amount);
 		account.setOutAmount(account.getOutAmount() - amount);
 		accountMapper.updateByPrimaryKey(account);
 
 		// 更新流水
-		final TblBill bill = new TblBill();
+		TblBill bill = new TblBill();
 		bill.setId(billId);
 		bill.setRecordId(recordId);
 		bill.setAmount(amount);
@@ -312,56 +319,68 @@ public class CartServiceImpl implements CartService {
 		bill.setCustomerId(customerId);
 		bill.setTime(new Date());
 		bill.setRecordId(recordId);
-		new Thread() {
-			@Override
-			public void run() {
-				if (account.getAmount() < EACH_HOUR_PRICE) {
-					bill.setStatus(NOT_PAY_STATUS);
-				} else {
-					bill.setStatus(PAY_TYPE);
-				}
-				billMapper.insert(bill);
-			}
-		}.start();
+		// new Thread() {
+		// @Override
+		// public void run() {
+		if (account.getAmount() < EACH_HOUR_PRICE) {
+			bill.setStatus(NOT_PAY_STATUS);
+		} else {
+			bill.setStatus(PAY_TYPE);
+		}
+		billMapper.insert(bill);
+		// }
+		// }.start();
 
-		// 微信服务通知推送支付结果
-		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential" + "&appid=" + WX_APPID
-				+ "&secret=" + WX_APPSECRET;
-		String result = HttpClientUtil.doGet(url, null);
-		String access_token = JSONObject.parseObject(result).getString("access_token");
-		//System.out.println("notify===========>" + access_token);
+		// // 微信服务通知推送支付结果
+		// String url =
+		// "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential"
+		// +
+		// "&appid=" + WX_APPID
+		// + "&secret=" + WX_APPSECRET;
+		// String result = HttpClientUtil.doGet(url, null);
+		// String access_token =
+		// JSONObject.parseObject(result).getString("access_token");
+		// //System.out.println("notify===========>" + access_token);
+		// //
 		// https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=ACCESS_TOKEN
+		//
+		// JSONObject notifyParameters = new JSONObject();
+		//
+		// Map<String, Object> datas = new HashMap<String, Object>();
+		//
+		// Map<String, String> keyValue1 = new HashMap<String, String>();
+		// keyValue1.put("value", "￥" + String.valueOf(bill.getAmount()));
+		// datas.put("keyword1", keyValue1);
+		//
+		// Map<String, String> keyValue2 = new HashMap<String, String>();
+		// keyValue2.put("value", "总费用￥" + String.valueOf(bill.getAmount()) +
+		// "，优惠￥"
+		// + String.valueOf(0d));
+		// datas.put("keyword2", keyValue2);
+		//
+		// Map<String, String> keyValue3 = new HashMap<String, String>();
+		// keyValue3.put("value", String.valueOf(time) + "分钟");
+		// datas.put("keyword3", keyValue3);
+		//
+		// notifyParameters.put("touser",
+		// customerMapper.selectByPrimaryKey(customerId).getOpenId());
+		// notifyParameters.put("template_id", NOTIFY_PAY_TEMPLATE_ID);
+		// notifyParameters.put("form_id", formId);
+		// notifyParameters.put("page", "pages/index/index");
+		// notifyParameters.put("data", datas);
+		// notifyParameters.put("emphasis_keyword", "keyword1.DATA");
+		//
+		// String params_json = JsonUtils.objectToJson(notifyParameters);
+		// System.out.println("### params to post =========================> " +
+		// params_json);
 
-		JSONObject notifyParameters = new JSONObject();
+		// String xw_url =
+		// "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="
+		// + access_token;
+		// String str = HttpClientUtil.doPostJson(xw_url, params_json);
 
-		Map<String, Object> datas = new HashMap<String, Object>();
-
-		Map<String, String> keyValue1 = new HashMap<String, String>();
-		keyValue1.put("value", "￥" + String.valueOf(bill.getAmount()));
-		datas.put("keyword1", keyValue1);
-
-		Map<String, String> keyValue2 = new HashMap<String, String>();
-		keyValue2.put("value", "总费用￥" + String.valueOf(bill.getAmount()) + "，优惠￥" + String.valueOf(0d));
-		datas.put("keyword2", keyValue2);
-
-		Map<String, String> keyValue3 = new HashMap<String, String>();
-		keyValue3.put("value", String.valueOf(time) + "分钟");
-		datas.put("keyword3", keyValue3);
-
-		notifyParameters.put("touser", customerMapper.selectByPrimaryKey(customerId).getOpenId());
-		notifyParameters.put("template_id", NOTIFY_PAY_TEMPLATE_ID);
-		notifyParameters.put("form_id", formId);
-		notifyParameters.put("page", "pages/index/index");
-		notifyParameters.put("data", datas);
-		notifyParameters.put("emphasis_keyword", "keyword1.DATA");
-
-		String params_json = JsonUtils.objectToJson(notifyParameters);
-		//System.out.println("### params to post =========================> " + params_json);
-
-		String xw_url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + access_token;
-		String str = HttpClientUtil.doPostJson(xw_url, params_json);
-
-		//System.out.println("!!!!!=======================>push pay info: " + str);
+		// System.out.println("!!!!!=======================>push pay info: " +
+		// str);
 		// 微信服务通知推送支付结果
 
 		// 看看更新后的账单是否为正数，如果是，证明扣费成功
@@ -370,10 +389,9 @@ public class CartServiceImpl implements CartService {
 		json.put("time", time);
 		json.put("amount", account.getAmount());
 		if (account.getAmount() > 0) {
-			
 			return PytheResult.build(200, "支付成功", json);
 		} else {
-			
+
 			return PytheResult.build(300, "余额不足，前往充值", json);
 		}
 	}
@@ -434,30 +452,46 @@ public class CartServiceImpl implements CartService {
 			// 将停止的时间作为最终时间更新
 			car.setEndtime(currentTime);
 			car.setUser(null);
-			carMapper.updateByPrimaryKey(car);
 
 			// 更新停止时间和停止位置和记录用的钱
 			int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
+
 			Double amount = null;
-			if (time % 30 == 0) {
-				amount = Math.floor(time / 30) * EACH_HOUR_PRICE;
-			} else {
-				amount = (Math.floor(time / 30) + 1) * EACH_HOUR_PRICE;
+			// 处理Bug如果钱是负数就说明用户报的时间不对
+			if (time<0) {
+				return PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
 			}
-
-			final String billId = FactoryUtils.getUUID();
-
-			final String recordId = holdrecord.getRecordId();
-
-			new Thread() {
-				@Override
-				public void run() {
-					TblRecord line = recordMapper.selectByPrimaryKey(recordId);
-					line.setStopTime(new Date());
-					line.setBillId(billId);
-					recordMapper.updateByPrimaryKey(line);
+			
+			int tmp = time -2;
+			if (tmp>0) {
+				// 前2分钟不算钱,所以这里要减去2
+				if (time % 30 == 0) {
+					amount = Math.floor(tmp / 30);
+				} else {
+					amount = (Math.floor(tmp / 30) + 1);
 				}
-			}.start();
+			}else{
+				amount = 0d;
+			}
+			amount = EACH_HOUR_PRICE* amount;
+			
+			car.setStarttime(null);
+			car.setEndtime(null);
+			carMapper.updateByPrimaryKey(car);
+
+			String billId = FactoryUtils.getUUID();
+
+			String recordId = holdrecord.getRecordId();
+
+			// new Thread() {
+			// @Override
+			// public void run() {
+			TblRecord line = recordMapper.selectByPrimaryKey(recordId);
+			line.setStopTime(new Date());
+			line.setBillId(billId);
+			recordMapper.updateByPrimaryKey(line);
+			// }
+			// }.start();
 
 			// 生成账单
 			final TblAccount account = accountMapper.selectByPrimaryKey(customerId);
@@ -508,24 +542,18 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public PytheResult selectUseCarTimeByCarId(String carId) {
-		// TODO Auto-generated method stub
 		// 说明用户已经计时完成
 		Date currentTime = new Date();
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 		Date startTime = car.getStarttime();
 		long time = currentTime.getTime() - startTime.getTime();
 		JSONObject json = new JSONObject();
-		json.put("time", time / 1000 / 60);
+		json.put("time", time / 1000l / 60l);
 		return PytheResult.ok(json);
 	}
-	
-	
-	
-	
 
 	@Override
 	public PytheResult deleteAppointmentByCustomerId(Long customerId) {
-		// TODO Auto-generated method stub
 		// 将锁的计时器释放掉
 		TblHoldRecordExample example = new TblHoldRecordExample();
 		example.createCriteria().andCustomerIdEqualTo(customerId).andStatusEqualTo(0);
@@ -546,21 +574,33 @@ public class CartServiceImpl implements CartService {
 
 		// 将停止的时间作为最终时间更新
 		car.setEndtime(currentTime);
-		car.setUser(null);
-		carMapper.updateByPrimaryKey(car);
 
-		// 更新停止时间和停止位置和记录用的钱
 		// 更新停止时间和停止位置和记录用的钱
 		int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
 		Double amount = null;
-		if (time % 30 == 0) {
-			amount = Math.floor(time / 30) * EACH_HOUR_PRICE;
-		} else {
-			amount = (Math.floor(time / 30) + 1) * EACH_HOUR_PRICE;
+		// 处理Bug如果钱是负数就说明用户报的时间不对
+		if (time<0) {
+			return PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
 		}
-
+		
+		int tmp = time -2;
+		if (tmp>0) {
+			// 前2分钟不算钱,所以这里要减去2
+			if (time % 30 == 0) {
+				amount = Math.floor(tmp / 30);
+			} else {
+				amount = (Math.floor(tmp / 30) + 1);
+			}
+		}else{
+			amount = 0d;
+		}
+		amount = EACH_HOUR_PRICE* amount;
+		
+		car.setEndtime(null);
+		car.setStarttime(null);
+		car.setUser(null);
+		carMapper.updateByPrimaryKey(car);
 		final String billId = FactoryUtils.getUUID();
-
 		final String recordId = holdrecord.getRecordId();
 
 		// 更新记录
@@ -634,8 +674,10 @@ public class CartServiceImpl implements CartService {
 			byte[] sSrc = new byte[head.length + s.length + 3];
 			System.arraycopy(head, 0, sSrc, 0, head.length);
 			System.arraycopy(s, 0, sSrc, head.length, s.length);
-			System.out.println("============================> unlock frame: " + NumberUtils.parseByteArray2HexArray(sSrc));
-			SecretKeySpec skeySpec = new SecretKeySpec(NumberUtils.parseHexArray2ByteArray(car.getLockKey().split(",")), "AES");
+			System.out.println(
+					"============================> unlock frame: " + NumberUtils.parseByteArray2HexArray(sSrc));
+			SecretKeySpec skeySpec = new SecretKeySpec(NumberUtils.parseHexArray2ByteArray(car.getLockKey().split(",")),
+					"AES");
 			Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
 			cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
 			byte[] encrypted = cipher.doFinal(sSrc);
@@ -685,30 +727,28 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public PytheResult prepareUnlock(Long customerId, String carId) {
-		
-		//判断该用户是否占用了某台车
+
+		// 判断该用户是否占用了某台车
 		TblCarExample example = new TblCarExample();
 		example.createCriteria().andUserEqualTo(customerId);
 		List<TblCar> carList = carMapper.selectByExample(example);
 		if (!carList.isEmpty()) {
-			return PytheResult.build(202,"抱歉，一个帐号只能使用一台车");
+			return PytheResult.build(202, "抱歉，一个帐号只能使用一台车");
 		}
-		
+
 		// 看看用户消费情况
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
 
 		if (account.getAmount() < EACH_HOUR_PRICE) {
 			return PytheResult.build(300, "余额不足前往充值", account.getAmount());
 		}
-		
+
 		// 看看车的状态
 		TblCar car = carMapper.selectByPrimaryKey(carId);
-		
-		
+
 		if (car == null) {
 			PytheResult.build(100, "该车信息尚未录入，暂无法使用");
 		}
-		
 
 		Integer status = car.getStatus();
 		switch (status) {
@@ -721,21 +761,6 @@ public class CartServiceImpl implements CartService {
 				return PytheResult.build(500, "抱歉，该车已被预约保留");
 			}
 			break;
-			// // 是，解除状态，将状态变为使用状态
-			// car.setLatitude(latitude);
-			// car.setLongitude(longitude);
-			// car.setUser(customerId);
-			// // car.setRecordid(recordId); 因为第一次开锁时候就已经记录的该车属于那条记录
-			// car.setStatus(CAR_USER_STATUS);
-			// carMapper.updateByPrimaryKey(car);
-			//
-			// // 将锁的计时器释放掉
-			// TblHoldRecordExample example = new TblHoldRecordExample();
-			// example.createCriteria().andCustomerIdEqualTo(customerId).andCarIdEqualTo(carId).andStatusEqualTo(0);
-			// TblHoldRecord holdRecord = new TblHoldRecord();
-			// holdRecord.setStatus(1);
-			// holdRecordMapper.updateByExampleSelective(holdRecord, example);
-			// return PytheResult.ok("开锁成功");
 		}
 		case 3: {
 			return PytheResult.build(600, "此车有故障，请换车扫码");
@@ -744,30 +769,29 @@ public class CartServiceImpl implements CartService {
 		return PytheResult.ok("车安全检测通过，请放心使用");
 	}
 
-	
 	@Override
 	public String bluetoothEncrypt(String parameter) {
-		
+
 		JSONObject j = JSONObject.parseObject(parameter);
 		String id = j.getString("carId");
 		String content = j.getString("content");
-		
+
 		TblCar car = carMapper.selectByPrimaryKey(id);
 		String encryptedStr = EncodeUtils.bluetoothEncrypt(content, car.getLockKey());
-		
+
 		return encryptedStr;
 	}
 
 	@Override
 	public String bluetoothDecrypt(String parameter) {
-		
+
 		JSONObject j = JSONObject.parseObject(parameter);
 		String id = j.getString("carId");
 		String content = j.getString("content");
-		
+
 		TblCar car = carMapper.selectByPrimaryKey(id);
 		String decryptedStr = DecodeUtils.bluetoothDecrypt(content, car.getLockKey());
-		
+
 		return decryptedStr;
 	}
 
@@ -811,7 +835,7 @@ public class CartServiceImpl implements CartService {
 
 		TblCar car = carMapper.selectByPrimaryKey(id);
 
-		if (car==null) {
+		if (car == null) {
 			return PytheResult.build(400, "查无此车");
 		} else {
 			return PytheResult.ok(car);
@@ -820,26 +844,26 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public PytheResult prepareUnlockGyQrId(Long customerId, Long qrId) {
-		//判断该用户是否占用了某台车
+		// 判断该用户是否占用了某台车
 		TblCarExample example = new TblCarExample();
 		example.createCriteria().andUserEqualTo(customerId);
 		List<TblCar> carList = carMapper.selectByExample(example);
 		if (!carList.isEmpty()) {
-			return PytheResult.build(202,"抱歉，一个帐号只能使用一台车");
+			return PytheResult.build(202, "抱歉，一个帐号只能使用一台车");
 		}
-		
+
 		// 看看用户消费情况
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
 
 		if (account.getAmount() < EACH_HOUR_PRICE) {
 			return PytheResult.build(300, "余额不足前往充值", account.getAmount());
 		}
-		
+
 		// 看看车的状态
 		TblCarExample example2 = new TblCarExample();
 		example2.createCriteria().andQrIdEqualTo(qrId);
 		List<TblCar> carList2 = carMapper.selectByExample(example2);
-		
+
 		if (carList2.isEmpty()) {
 			PytheResult.build(100, "该车信息尚未录入，暂无法使用");
 		}
@@ -861,7 +885,7 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.build(600, "此车有故障，请换车扫码");
 		}
 		}
-		return PytheResult.build(200,"车安全检测通过，请放心使用", car.getId());
+		return PytheResult.build(200, "车安全检测通过，请放心使用", car.getId());
 	}
 
 	@Override
@@ -878,12 +902,137 @@ public class CartServiceImpl implements CartService {
 		if (carList.isEmpty()) {
 			PytheResult.build(400, "该车不存在");
 		}
-		
+
 		TblCar car = carList.get(0);
 		car.setStatus(CAR_FREE_STATUS);
 		car.setUser(null);
 		carMapper.updateByPrimaryKey(car);
 		recordMapper.deleteByPrimaryKey(recordId);
 		return PytheResult.ok("重置成功");
+	}
+
+	@Override
+	public PytheResult urgentUnlock(String parameters) {
+
+		JSONObject information = JSONObject.parseObject(parameters);
+		String phoneNum = information.getString("phoneNum");
+		String date = information.getString("date");
+
+		// TODO Auto-generated method stub
+		// 让车处于空闲状态，让后续的人可以使用
+		VCustomerExample example = new VCustomerExample();
+		example.createCriteria().andPhoneNumEqualTo(phoneNum.trim());
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+		if (customerList.isEmpty()) {
+			return PytheResult.build(400, "该用户不存在");
+		}
+
+		VCustomer customer = customerList.get(0);
+		Long customerId = customer.getCustomerId();
+		TblCar car = null;
+		String carId = customer.getCarId();
+		int time = 0;
+		Double amount = null;
+		if (null != carId) {
+			car = carMapper.selectByPrimaryKey(carId);
+			// 更新停止时间和停止位置和记录用的钱
+			time = DateUtils.minusForPartHour(DateUtils.parseTime(date), car.getStarttime());
+			
+			
+			// 处理Bug如果钱是负数就说明用户报的时间不对
+			if (time<0) {
+				return PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
+			}
+			
+			int tmp = time -2;
+			if (tmp>0) {
+				// 前2分钟不算钱,所以这里要减去2
+				if (time % 30 == 0) {
+					amount = Math.floor(tmp / 30);
+				} else {
+					amount = (Math.floor(tmp / 30) + 1);
+				}
+			}else{
+				amount = 0d;
+			}
+
+			amount = EACH_HOUR_PRICE* amount;
+			
+			car.setId(customer.getCarId());
+			car.setStatus(CAR_FREE_STATUS);
+			car.setEndtime(null);
+			car.setUser(null);
+			carMapper.updateByPrimaryKey(car);
+		} else {
+			return PytheResult.build(400, "暂无占用任何车，无需释放");
+		}
+
+		// 查看某用户的最近行车记录
+		TblRecord record = recordMapper.selectPreRecordPrimaryKey(customerId, carId);
+		final String recordId = record.getId();
+		final String billId = FactoryUtils.getUUID();
+		new Thread() {
+			@Override
+			public void run() {
+				TblRecord line = recordMapper.selectByPrimaryKey(recordId);
+				line.setStopTime(new Date());
+				line.setBillId(billId);
+				recordMapper.updateByPrimaryKey(line);
+			}
+		}.start();
+
+		// 生成账单
+		final TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+		account.setAmount(account.getAmount() - amount);
+		account.setOutAmount(account.getOutAmount() - amount);
+		accountMapper.updateByPrimaryKey(account);
+
+		// 更新流水
+		final TblBill bill = new TblBill();
+		bill.setId(billId);
+		bill.setRecordId(recordId);
+		bill.setAmount(amount);
+		bill.setType(BILL_PAY_TYPE);
+		bill.setCustomerId(customerId);
+		bill.setTime(new Date());
+		bill.setRecordId(recordId);
+		new Thread() {
+			@Override
+			public void run() {
+				if (account.getAmount() < EACH_HOUR_PRICE) {
+					bill.setStatus(NOT_PAY_STATUS);
+				} else {
+					bill.setStatus(PAY_TYPE);
+				}
+				billMapper.insert(bill);
+			}
+		}.start();
+
+		// 看看更新后的账单是否为正数，如果是，证明扣费成功
+		JSONObject json = new JSONObject();
+		json.put("price", amount.intValue());
+		json.put("time", time);
+		json.put("amount", account.getAmount());
+		if (account.getAmount() > 0) {
+			return PytheResult.build(200, "支付成功", json);
+		} else {
+			return PytheResult.build(300, "余额不足，前往充值", json);
+		}
+	}
+
+	@Override
+	public PytheResult urgentUnlockByClient(String parameters) {
+		// TODO Auto-generated method stub
+		// 更新记录位置
+		JSONObject information = JSONObject.parseObject(parameters);
+		JSONObject param1 = new JSONObject();
+		param1.put("longitude", information.getDouble("longitude"));
+		param1.put("latitude", information.getDouble("latitude"));
+		param1.put("carId", information.getString("carId"));
+		param1.put("recordId", information.getString("recordId"));
+		param1.put("customerId", information.getLong("customerId"));
+		parameters = JsonUtils.objectToJson(param1);
+		lock(parameters);
+		return computeFee(parameters);
 	}
 }

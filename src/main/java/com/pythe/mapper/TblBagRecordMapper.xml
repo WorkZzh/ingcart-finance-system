@@ -5,7 +5,6 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="store_id" property="storeId" jdbcType="VARCHAR" />
     <result column="buy_time" property="buyTime" jdbcType="TIMESTAMP" />
-    <result column="dealer_id" property="dealerId" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="customer_id" property="customerId" jdbcType="BIGINT" />
   </resultMap>
@@ -68,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, store_id, buy_time, dealer_id, type, customer_id
+    id, store_id, buy_time, type, customer_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblBagRecordExample" >
     select
@@ -102,11 +101,9 @@
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblBagRecord" >
     insert into tbl_bag_record (id, store_id, buy_time, 
-      dealer_id, type, customer_id
-      )
+      type, customer_id)
     values (#{id,jdbcType=BIGINT}, #{storeId,jdbcType=VARCHAR}, #{buyTime,jdbcType=TIMESTAMP}, 
-      #{dealerId,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{customerId,jdbcType=BIGINT}
-      )
+      #{type,jdbcType=INTEGER}, #{customerId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblBagRecord" >
     insert into tbl_bag_record
@@ -119,9 +116,6 @@
       </if>
       <if test="buyTime != null" >
         buy_time,
-      </if>
-      <if test="dealerId != null" >
-        dealer_id,
       </if>
       <if test="type != null" >
         type,
@@ -139,9 +133,6 @@
       </if>
       <if test="buyTime != null" >
         #{buyTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="dealerId != null" >
-        #{dealerId,jdbcType=VARCHAR},
       </if>
       <if test="type != null" >
         #{type,jdbcType=INTEGER},
@@ -169,9 +160,6 @@
       <if test="record.buyTime != null" >
         buy_time = #{record.buyTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.dealerId != null" >
-        dealer_id = #{record.dealerId,jdbcType=VARCHAR},
-      </if>
       <if test="record.type != null" >
         type = #{record.type,jdbcType=INTEGER},
       </if>
@@ -188,7 +176,6 @@
     set id = #{record.id,jdbcType=BIGINT},
       store_id = #{record.storeId,jdbcType=VARCHAR},
       buy_time = #{record.buyTime,jdbcType=TIMESTAMP},
-      dealer_id = #{record.dealerId,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=INTEGER},
       customer_id = #{record.customerId,jdbcType=BIGINT}
     <if test="_parameter != null" >
@@ -204,9 +191,6 @@
       <if test="buyTime != null" >
         buy_time = #{buyTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="dealerId != null" >
-        dealer_id = #{dealerId,jdbcType=VARCHAR},
-      </if>
       <if test="type != null" >
         type = #{type,jdbcType=INTEGER},
       </if>
@@ -220,7 +204,6 @@
     update tbl_bag_record
     set store_id = #{storeId,jdbcType=VARCHAR},
       buy_time = #{buyTime,jdbcType=TIMESTAMP},
-      dealer_id = #{dealerId,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
       customer_id = #{customerId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}

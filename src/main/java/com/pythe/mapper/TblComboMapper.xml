@@ -9,6 +9,7 @@
     <result column="created" property="created" jdbcType="TIMESTAMP" />
     <result column="stoped" property="stoped" jdbcType="TIMESTAMP" />
     <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="giving" property="giving" jdbcType="DOUBLE" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -69,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    combo_id, title, content, status, created, stoped, price
+    combo_id, title, content, status, created, stoped, price, giving
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblComboExample" >
     select
@@ -104,10 +105,10 @@
   <insert id="insert" parameterType="com.pythe.pojo.TblCombo" >
     insert into tbl_combo (combo_id, title, content, 
       status, created, stoped, 
-      price)
+      price, giving)
     values (#{comboId,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP}, #{stoped,jdbcType=TIMESTAMP}, 
-      #{price,jdbcType=DOUBLE})
+      #{price,jdbcType=DOUBLE}, #{giving,jdbcType=DOUBLE})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblCombo" >
     insert into tbl_combo
@@ -133,6 +134,9 @@
       <if test="price != null" >
         price,
       </if>
+      <if test="giving != null" >
+        giving,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="comboId != null" >
@@ -155,6 +159,9 @@
       </if>
       <if test="price != null" >
         #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="giving != null" >
+        #{giving,jdbcType=DOUBLE},
       </if>
     </trim>
   </insert>
@@ -188,6 +195,9 @@
       <if test="record.price != null" >
         price = #{record.price,jdbcType=DOUBLE},
       </if>
+      <if test="record.giving != null" >
+        giving = #{record.giving,jdbcType=DOUBLE},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -201,7 +211,8 @@
       status = #{record.status,jdbcType=INTEGER},
       created = #{record.created,jdbcType=TIMESTAMP},
       stoped = #{record.stoped,jdbcType=TIMESTAMP},
-      price = #{record.price,jdbcType=DOUBLE}
+      price = #{record.price,jdbcType=DOUBLE},
+      giving = #{record.giving,jdbcType=DOUBLE}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -227,6 +238,9 @@
       <if test="price != null" >
         price = #{price,jdbcType=DOUBLE},
       </if>
+      <if test="giving != null" >
+        giving = #{giving,jdbcType=DOUBLE},
+      </if>
     </set>
     where combo_id = #{comboId,jdbcType=BIGINT}
   </update>
@@ -237,7 +251,8 @@
       status = #{status,jdbcType=INTEGER},
       created = #{created,jdbcType=TIMESTAMP},
       stoped = #{stoped,jdbcType=TIMESTAMP},
-      price = #{price,jdbcType=DOUBLE}
+      price = #{price,jdbcType=DOUBLE},
+      giving = #{giving,jdbcType=DOUBLE}
     where combo_id = #{comboId,jdbcType=BIGINT}
   </update>
 </mapper>

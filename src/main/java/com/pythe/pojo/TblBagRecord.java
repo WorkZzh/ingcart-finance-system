@@ -9,8 +9,6 @@ public class TblBagRecord {
 
     private Date buyTime;
 
-    private String dealerId;
-
     private Integer type;
 
     private Long customerId;
@@ -37,14 +35,6 @@ public class TblBagRecord {
 
     public void setBuyTime(Date buyTime) {
         this.buyTime = buyTime;
-    }
-
-    public String getDealerId() {
-        return dealerId;
-    }
-
-    public void setDealerId(String dealerId) {
-        this.dealerId = dealerId == null ? null : dealerId.trim();
     }
 
     public Integer getType() {

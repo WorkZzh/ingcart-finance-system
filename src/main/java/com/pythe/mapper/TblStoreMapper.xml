@@ -13,8 +13,8 @@
     <result column="bag_num" property="bagNum" jdbcType="INTEGER" />
     <result column="in_bag_num" property="inBagNum" jdbcType="INTEGER" />
     <result column="out_bag_num" property="outBagNum" jdbcType="INTEGER" />
-    <result column="dealer_id" property="dealerId" jdbcType="VARCHAR" />
     <result column="store_hours" property="storeHours" jdbcType="VARCHAR" />
+    <result column="dealer" property="dealer" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -76,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, name, longitude, latitude, location_name, created, description, status, bag_num, 
-    in_bag_num, out_bag_num, dealer_id, store_hours
+    in_bag_num, out_bag_num, store_hours, dealer
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblStoreExample" >
     select
@@ -112,13 +112,13 @@
     insert into tbl_store (id, name, longitude, 
       latitude, location_name, created, 
       description, status, bag_num, 
-      in_bag_num, out_bag_num, dealer_id, 
-      store_hours)
+      in_bag_num, out_bag_num, store_hours, 
+      dealer)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, 
       #{latitude,jdbcType=DOUBLE}, #{locationName,jdbcType=VARCHAR}, #{created,jdbcType=TIMESTAMP}, 
       #{description,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{bagNum,jdbcType=INTEGER}, 
-      #{inBagNum,jdbcType=INTEGER}, #{outBagNum,jdbcType=INTEGER}, #{dealerId,jdbcType=VARCHAR}, 
-      #{storeHours,jdbcType=VARCHAR})
+      #{inBagNum,jdbcType=INTEGER}, #{outBagNum,jdbcType=INTEGER}, #{storeHours,jdbcType=VARCHAR}, 
+      #{dealer,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblStore" >
     insert into tbl_store
@@ -156,11 +156,11 @@
       <if test="outBagNum != null" >
         out_bag_num,
       </if>
-      <if test="dealerId != null" >
-        dealer_id,
-      </if>
       <if test="storeHours != null" >
         store_hours,
+      </if>
+      <if test="dealer != null" >
+        dealer,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -197,11 +197,11 @@
       <if test="outBagNum != null" >
         #{outBagNum,jdbcType=INTEGER},
       </if>
-      <if test="dealerId != null" >
-        #{dealerId,jdbcType=VARCHAR},
-      </if>
       <if test="storeHours != null" >
         #{storeHours,jdbcType=VARCHAR},
+      </if>
+      <if test="dealer != null" >
+        #{dealer,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -247,11 +247,11 @@
       <if test="record.outBagNum != null" >
         out_bag_num = #{record.outBagNum,jdbcType=INTEGER},
       </if>
-      <if test="record.dealerId != null" >
-        dealer_id = #{record.dealerId,jdbcType=VARCHAR},
-      </if>
       <if test="record.storeHours != null" >
         store_hours = #{record.storeHours,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dealer != null" >
+        dealer = #{record.dealer,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -271,8 +271,8 @@
       bag_num = #{record.bagNum,jdbcType=INTEGER},
       in_bag_num = #{record.inBagNum,jdbcType=INTEGER},
       out_bag_num = #{record.outBagNum,jdbcType=INTEGER},
-      dealer_id = #{record.dealerId,jdbcType=VARCHAR},
-      store_hours = #{record.storeHours,jdbcType=VARCHAR}
+      store_hours = #{record.storeHours,jdbcType=VARCHAR},
+      dealer = #{record.dealer,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -310,11 +310,11 @@
       <if test="outBagNum != null" >
         out_bag_num = #{outBagNum,jdbcType=INTEGER},
       </if>
-      <if test="dealerId != null" >
-        dealer_id = #{dealerId,jdbcType=VARCHAR},
-      </if>
       <if test="storeHours != null" >
         store_hours = #{storeHours,jdbcType=VARCHAR},
+      </if>
+      <if test="dealer != null" >
+        dealer = #{dealer,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -331,8 +331,8 @@
       bag_num = #{bagNum,jdbcType=INTEGER},
       in_bag_num = #{inBagNum,jdbcType=INTEGER},
       out_bag_num = #{outBagNum,jdbcType=INTEGER},
-      dealer_id = #{dealerId,jdbcType=VARCHAR},
-      store_hours = #{storeHours,jdbcType=VARCHAR}
+      store_hours = #{storeHours,jdbcType=VARCHAR},
+      dealer = #{dealer,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

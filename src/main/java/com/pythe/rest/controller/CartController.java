@@ -31,8 +31,7 @@ public class CartController {
 	@ResponseBody
 	public PytheResult prepareUnlock(
 			@RequestParam(required = true,value = "customerId") Long customerId,
-			@RequestParam(required = true,value = "carId") String carId
-			) throws Exception {
+			@RequestParam(required = true,value = "carId") String carId) throws Exception {
 		try {
 			return service.prepareUnlock(customerId,carId);
 		} catch (Exception e) {
@@ -41,6 +40,41 @@ public class CartController {
 		}
 	}
     
+    
+    /**
+	 * 管理员紧急关锁
+	 * @return
+	 * localhost:8084/manage/urgent/lock?phoneNum=13828494261&date=2018-01-30 20:49:22
+	 */
+    @RequestMapping(value = "/manage/urgent/lock/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult urgentUnlock(
+			@RequestBody String parameters
+			) throws Exception {
+		try {
+			return service.urgentUnlock(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
+    /**
+	 * 用户紧急关锁
+	 * @return
+	 * localhost:8084/client/urgent/lock/
+	 */
+    @RequestMapping(value = "/client/urgent/lock/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult urgentUnlockByClient(@RequestBody String parameters) throws Exception {
+		try {
+			return service.urgentUnlockByClient(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
     
     
     
@@ -72,8 +106,6 @@ public class CartController {
 	@ResponseBody
 	public ModelAndView outsideUnlock(@RequestParam(required = true,value = "id") Long id) throws Exception {
 		ModelAndView mv = new ModelAndView(new RedirectView("https://wx.ingcart.com/source/todownload.html"));
-		//RedirectView rv = new RedirectView("https://wx.ingcart.com/source/todownload.html");
-		//RedirectView rv = new RedirectView("https://wx.ingcart.com/source/todownload.html");
 		return mv;
 	}
 	
@@ -109,6 +141,10 @@ public class CartController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	
 	
 	
 	/**

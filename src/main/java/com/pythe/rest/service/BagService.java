@@ -11,6 +11,10 @@ public interface BagService {
 
 	PytheResult selectComboDetailList();
 
+	PytheResult insertStore(String parameters);
+
+	PytheResult updateStoreGoods(String parameters);
+
 
 
 	

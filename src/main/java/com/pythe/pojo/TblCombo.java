@@ -17,6 +17,8 @@ public class TblCombo {
 
     private Double price;
 
+    private Double giving;
+
     public Long getComboId() {
         return comboId;
     }
@@ -71,5 +73,13 @@ public class TblCombo {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Double getGiving() {
+        return giving;
+    }
+
+    public void setGiving(Double giving) {
+        this.giving = giving;
     }
 }

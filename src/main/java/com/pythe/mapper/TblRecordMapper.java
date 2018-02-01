@@ -27,4 +27,6 @@ public interface TblRecordMapper {
     int updateByPrimaryKeySelective(TblRecord record);
 
     int updateByPrimaryKey(TblRecord record);
+    
+    TblRecord selectPreRecordPrimaryKey(Long customer_id,String car_id);
 }

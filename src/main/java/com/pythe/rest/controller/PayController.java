@@ -80,13 +80,13 @@ public class PayController {
 	 */
 	@RequestMapping(value = "/app/account/wxChargeConfirm", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult wxChargeConfirmInApp(@RequestBody String parameters) throws Exception {
+	public String wxChargeConfirmInApp(@RequestBody String parameters) throws Exception {
 
 		try {
 			return service.wxChargeConfirmInApp(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+			return e.toString();
 		}
 	}
     

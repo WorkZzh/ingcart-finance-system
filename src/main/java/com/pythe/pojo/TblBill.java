@@ -11,6 +11,8 @@ public class TblBill {
 
     private Double amount;
 
+    private Double givingAmount;
+
     private Integer status;
 
     private String prepayId;
@@ -51,6 +53,14 @@ public class TblBill {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public Double getGivingAmount() {
+        return givingAmount;
+    }
+
+    public void setGivingAmount(Double givingAmount) {
+        this.givingAmount = givingAmount;
     }
 
     public Integer getStatus() {

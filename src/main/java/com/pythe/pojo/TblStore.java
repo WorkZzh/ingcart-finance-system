@@ -25,9 +25,9 @@ public class TblStore {
 
     private Integer outBagNum;
 
-    private String dealerId;
-
     private String storeHours;
+
+    private String dealer;
 
     public String getId() {
         return id;
@@ -117,19 +117,19 @@ public class TblStore {
         this.outBagNum = outBagNum;
     }
 
-    public String getDealerId() {
-        return dealerId;
-    }
-
-    public void setDealerId(String dealerId) {
-        this.dealerId = dealerId == null ? null : dealerId.trim();
-    }
-
     public String getStoreHours() {
         return storeHours;
     }
 
     public void setStoreHours(String storeHours) {
         this.storeHours = storeHours == null ? null : storeHours.trim();
+    }
+
+    public String getDealer() {
+        return dealer;
+    }
+
+    public void setDealer(String dealer) {
+        this.dealer = dealer == null ? null : dealer.trim();
     }
 }

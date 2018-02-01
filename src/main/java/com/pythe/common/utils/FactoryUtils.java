@@ -150,6 +150,27 @@ public class FactoryUtils {
     }
     
     /**
+     * 参数进行XML化
+     * @param map,sign
+     * @return
+     */
+    public static String parseString2Xml(Map<String, String> map){
+        StringBuffer sb = new StringBuffer();
+        sb.append("<xml>");
+        Set es = map.entrySet();
+        Iterator iterator = es.iterator();
+        while(iterator.hasNext()){
+            Map.Entry entry = (Map.Entry)iterator.next();
+            String k = (String)entry.getKey();
+            String v = (String)entry.getValue();
+            sb.append("<"+k+">"+v+"</"+k+">");
+        }
+        
+        sb.append("</xml>");
+        return sb.toString();
+    }
+    
+    /**
 	 * 得到本地IP地址
 	 * 
 	 * @return
