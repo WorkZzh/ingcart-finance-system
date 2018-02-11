@@ -107,7 +107,7 @@ public class PayController {
 	}
     
 	/**
-	 *app微信支付确认
+	 *app订单状态查询
 	 * @return
 	 */
 	@RequestMapping(value = "/app/wxOrderQuery", method = RequestMethod.POST)
