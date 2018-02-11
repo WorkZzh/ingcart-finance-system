@@ -460,4 +460,40 @@ public class PayServiceImpl implements PayService {
 		return PytheResult.ok(json);
 	}
 
+	@Override
+	public String wxOrderQueryInApp(String parameters) {
+		String appid = APP_APPID;// appid
+		String mch_id = APP_MCH_ID;// 微信支付商户号
+		String nonce_str = FactoryUtils.getUUID();// 随机码
+		
+
+		JSONObject json = JSONObject.parseObject(parameters);
+
+		String out_trade_no = json.getString("out_trade_no");//订单号
+		
+		
+
+		SortedMap<String, String> params = new TreeMap<String, String>();
+		params.put("appid", appid);
+		params.put("mch_id", mch_id);
+		params.put("nonce_str", nonce_str);
+		params.put("out_trade_no", out_trade_no);
+		
+		
+
+		String sign = "";// 签名(该签名本应使用微信商户平台的API证书中的密匙key,但此处使用的是微信公众号的密匙APP_SECRET)
+		sign = FactoryUtils.getSign(params, WX_KEY);
+		// 参数xml化
+		String xmlParams = FactoryUtils.parseString2Xml(params, sign);
+		
+		// 判断返回码
+		String str = "";
+		String xw_url = "https://api.mch.weixin.qq.com/pay/orderquery";
+		str = HttpClientUtil.doPostJson(xw_url, xmlParams);
+		
+		System.out.println("=======================================> order query : " + str);
+		
+		return (str);
+	}
+
 }

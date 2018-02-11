@@ -104,6 +104,20 @@ public class PayController {
 		}
 	}
     
-    
+	/**
+	 *app订单状态查询
+	 * @return
+	 */
+	@RequestMapping(value = "/app/wxOrderQuery", method = RequestMethod.POST)
+	@ResponseBody
+	public String wxOrderQueryInApp(@RequestBody String parameters) throws Exception {
+
+		try {
+			return service.wxOrderQueryInApp(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.toString();
+		}
+	}
     
 }  

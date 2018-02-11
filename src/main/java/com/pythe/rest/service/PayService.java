@@ -16,6 +16,8 @@ public interface PayService {
 
 	PytheResult hiddleCharge();
 
+	String wxOrderQueryInApp(String parameters);
+
 
 	
 }
