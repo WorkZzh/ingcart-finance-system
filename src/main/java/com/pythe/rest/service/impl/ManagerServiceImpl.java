@@ -25,6 +25,7 @@ import com.pythe.mapper.TblFaultTypeMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
 import com.pythe.mapper.TblVersionMapper;
 import com.pythe.mapper.VAcountRecordMapper;
+import com.pythe.mapper.VCustomerMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBill;
 import com.pythe.pojo.TblCar;
@@ -37,6 +38,8 @@ import com.pythe.pojo.TblRecord;
 import com.pythe.pojo.TblVersion;
 import com.pythe.pojo.VAcountRecord;
 import com.pythe.pojo.VAcountRecordExample;
+import com.pythe.pojo.VCustomer;
+import com.pythe.pojo.VCustomerExample;
 import com.pythe.rest.service.MaintenanceService;
 import com.pythe.rest.service.ManagerService;
 
@@ -47,6 +50,9 @@ public class ManagerServiceImpl implements ManagerService{
 	
 	@Autowired
 	private TblVersionMapper versionMapper;
+	
+	@Autowired
+	private VCustomerMapper vCustomerMapper;
 
 	@Override
 	public PytheResult updateVersion(String parameters) {
@@ -87,6 +93,35 @@ public class ManagerServiceImpl implements ManagerService{
 		}
 		
 		return PytheResult.ok(version);
+	}
+
+
+
+	@Override
+	public PytheResult countCarCondition(Integer pageNum, Integer pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
+		VCustomerExample example = new VCustomerExample();
+		example.createCriteria().andCarStatusEqualTo(1);
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+		JSONArray arr =new JSONArray();
+		JSONObject json =new JSONObject();
+		
+		if (!customerList.isEmpty()) {
+			json.put("size",customerList.size());
+			for (VCustomer vCustomer : customerList) {
+				JSONObject json2 = new JSONObject();
+				json2.put("start_time",DateUtils.formatTime(vCustomer.getStartTime()));
+				json2.put("phone_num", vCustomer.getPhoneNum());
+				json2.put("level", vCustomer.getLevel());
+				arr.add(json2);
+			}
+			json.put("user", arr);
+		}else{
+			json.put("size", 0);
+			json.put("user", null);
+		}
+		
+		return PytheResult.ok(json);
 	}
 	
 	

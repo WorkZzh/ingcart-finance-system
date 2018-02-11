@@ -197,7 +197,7 @@ public class DateUtils {
 	
 	
 	/**
-	 * 获取当天日期（yyyy-MM-dd）
+	 * 获取当天日期（yyyy-MM-dd HH-ss）
 	 * 
 	 * @return 当天日期
 	 */

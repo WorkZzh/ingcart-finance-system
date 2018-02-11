@@ -54,8 +54,6 @@ public class PayController {
 	}
 	
 	
-	
-	
 	  /**
 		 *APP充值下单
 		 * @return

@@ -54,7 +54,7 @@ public class PaymentOrderJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        System.out.println("========>开始自动检测,是否忘记关锁");
+        //System.out.println("========>开始自动检测,是否忘记关锁");
     	
     	final ApplicationContext applicationContext = (ApplicationContext) context.getJobDetail().getJobDataMap()
                 .get("applicationContext");

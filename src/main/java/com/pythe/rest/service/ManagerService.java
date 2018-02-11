@@ -9,6 +9,9 @@ public interface ManagerService {
 	PytheResult selectVersion(String parameters);
 
 
+	PytheResult countCarCondition(Integer pageNum, Integer pageSize);
+
+
 
 
 }
