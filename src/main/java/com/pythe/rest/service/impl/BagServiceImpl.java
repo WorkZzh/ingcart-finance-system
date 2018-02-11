@@ -102,7 +102,7 @@ public class BagServiceImpl implements BagService {
 		bagRecordMapper.insert(bagRecord);
 
 		// 更新账单记录
-		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+//		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
 		// //先查是否已付款
 		// TblBillExample billExample = new TblBillExample();
 		// billExample.createCriteria().andOutTradeNoEqualTo(out_trade_no).andStatusEqualTo(PAY_STATUS);
@@ -113,22 +113,22 @@ public class BagServiceImpl implements BagService {
 		// }
 
 		// 再更新账单
-		TblBill bill = new TblBill();
-		bill.setId(FactoryUtils.getUUID());
-		bill.setAmount(GIVE_BAG_MONEY);
-		bill.setType(BILL_GIVE_TYPE);
-		bill.setOutTradeNo(out_trade_no);
-		bill.setPrepayId(prepay_id);
-		bill.setStatus(PAY_STATUS);
-		bill.setTime(new Date());
-		bill.setCustomerId(customerId);
-		billMapper.insert(bill);
+//		TblBill bill = new TblBill();
+//		bill.setId(FactoryUtils.getUUID());
+//		bill.setAmount(GIVE_BAG_MONEY);
+//		bill.setType(BILL_GIVE_TYPE);
+//		bill.setOutTradeNo(out_trade_no);
+//		bill.setPrepayId(prepay_id);
+//		bill.setStatus(PAY_STATUS);
+//		bill.setTime(new Date());
+//		bill.setCustomerId(customerId);
+//		billMapper.insert(bill);
 
 		// 更新账户
-		account.setAmount(account.getAmount() + GIVE_BAG_MONEY);
-		account.setInAmount(account.getInAmount() + GIVE_BAG_MONEY);
-		account.setGivingAmount(account.getGivingAmount() + GIVE_BAG_MONEY);
-		accountMapper.updateByPrimaryKey(account);
+//		account.setAmount(account.getAmount() + GIVE_BAG_MONEY);
+//		account.setInAmount(account.getInAmount() + GIVE_BAG_MONEY);
+//		account.setGivingAmount(account.getGivingAmount() + GIVE_BAG_MONEY);
+//		accountMapper.updateByPrimaryKey(account);
 
 		// 向消费用户发送服务通知
 		// String url =
@@ -177,7 +177,6 @@ public class BagServiceImpl implements BagService {
 
 		// System.out.println("===================> notify template result: " +
 		// str);
-
 		// JSONObject purchaseInfo = new JSONObject();
 		// purchaseInfo.put("finishTime", System.currentTimeMillis());
 		// purchaseInfo.put("bill", payBills.get(0));
@@ -268,6 +267,34 @@ public class BagServiceImpl implements BagService {
 		json.put("total_bag_num", store.getBagNum());
 		json.put("add_bag_num", bag_num);
 		return PytheResult.ok(json);
+	}
+
+	@Override
+	public PytheResult selectStoreBag(String code) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		code= code.trim();
+		TblStoreExample example =new TblStoreExample();
+		example.createCriteria().andLocationNameEqualTo(code);
+		List<TblStore> storeList = storeMapper.selectByExample(example);
+		if (storeList.isEmpty()) {
+			return PytheResult.build(400, "该店铺不存在,请填写正确店铺编码信息");
+		}
+		return PytheResult.ok(storeList.get(0));
+	}
+
+	@Override
+	public PytheResult deleteBagStore(String code) {
+		// TODO Auto-generated method stub
+		code= code.trim();
+		TblStoreExample example =new TblStoreExample();
+		example.createCriteria().andLocationNameEqualTo(code);
+		List<TblStore> storeList = storeMapper.selectByExample(example);
+		if (storeList.isEmpty()) {
+			return PytheResult.build(400, "该店铺不存在,请填写正确店铺编码信息");
+		}
+		storeMapper.deleteByPrimaryKey(storeList.get(0).getId());
+		return PytheResult.ok(code+"店铺信息删除成功");
 	}
 
 }

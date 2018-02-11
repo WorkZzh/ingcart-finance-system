@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.pythe.pojo.VCustomer" >
     <result column="customer_id" property="customerId" jdbcType="BIGINT" />
     <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="description" property="description" jdbcType="VARCHAR" />
     <result column="level" property="level" jdbcType="INTEGER" />
@@ -79,7 +80,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    customer_id, phone_num, name, description, level, amount, in_amount, out_amount, 
+    customer_id, phone_num, type, name, description, level, amount, in_amount, out_amount, 
     car_status, car_id, start_time, stop_time, open_id, union_id, record_id, device_id, 
     qr_id
   </sql>
@@ -104,18 +105,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.VCustomer" >
-    insert into v_customer (customer_id, phone_num, name, 
-      description, level, amount, 
-      in_amount, out_amount, car_status, 
-      car_id, start_time, stop_time, 
-      open_id, union_id, record_id, 
-      device_id, qr_id)
-    values (#{customerId,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
-      #{description,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, #{amount,jdbcType=DOUBLE}, 
-      #{inAmount,jdbcType=DOUBLE}, #{outAmount,jdbcType=DOUBLE}, #{carStatus,jdbcType=INTEGER}, 
-      #{carId,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, 
-      #{openId,jdbcType=VARCHAR}, #{unionId,jdbcType=VARCHAR}, #{recordId,jdbcType=VARCHAR}, 
-      #{deviceId,jdbcType=VARCHAR}, #{qrId,jdbcType=BIGINT})
+    insert into v_customer (customer_id, phone_num, type, 
+      name, description, level, 
+      amount, in_amount, out_amount, 
+      car_status, car_id, start_time, 
+      stop_time, open_id, union_id, 
+      record_id, device_id, qr_id
+      )
+    values (#{customerId,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
+      #{amount,jdbcType=DOUBLE}, #{inAmount,jdbcType=DOUBLE}, #{outAmount,jdbcType=DOUBLE}, 
+      #{carStatus,jdbcType=INTEGER}, #{carId,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{stopTime,jdbcType=TIMESTAMP}, #{openId,jdbcType=VARCHAR}, #{unionId,jdbcType=VARCHAR}, 
+      #{recordId,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, #{qrId,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.VCustomer" >
     insert into v_customer
@@ -125,6 +128,9 @@
       </if>
       <if test="phoneNum != null" >
         phone_num,
+      </if>
+      <if test="type != null" >
+        type,
       </if>
       <if test="name != null" >
         name,
@@ -178,6 +184,9 @@
       </if>
       <if test="phoneNum != null" >
         #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
       </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
@@ -241,6 +250,9 @@
       <if test="record.phoneNum != null" >
         phone_num = #{record.phoneNum,jdbcType=VARCHAR},
       </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
       <if test="record.name != null" >
         name = #{record.name,jdbcType=VARCHAR},
       </if>
@@ -295,6 +307,7 @@
     update v_customer
     set customer_id = #{record.customerId,jdbcType=BIGINT},
       phone_num = #{record.phoneNum,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=INTEGER},
       name = #{record.name,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
       level = #{record.level,jdbcType=INTEGER},

@@ -15,6 +15,10 @@ public interface BagService {
 
 	PytheResult updateStoreGoods(String parameters);
 
+	PytheResult selectStoreBag(String code);
+
+	PytheResult deleteBagStore(String code);
+
 
 
 	

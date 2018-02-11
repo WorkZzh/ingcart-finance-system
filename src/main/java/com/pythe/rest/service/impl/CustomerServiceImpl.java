@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
+import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.FactoryUtils;
 import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.mapper.TblAccountMapper;
@@ -83,7 +84,7 @@ public class CustomerServiceImpl implements CustomerService {
 		if (!verification_info.getVerificationCode().equals(verificationCode)) {
 			return PytheResult.build(400, "验证码错误或过期");
 		}
-
+		
 		String openId = null;
 		String unionId = null;
 		if (type == 0) {
@@ -95,7 +96,6 @@ public class CustomerServiceImpl implements CustomerService {
 			if (customerList2.isEmpty()) {
 				return PytheResult.build(202, "抱歉，小程序暂供管理员使用，如需使用请下载APP");
 			}
-			
 			TblCustomer record = new TblCustomer();
 			record.setOpenId(openId);
 			record.setCreated(new Date());
@@ -105,9 +105,9 @@ public class CustomerServiceImpl implements CustomerService {
 			
 			TblAccount newAccount = new TblAccount();
 			newAccount.setCustomerId(customerList2.get(0).getCustomerId());
-			newAccount.setAmount(100000000d);
+			newAccount.setAmount(10000d);
 			newAccount.setLevel(1);
-			newAccount.setInAmount(100000000d);
+			newAccount.setInAmount(10000d);
 			newAccount.setOutAmount(0d);
 			newAccount.setGivingAmount(0d);
 			accountMapper.insert(newAccount);
@@ -124,9 +124,9 @@ public class CustomerServiceImpl implements CustomerService {
 		//管理员临时使用逻辑，获得管理员权限
 		if (!customerList.isEmpty()) {
 			VCustomer tmpCustomer = customerList.get(0);
-			if (type.equals(0)) {
-				return PytheResult.build(400, "该用户已为管理员，请换用微信小程序使用");
-			}
+//			if (tmpCustomer.getType().equals(0)) {
+//				return PytheResult.build(400, "该用户已为管理员，请换用微信小程序使用");
+//			}
 			return PytheResult.ok(tmpCustomer);
 		} 
 		
@@ -150,11 +150,11 @@ public class CustomerServiceImpl implements CustomerService {
 		
 		TblAccount newAccount = new TblAccount();
 		newAccount.setCustomerId(customer.getCustomerId());
-		newAccount.setAmount(0d);
+		newAccount.setAmount(8d);
 		newAccount.setLevel(0);
-		newAccount.setInAmount(0d);
+		newAccount.setInAmount(8d);
 		newAccount.setOutAmount(0d);
-		newAccount.setGivingAmount(0d);
+		newAccount.setGivingAmount(8d);
 		accountMapper.insert(newAccount);
 
 		return PytheResult.ok(customer);
@@ -246,6 +246,32 @@ public class CustomerServiceImpl implements CustomerService {
 			return PytheResult.build(400, "券码错误");
 		}
 
+	}
+
+	@Override
+	public PytheResult selectCustomerByPhoneNum(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject params = JSONObject.parseObject(parameters);
+		String phoneNum = params.getString("phoneNum").trim();
+		VCustomerExample vCustomerExample = new VCustomerExample();
+		vCustomerExample.createCriteria().andPhoneNumEqualTo(phoneNum);
+		
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(vCustomerExample);
+		
+		System.out.println("===========>customerList"+ customerList.size());
+		if (customerList.isEmpty()) {
+			return PytheResult.build(400, "该手机号用户不存在");
+		}
+		
+		VCustomer customer = customerList.get(0);
+		if (customer.getStartTime()==null) {
+			return PytheResult.build(400, "该车已经成功结束计费，不需重复");
+		}
+		
+		JSONObject object =new JSONObject();
+		object.put("start_time",DateUtils.formatTime(customer.getStartTime()));
+		
+		return PytheResult.ok(object);
 	}
 
 	// @Override

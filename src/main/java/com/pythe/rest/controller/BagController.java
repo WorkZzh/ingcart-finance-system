@@ -49,6 +49,32 @@ public class BagController {
 	}
 	
 	
+	@RequestMapping(value = "/select/store/bag", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectStoreBag(@RequestParam(required = true,value = "code") String code ) {
+		try {
+			return service.selectStoreBag(code);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	@RequestMapping(value = "/delete/store", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult deleteBagStore(@RequestParam(required = true,value = "code") String code ) {
+		try {
+			return service.deleteBagStore(code);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
+	
+	
 	@RequestMapping(value = "/combo/detail", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult selectComboDetailList() {

@@ -17,10 +17,12 @@ import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.common.utils.Xml2JsonUtil;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblBillMapper;
+import com.pythe.mapper.TblComboMapper;
 import com.pythe.mapper.TblCouponMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBill;
 import com.pythe.pojo.TblBillExample;
+import com.pythe.pojo.TblCombo;
 import com.pythe.pojo.TblCoupon;
 import com.pythe.rest.service.PayService;
 
@@ -30,9 +32,15 @@ public class PayServiceImpl implements PayService {
 	// BILL
 	@Value("${BILL_CHARGE_TYPE}")
 	private Integer BILL_CHARGE_TYPE;
+	
+	
+	@Value("${BILL_GIVE_TYPE}")
+	private Integer BILL_GIVE_TYPE;
+	
 
 	@Value("${BILL_PAY_TYPE}")
 	private Integer BILL_PAY_TYPE;
+	
 
 	@Value("${NOT_PAY_STATUS}")
 	private Integer NOT_PAY_STATUS;
@@ -66,6 +74,11 @@ public class PayServiceImpl implements PayService {
 
 	@Value("${GIFT_COUPONS_THRESHOLD}")
 	private double GIFT_COUPONS_THRESHOLD;
+	
+	
+	@Value("${HIDDLE_CHARE_STATUS}")
+	private Integer HIDDLE_CHARE_STATUS;
+	
 
 	@Autowired
 	private TblAccountMapper accountMapper;
@@ -73,8 +86,9 @@ public class PayServiceImpl implements PayService {
 	@Autowired
 	private TblBillMapper billMapper;
 
+	
 	@Autowired
-	private TblCouponMapper couponMapper;
+	private TblComboMapper comboMapper;
 
 	@Override
 	public PytheResult chargeForAccount(String prepayment_imforamtion) throws Exception {
@@ -272,7 +286,14 @@ public class PayServiceImpl implements PayService {
 		// prepayment_imforamtion = DecodeUtils.decode(prepayment_imforamtion);
 		JSONObject json = JSONObject.parseObject(prepayment_imforamtion);
 		Long customerId = json.getLong("customerId");
-		Double givingAmount = json.getDouble("givingAmount");
+		Long comboId = json.getLong("comboId");
+		
+		TblCombo combo = comboMapper.selectByPrimaryKey(comboId);
+		
+		Double givingAmount = combo.getGiving();
+		
+		//获取支付的类型的状态
+		Integer status  = combo.getStatus();
 		
 		String body = json.getString("body");// 商品描述
 		String out_trade_no = System.currentTimeMillis() + "" + new java.util.Random().nextInt(8);// 商品订单号
@@ -280,7 +301,7 @@ public class PayServiceImpl implements PayService {
 		Double a = json.getDouble("total_fee") * 100;
 		String total_fee = a.intValue() + "";// 总金额
 		String spbill_create_ip = json.getString("spbill_create_ip");
-		// 分
+
 		// String time_start = getCurrTime();// 交易起始时间(订单生成时间非必须)
 		String trade_type = json.getString("trade_type");// 公众号支付
 		String notify_url = WX_PAY_CONFIRM_NOTIFY_URL;// 回调函数
@@ -311,7 +332,6 @@ public class PayServiceImpl implements PayService {
 		String xw_url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 		str = HttpClientUtil.doPostJson(xw_url, xmlParams);
 
-		System.out.println(str);
 
 		// 2第二步签名
 		JSONObject strJson = Xml2JsonUtil.xml2Json(str);
@@ -345,9 +365,16 @@ public class PayServiceImpl implements PayService {
 		// 插入账单，设置未确定支付结果状态，等待微信支付回调确认再更新
 		TblBill bill = new TblBill();
 		bill.setId(FactoryUtils.getUUID());
-		bill.setAmount(json.getDouble("total_fee"));
-		bill.setType(BILL_CHARGE_TYPE);
-		bill.setGivingAmount(givingAmount);
+		
+		if (1 == status) {
+			bill.setAmount(0d);
+			bill.setType(BILL_GIVE_TYPE);
+			//System.out.println("=============>"+ bill.getAmount());
+		}else{
+			bill.setAmount(json.getDouble("total_fee"));
+			bill.setType(BILL_CHARGE_TYPE);
+		}
+		
 		bill.setOutTradeNo(out_trade_no);
 		bill.setPrepayId(prepay_id);
 		bill.setStatus(NOT_PAY_STATUS);
@@ -371,14 +398,13 @@ public class PayServiceImpl implements PayService {
 		String totalFee = strJson.getString("total_fee");
 
 		if (returnCode.equals("SUCCESS") && resultCode.equals("SUCCESS")) {
-			//System.out.println("============================> accept return !!! " + returnCode + " && " + resultCode);
+			System.out.println("============================> accept return !!! " + returnCode + " && " + resultCode);
 			if (appId.equals(APP_APPID) && mchId.equals(APP_MCH_ID)) {
-				//System.out.println("=============================> match !!!!!!!!!!!!");
+				System.out.println("=============================> match !!!!!!!!!!!!");
 				TblBillExample billExample = new TblBillExample();
 				billExample.createCriteria().andOutTradeNoEqualTo(outTradeNo);
 				TblBill originalBill = billMapper.selectByExample(billExample).get(0);
-				if (originalBill.getAmount() * 100 == Double.valueOf(totalFee)
-						&& originalBill.getStatus().equals(NOT_PAY_STATUS)) {
+				if (originalBill.getStatus().equals(NOT_PAY_STATUS)) {
 					//System.out.println("============================> charge fee !!! " + totalFee);
 					originalBill.setStatus(PAY_STATUS);
 					billMapper.updateByPrimaryKey(originalBill);
@@ -388,7 +414,7 @@ public class PayServiceImpl implements PayService {
 					Double givingAmount = originalBill.getGivingAmount();
 					TblAccount account = accountMapper.selectByPrimaryKey(originalBill.getCustomerId());
 
-					System.out.println("====================>givingAmount"+ givingAmount);
+					//System.out.println("====================>givingAmount"+ givingAmount);
 					account.setGivingAmount(account.getGivingAmount() + givingAmount);
 //					if (10 == inAmount) {
 //						GIVING_ACCOUNT = 2d;
@@ -423,6 +449,15 @@ public class PayServiceImpl implements PayService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public PytheResult hiddleCharge() {
+		// TODO Auto-generated method stub
+		
+		JSONObject json = new JSONObject();
+		json.put("status", HIDDLE_CHARE_STATUS);
+		return PytheResult.ok(json);
 	}
 
 }

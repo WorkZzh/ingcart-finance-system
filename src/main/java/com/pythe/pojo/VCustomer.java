@@ -7,6 +7,8 @@ public class VCustomer {
 
     private String phoneNum;
 
+    private Integer type;
+
     private String name;
 
     private String description;
@@ -51,6 +53,14 @@ public class VCustomer {
 
     public void setPhoneNum(String phoneNum) {
         this.phoneNum = phoneNum == null ? null : phoneNum.trim();
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public String getName() {

@@ -918,6 +918,7 @@ public class CartServiceImpl implements CartService {
 		String phoneNum = information.getString("phoneNum");
 		String date = information.getString("date");
 
+		final Date date_ = DateUtils.parseTime(date);
 		// TODO Auto-generated method stub
 		// 让车处于空闲状态，让后续的人可以使用
 		VCustomerExample example = new VCustomerExample();
@@ -936,7 +937,7 @@ public class CartServiceImpl implements CartService {
 		if (null != carId) {
 			car = carMapper.selectByPrimaryKey(carId);
 			// 更新停止时间和停止位置和记录用的钱
-			time = DateUtils.minusForPartHour(DateUtils.parseTime(date), car.getStarttime());
+			time = DateUtils.minusForPartHour(date_, car.getStarttime());
 			
 			
 			// 处理Bug如果钱是负数就说明用户报的时间不对
@@ -975,7 +976,7 @@ public class CartServiceImpl implements CartService {
 			@Override
 			public void run() {
 				TblRecord line = recordMapper.selectByPrimaryKey(recordId);
-				line.setStopTime(new Date());
+				line.setStopTime(date_);
 				line.setBillId(billId);
 				recordMapper.updateByPrimaryKey(line);
 			}

@@ -53,9 +53,6 @@ public class CustomerController {
 	}
 	
 	
-	
-	
-	
 	/**
 	 * 客户注册
 	 * @return
@@ -71,6 +68,8 @@ public class CustomerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
 	
 	
 	/**
@@ -103,5 +102,21 @@ public class CustomerController {
 		}
 	}
 	
+	
+	
+	/**
+	 * 通过电话号码查询用户使用车的情况
+	 * @return
+	 */
+	@RequestMapping(value = "/select/cr", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult  selectCustomerByPhoneNum(@RequestBody String parameters) {
+		try {
+			return (customerService.selectCustomerByPhoneNum(parameters));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 
 }

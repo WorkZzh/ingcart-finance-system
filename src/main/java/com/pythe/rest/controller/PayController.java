@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pythe.common.pojo.PytheResult;
@@ -38,6 +39,21 @@ public class PayController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	@RequestMapping(value = "/hiddle/charge", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult hiddleCharge() {
+		try {
+			return service.hiddleCharge();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
 	
 	
 	  /**

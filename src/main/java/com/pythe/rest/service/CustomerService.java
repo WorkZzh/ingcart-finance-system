@@ -18,6 +18,8 @@ public interface CustomerService  {
 
 	PytheResult selectPersonalImformationByCustomerId(Long customerId);
 
+	PytheResult selectCustomerByPhoneNum(String parameters);
+
 //	PytheResult userLoginByVerificationCode(String parameters);
     
 	
