@@ -488,7 +488,7 @@ public class PayServiceImpl implements PayService {
 		
 		// 判断返回码
 		String str = "";
-		String xw_url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+		String xw_url = "https://api.mch.weixin.qq.com/pay/orderquery";
 		str = HttpClientUtil.doPostJson(xw_url, xmlParams);
 		
 		System.out.println("=======================================> order query : " + str);
