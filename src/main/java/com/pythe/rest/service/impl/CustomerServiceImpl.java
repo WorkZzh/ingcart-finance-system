@@ -96,6 +96,13 @@ public class CustomerServiceImpl implements CustomerService {
 			if (customerList2.isEmpty()) {
 				return PytheResult.build(202, "抱歉，小程序暂供管理员使用，如需使用请下载APP");
 			}
+			
+//			//避免小程序再次进入的情况
+//			VCustomer manager = customerList2.get(0);
+//			if (null!=manager.getOpenId()) {
+//				return PytheResult.ok("管理员验证成功");
+//			}
+			
 			TblCustomer record = new TblCustomer();
 			record.setOpenId(openId);
 			record.setCreated(new Date());
@@ -258,7 +265,7 @@ public class CustomerServiceImpl implements CustomerService {
 		
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(vCustomerExample);
 		
-		System.out.println("===========>customerList"+ customerList.size());
+		//System.out.println("===========>customerList"+ customerList.size());
 		if (customerList.isEmpty()) {
 			return PytheResult.build(400, "该手机号用户不存在");
 		}
@@ -274,10 +281,6 @@ public class CustomerServiceImpl implements CustomerService {
 		return PytheResult.ok(object);
 	}
 
-	// @Override
-	// public PytheResult userLoginByVerificationCode(String parameters) {
-	// // TODO Auto-generated method stub
-	//
-	// }
+
 
 }
