@@ -27,9 +27,12 @@ public class CustomerController {
 	 */
 	@RequestMapping(value = "/wxSession/request", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult updateRequest(@RequestParam(required = true, value = "code") String code) {
+	public PytheResult updateRequest(
+			@RequestParam(required = true, value = "code") String code,
+			@RequestParam(defaultValue="0") Integer userType) {
 		try {
-			return (customerService.wxSessionRequest(code));
+			
+			return (customerService.wxSessionRequest(code, userType));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));

@@ -36,6 +36,12 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Value("${WX_APPSECRET}")
 	private String WX_APPSECRET;
+	
+	@Value("${INGCART_MANAGE_MNP_APPID}")
+	private String INGCART_MANAGE_MNP_APPID;
+
+	@Value("${INGCART_MANAGE_MNP_APPSECRET}")
+	private String INGCART_MANAGE_MNP_APPSECRET;
 
 	@Value("${WX_KEY}")
 	private String WX_KEY;
@@ -43,6 +49,12 @@ public class CustomerServiceImpl implements CustomerService {
 	@Value("${WX_MCH_ID}")
 	private String WX_MCH_ID;
 
+	@Value("${INGCART_CUSTOMER_TYPE}")
+	private Integer INGCART_CUSTOMER_TYPE;
+	
+	@Value("${INGCART_MANAGER_TYPE}")
+	private Integer INGCART_MANAGER_TYPE;
+	
 	@Autowired
 	private TblCustomerMapper customerMapper;
 
@@ -207,10 +219,20 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	
 	@Override
-	public PytheResult wxSessionRequest(String code) {
+	public PytheResult wxSessionRequest(String code, Integer userType) {
 
-		String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + WX_APPID + "&secret=" + WX_APPSECRET
-				+ "&js_code=" + code + "&grant_type=authorization_code";
+		String url = null;
+		if(userType.equals(INGCART_MANAGER_TYPE))
+		{
+			url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + INGCART_MANAGE_MNP_APPID + "&secret=" + INGCART_MANAGE_MNP_APPSECRET
+					+ "&js_code=" + code + "&grant_type=authorization_code";
+		}
+		if(userType.equals(INGCART_CUSTOMER_TYPE))
+		{
+			url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + WX_APPID + "&secret=" + WX_APPSECRET
+					+ "&js_code=" + code + "&grant_type=authorization_code";
+		}
+		
 		String prePayResult = HttpClientUtil.doGet(url, null);
 		String session_id = FactoryUtils.getUUID();
 		String session_key = JSONObject.parseObject(prePayResult).getString("session_key");
