@@ -10,7 +10,7 @@ public interface CustomerService  {
 
 	PytheResult registerCheck(String parameters);
 
-	PytheResult wxSessionRequest(String code);
+	PytheResult wxSessionRequest(String code, Integer userType);
 
 //	PytheResult selectPersonalImformationByCustomerId(Long customerId);
 
