@@ -232,8 +232,9 @@ public class CustomerServiceImpl implements CustomerService {
 			url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + WX_APPID + "&secret=" + WX_APPSECRET
 					+ "&js_code=" + code + "&grant_type=authorization_code";
 		}
-		
+		System.out.println("========================================> js_code !!! "+ url);
 		String prePayResult = HttpClientUtil.doGet(url, null);
+		System.out.println("========================================> get openid !!! "+ prePayResult);
 		String session_id = FactoryUtils.getUUID();
 		String session_key = JSONObject.parseObject(prePayResult).getString("session_key");
 		String openid = JSONObject.parseObject(prePayResult).getString("openid");
