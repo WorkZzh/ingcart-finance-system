@@ -19,6 +19,8 @@ public interface BagService {
 
 	PytheResult deleteBagStore(String code);
 
+	PytheResult selectAllStore();
+
 
 
 	

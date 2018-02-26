@@ -297,4 +297,16 @@ public class BagServiceImpl implements BagService {
 		return PytheResult.ok(code+"店铺信息删除成功");
 	}
 
+	@Override
+	public PytheResult selectAllStore() {
+		// TODO Auto-generated method stub
+		TblStoreExample example =new TblStoreExample();
+		List<TblStore> storeList = storeMapper.selectByExample(example);
+		return PytheResult.ok(storeList);
+	}
+	
+	
+	
+	
+
 }

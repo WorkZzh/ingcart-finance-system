@@ -1,6 +1,5 @@
 package com.pythe.rest.service;
 
-import org.dom4j.DocumentException;
 
 import com.pythe.common.pojo.PytheResult;
 
@@ -17,6 +16,9 @@ public interface PayService {
 	PytheResult hiddleCharge();
 
 	String wxOrderQueryInApp(String parameters);
+
+
+	PytheResult refundByOrderInWX(String url);
 
 
 	

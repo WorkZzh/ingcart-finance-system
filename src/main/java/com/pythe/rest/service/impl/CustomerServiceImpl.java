@@ -161,19 +161,17 @@ public class CustomerServiceImpl implements CustomerService {
 		
 
 		
-		
 		List<VCustomer> customers = vCustomerMapper.selectByExample(example2);
 		VCustomer customer = customers.get(0);
 		customer.setAmount(0.0);
 		
-		
 		TblAccount newAccount = new TblAccount();
 		newAccount.setCustomerId(customer.getCustomerId());
-		newAccount.setAmount(8d);
+		newAccount.setAmount(0d);
 		newAccount.setLevel(0);
-		newAccount.setInAmount(8d);
+		newAccount.setInAmount(0d);
 		newAccount.setOutAmount(0d);
-		newAccount.setGivingAmount(8d);
+		newAccount.setGivingAmount(0d);
 		accountMapper.insert(newAccount);
 
 		return PytheResult.ok(customer);

@@ -1,5 +1,6 @@
 package com.pythe.rest.service.impl;
 
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -31,6 +32,7 @@ import com.pythe.mapper.TblBillMapper;
 import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblHoldRecordMapper;
+import com.pythe.mapper.TblPriceMapper;
 import com.pythe.mapper.TblRecordMapper;
 import com.pythe.mapper.TblStoreMapper;
 import com.pythe.mapper.VCustomerMapper;
@@ -43,6 +45,7 @@ import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblCustomerExample;
 import com.pythe.pojo.TblHoldRecord;
 import com.pythe.pojo.TblHoldRecordExample;
+import com.pythe.pojo.TblPrice;
 import com.pythe.pojo.TblRecord;
 import com.pythe.pojo.TblRecordExample;
 import com.pythe.pojo.TblStore;
@@ -107,12 +110,23 @@ public class CartServiceImpl implements CartService {
 	@Value("${NOTIFY_PAY_TEMPLATE_ID}")
 	private String NOTIFY_PAY_TEMPLATE_ID;
 
+	@Value("${WX_KEY}")
+	private String WX_KEY;
+
+	@Value("${WX_MCH_ID}")
+	private String WX_MCH_ID;
+
+	@Value("${WX_PAY_CONFIRM_NOTIFY_URL}")
+	private String WX_PAY_CONFIRM_NOTIFY_URL;
 
 	@Autowired
 	private VCustomerMapper vCustomerMapper;
 
 	@Autowired
 	private TblRecordMapper recordMapper;
+
+	@Autowired
+	private TblPriceMapper priceMapper;
 
 	@Autowired
 	private TblStoreMapper storeMapper;
@@ -224,9 +238,9 @@ public class CartServiceImpl implements CartService {
 		LinkedList<JSONObject> list = new LinkedList<JSONObject>();
 
 		TblCarExample example = new TblCarExample();
-		example.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 2)
-				.andLatitudeLessThanOrEqualTo(latitude + 2).andLongitudeGreaterThan(longitude - 2)
-				.andLongitudeLessThanOrEqualTo(longitude + 2).andStatusEqualTo(CAR_FREE_STATUS);
+		example.createCriteria().andLatitudeGreaterThanOrEqualTo(latitude - 1)
+				.andLatitudeLessThanOrEqualTo(latitude + 1).andLongitudeGreaterThan(longitude - 1)
+				.andLongitudeLessThanOrEqualTo(longitude + 1).andStatusEqualTo(CAR_FREE_STATUS);
 		List<TblCar> carList = carMapper.selectByExample(example);
 		for (TblCar car : carList) {
 			JSONObject json = new JSONObject();
@@ -275,22 +289,22 @@ public class CartServiceImpl implements CartService {
 		int time = DateUtils.minusForPartHour(new Date(), car.getStarttime());
 		Double amount = null;
 		// 处理Bug如果钱是负数就说明用户报的时间不对
-		if (time<0) {
+		if (time < 0) {
 			return PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
 		}
-		
-		int tmp = time -2;
-		if (tmp>0) {
+
+		int tmp = time - 2;
+		if (tmp > 0) {
 			// 前2分钟不算钱,所以这里要减去2
 			if (time % 30 == 0) {
 				amount = Math.floor(tmp / 30);
 			} else {
 				amount = (Math.floor(tmp / 30) + 1);
 			}
-		}else{
+		} else {
 			amount = 0d;
 		}
-		amount = EACH_HOUR_PRICE* amount;
+		amount = EACH_HOUR_PRICE * amount;
 
 		car.setStatus(CAR_FREE_STATUS);
 		car.setEndtime(null);
@@ -458,23 +472,23 @@ public class CartServiceImpl implements CartService {
 
 			Double amount = null;
 			// 处理Bug如果钱是负数就说明用户报的时间不对
-			if (time<0) {
+			if (time < 0) {
 				return PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
 			}
-			
-			int tmp = time -2;
-			if (tmp>0) {
+
+			int tmp = time - 2;
+			if (tmp > 0) {
 				// 前2分钟不算钱,所以这里要减去2
 				if (time % 30 == 0) {
 					amount = Math.floor(tmp / 30);
 				} else {
 					amount = (Math.floor(tmp / 30) + 1);
 				}
-			}else{
+			} else {
 				amount = 0d;
 			}
-			amount = EACH_HOUR_PRICE* amount;
-			
+			amount = EACH_HOUR_PRICE * amount;
+
 			car.setStarttime(null);
 			car.setEndtime(null);
 			carMapper.updateByPrimaryKey(car);
@@ -579,23 +593,23 @@ public class CartServiceImpl implements CartService {
 		int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
 		Double amount = null;
 		// 处理Bug如果钱是负数就说明用户报的时间不对
-		if (time<0) {
+		if (time < 0) {
 			return PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
 		}
-		
-		int tmp = time -2;
-		if (tmp>0) {
+
+		int tmp = time - 2;
+		if (tmp > 0) {
 			// 前2分钟不算钱,所以这里要减去2
 			if (time % 30 == 0) {
 				amount = Math.floor(tmp / 30);
 			} else {
 				amount = (Math.floor(tmp / 30) + 1);
 			}
-		}else{
+		} else {
 			amount = 0d;
 		}
-		amount = EACH_HOUR_PRICE* amount;
-		
+		amount = EACH_HOUR_PRICE * amount;
+
 		car.setEndtime(null);
 		car.setStarttime(null);
 		car.setUser(null);
@@ -855,19 +869,27 @@ public class CartServiceImpl implements CartService {
 		// 看看用户消费情况
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
 
-		if (account.getAmount() < EACH_HOUR_PRICE) {
-			return PytheResult.build(300, "余额不足前往充值", account.getAmount());
-		}
-
 		// 看看车的状态
 		TblCarExample example2 = new TblCarExample();
 		example2.createCriteria().andQrIdEqualTo(qrId);
 		List<TblCar> carList2 = carMapper.selectByExample(example2);
 
+		// 改变检测费用情况
+		// if (account.getAmount() < EACH_HOUR_PRICE) {
+		// return PytheResult.build(300, "余额不足前往充值", account.getAmount());
+		// }
+
 		if (carList2.isEmpty()) {
 			PytheResult.build(100, "该车信息尚未录入，暂无法使用");
 		}
 		TblCar car = carList2.get(0);
+
+		// 检测该园区是否符合收费标准
+		TblPrice price = priceMapper.selectByPrimaryKey(car.getDescription());
+
+		if (account.getAmount() < price.getPrice()) {
+			return PytheResult.build(300, "余额不满足此次旅程费用，点击确定前往充值", account.getAmount());
+		}
 
 		Integer status = car.getStatus();
 		switch (status) {
@@ -915,14 +937,19 @@ public class CartServiceImpl implements CartService {
 	public PytheResult urgentUnlock(String parameters) {
 
 		JSONObject information = JSONObject.parseObject(parameters);
-		String phoneNum = information.getString("phoneNum");
+		String phoneNum = information.getString("phoneNum").trim();
 		String date = information.getString("date");
 
 		final Date date_ = DateUtils.parseTime(date);
-		// TODO Auto-generated method stub
 		// 让车处于空闲状态，让后续的人可以使用
 		VCustomerExample example = new VCustomerExample();
-		example.createCriteria().andPhoneNumEqualTo(phoneNum.trim());
+
+		if (phoneNum.length() == 11) {
+			example.createCriteria().andPhoneNumEqualTo(phoneNum);
+		} else {
+			example.createCriteria().andQrIdEqualTo(Long.valueOf(phoneNum));
+		}
+
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
 		if (customerList.isEmpty()) {
 			return PytheResult.build(400, "该用户不存在");
@@ -938,27 +965,26 @@ public class CartServiceImpl implements CartService {
 			car = carMapper.selectByPrimaryKey(carId);
 			// 更新停止时间和停止位置和记录用的钱
 			time = DateUtils.minusForPartHour(date_, car.getStarttime());
-			
-			
+
 			// 处理Bug如果钱是负数就说明用户报的时间不对
-			if (time<0) {
+			if (time < 0) {
 				return PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
 			}
-			
-			int tmp = time -2;
-			if (tmp>0) {
+
+			int tmp = time - 2;
+			if (tmp > 0) {
 				// 前2分钟不算钱,所以这里要减去2
 				if (time % 30 == 0) {
 					amount = Math.floor(tmp / 30);
 				} else {
 					amount = (Math.floor(tmp / 30) + 1);
 				}
-			}else{
+			} else {
 				amount = 0d;
 			}
 
-			amount = EACH_HOUR_PRICE* amount;
-			
+			amount = EACH_HOUR_PRICE * amount;
+
 			car.setId(customer.getCarId());
 			car.setStatus(CAR_FREE_STATUS);
 			car.setEndtime(null);
@@ -1036,4 +1062,272 @@ public class CartServiceImpl implements CartService {
 		lock(parameters);
 		return computeFee(parameters);
 	}
+
+	@Override
+	public PytheResult manageUrgentRefund(String parameters) {
+		JSONObject information = JSONObject.parseObject(parameters);
+		String phoneNum = information.getString("phoneNum").trim();
+		String date = information.getString("date");
+
+		final Date date_ = DateUtils.parseTime(date);
+		// 让车处于空闲状态，让后续的人可以使用
+		VCustomerExample example = new VCustomerExample();
+
+		if (phoneNum.length() == 11) {
+			example.createCriteria().andPhoneNumEqualTo(phoneNum);
+		} else {
+			example.createCriteria().andQrIdEqualTo(Long.valueOf(phoneNum));
+		}
+
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+		if (customerList.isEmpty()) {
+			return PytheResult.build(400, "该用户不存在");
+		}
+
+		VCustomer customer = customerList.get(0);
+		Long customerId = customer.getCustomerId();
+		TblCar car = null;
+		String carId = customer.getCarId();
+		String giving = String.valueOf((customer.getGiving().intValue() * 100));
+		int time = 0;
+		Double amount = null;
+		Double givingAmount = 0d;
+
+		if (null != carId) {
+			car = carMapper.selectByPrimaryKey(carId);
+			// 更新停止时间和停止位置和记录用的钱
+			time = DateUtils.minusForPartHour(date_, car.getStarttime());
+			// 处理Bug如果钱是负数就说明用户报的时间不对
+			if (time < 0) {
+				return PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
+			}
+
+			// 前面10分钟不要钱
+			int tmp = time - 10;
+
+			if (tmp > 0) {
+				amount = 30d;
+				givingAmount = 20d;
+				// 前2分钟不算钱,所以这里要减去2
+				// if (time % 30 == 0) {
+				// amount = Math.floor(tmp / 30);
+				// } else {
+				// amount = (Math.floor(tmp / 30) + 1);
+				// }
+			} else {
+				amount = 0d;
+			}
+			// amount = EACH_HOUR_PRICE* amount;
+			car.setId(customer.getCarId());
+			car.setStatus(CAR_FREE_STATUS);
+			car.setEndtime(null);
+			car.setUser(null);
+			car.setStarttime(null);
+			carMapper.updateByPrimaryKey(car);
+		} else {
+			return PytheResult.build(400, "暂无占用任何车，无需释放");
+		}
+
+		// 查看某用户的最近行车记录
+		TblRecord record = recordMapper.selectPreRecordPrimaryKey(customerId, carId);
+		final String recordId = record.getId();
+		final String billId = FactoryUtils.getUUID();
+		new Thread() {
+			@Override
+			public void run() {
+				TblRecord line = recordMapper.selectByPrimaryKey(recordId);
+				line.setStopTime(date_);
+				line.setBillId(billId);
+				recordMapper.updateByPrimaryKey(line);
+			}
+		}.start();
+
+		// 生成账单
+		final TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+		account.setAmount(account.getAmount() - amount);
+		account.setOutAmount(account.getOutAmount() - amount);
+		accountMapper.updateByPrimaryKey(account);
+
+		// 更新流水
+		final TblBill bill = new TblBill();
+		bill.setId(billId);
+		bill.setRecordId(recordId);
+		bill.setAmount(amount);
+
+		bill.setGivingAmount(givingAmount);
+		bill.setType(BILL_PAY_TYPE);
+		bill.setCustomerId(customerId);
+		bill.setTime(new Date());
+		bill.setRecordId(recordId);
+
+		new Thread() {
+			@Override
+			public void run() {
+				if (account.getAmount() < EACH_HOUR_PRICE) {
+					bill.setStatus(NOT_PAY_STATUS);
+				} else {
+					bill.setStatus(PAY_TYPE);
+				}
+				billMapper.insert(bill);
+			}
+		}.start();
+
+		// 退回用户20元现金
+		TblBillExample example2 = new TblBillExample();
+		example2.createCriteria().andStatusEqualTo(1).andTypeEqualTo(BILL_CHARGE_TYPE).andCustomerIdEqualTo(customerId);
+		example2.setOrderByClause("time DESC");
+		List<TblBill> billList = billMapper.selectByExample(example2);
+		if (!billList.isEmpty()) {
+			TblBill bi = billList.get(0);
+			// System.out.println("============>OutTradeNo!" +
+			// bi.getOutTradeNo());
+			// 这里要后面要改一下
+			// System.out.println("============>Bi!!" +
+			// String.valueOf((bi.getAmount().intValue() * 100)));
+			String str = refundByOrderInWX(bi.getOutTradeNo(), String.valueOf((bi.getAmount().intValue() * 100)),
+					giving);
+			// System.out.println("=================>str" + str);
+
+			if (str.indexOf("SUCCESS") != -1) {
+				// 看看更新后的账单是否为正数，如果是，证明扣费成功
+				JSONObject json = new JSONObject();
+				json.put("price", amount.intValue());
+				json.put("time", time);
+				json.put("amount", account.getAmount());
+				return PytheResult.build(200, "支付成功", json);
+			}
+		}
+		// refundByOrderInWX(url);
+		return PytheResult.build(400, "支付失败，请手动退还用户");
+	}
+
+	private String refundByOrderInWX(String out_trade_no, String total_fee, String refund_fee) {
+
+		String appid = WX_APPID;// appid
+		String mch_id = WX_MCH_ID;// 微信支付商户号
+		String nonce_str = FactoryUtils.getUUID();// 随机码
+		String sign = "";
+		String out_refund_no = FactoryUtils.getUUID();
+		String op_user_id = WX_MCH_ID;
+		// sign
+		SortedMap<String, String> params = new TreeMap<String, String>();
+		params.put("appid", appid);
+		params.put("mch_id", mch_id);
+		params.put("nonce_str", nonce_str);
+		params.put("out_trade_no", out_trade_no);
+		params.put("out_refund_no", out_refund_no);
+		params.put("out_trade_no", out_trade_no);
+		params.put("total_fee", total_fee);
+		params.put("refund_fee", refund_fee);
+		params.put("op_user_id", op_user_id);
+
+		// 1第一次签名
+		sign = FactoryUtils.getSign(params, WX_KEY);
+		// 参数xml化
+		String xmlParams = FactoryUtils.parseString2Xml(params, sign);
+		// 判断返回码
+		String str = "";
+		String xw_url = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+		try {
+			// resource/apiclient_cert.p12
+			// System.out.println("===============>我我我"+this.getClass().getClassLoader().getResource("resource/apiclient_cert.p12").getPath());
+			str = HttpClientUtil.doPostXmlSafely(xw_url, xmlParams, mch_id,
+					new File(this.getClass().getClassLoader().getResource("resource/apiclient_cert.p12").getPath()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return str;
+	}
+
+	@Override
+	public void autoLock() {
+		// TODO Auto-generated method stub
+
+		final Date date_ = DateUtils.parseTime(DateUtils.getTodayDate() + " 20:00:00");
+
+		VCustomerExample example = new VCustomerExample();
+		example.createCriteria().andCarStatusEqualTo(CAR_USER_STATUS);
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+
+		for (VCustomer customer : customerList) {
+			Long customerId = customer.getCustomerId();
+			TblCar car = null;
+			String carId = customer.getCarId();
+			int time = 0;
+			Double amount = null;
+			Double givingAmount = 0d;
+
+			
+			//因为用户在使用所以车一定是存在的
+			car = carMapper.selectByPrimaryKey(carId);
+			// 更新停止时间和停止位置和记录用的钱
+			time = DateUtils.minusForPartHour(date_, car.getStarttime());
+
+			// 前面10分钟不要钱
+			int tmp = time - 10;
+
+			if (tmp > 0) {
+				amount = customer.getPrice();
+			} else {
+				amount = 0d;
+			}
+
+			// 查看某用户的最近行车记录
+
+			// TblRecord record =
+			// recordMapper.selectPreRecordPrimaryKey(customerId, carId);
+			TblRecord record = recordMapper.selectByPrimaryKey(customer.getRecordId());
+			final String recordId = record.getId();
+			final String billId = FactoryUtils.getUUID();
+			new Thread() {
+				@Override
+				public void run() {
+					TblRecord line = recordMapper.selectByPrimaryKey(recordId);
+					line.setStopTime(date_);
+					line.setBillId(billId);
+					recordMapper.updateByPrimaryKey(line);
+				}
+			}.start();
+			
+			//更新车的信息
+			car.setId(customer.getCarId());
+			car.setStatus(CAR_FREE_STATUS);
+			car.setStarttime(null);
+			car.setEndtime(null);
+			car.setUser(null);
+			car.setRecordid(null);;
+			carMapper.updateByPrimaryKey(car);
+
+			// 生成账单
+			final TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+			account.setAmount(account.getAmount() - amount);
+			account.setOutAmount(account.getOutAmount() - amount);
+			accountMapper.updateByPrimaryKey(account);
+
+			// 更新流水
+			final TblBill bill = new TblBill();
+			bill.setId(billId);
+			bill.setRecordId(recordId);
+			bill.setAmount(amount);
+
+			bill.setGivingAmount(givingAmount);
+			bill.setType(BILL_PAY_TYPE);
+			bill.setCustomerId(customerId);
+			bill.setTime(new Date());
+			bill.setRecordId(recordId);
+
+			//amount就是那个钱
+			if (account.getAmount() < amount) {
+				bill.setStatus(NOT_PAY_STATUS);
+			} else {
+				bill.setStatus(PAY_TYPE);
+			}
+			billMapper.insert(bill);
+			
+		}
+
+	}
+
 }

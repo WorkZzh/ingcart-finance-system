@@ -6,7 +6,6 @@
     <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="description" property="description" jdbcType="VARCHAR" />
     <result column="level" property="level" jdbcType="INTEGER" />
     <result column="amount" property="amount" jdbcType="DOUBLE" />
     <result column="in_amount" property="inAmount" jdbcType="DOUBLE" />
@@ -20,6 +19,9 @@
     <result column="record_id" property="recordId" jdbcType="VARCHAR" />
     <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
     <result column="qr_id" property="qrId" jdbcType="BIGINT" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="giving" property="giving" jdbcType="DOUBLE" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -80,9 +82,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    customer_id, phone_num, type, name, description, level, amount, in_amount, out_amount, 
-    car_status, car_id, start_time, stop_time, open_id, union_id, record_id, device_id, 
-    qr_id
+    customer_id, phone_num, type, name, level, amount, in_amount, out_amount, car_status, 
+    car_id, start_time, stop_time, open_id, union_id, record_id, device_id, qr_id, description, 
+    giving, price
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.VCustomerExample" >
     select
@@ -106,19 +108,19 @@
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.VCustomer" >
     insert into v_customer (customer_id, phone_num, type, 
-      name, description, level, 
-      amount, in_amount, out_amount, 
-      car_status, car_id, start_time, 
-      stop_time, open_id, union_id, 
-      record_id, device_id, qr_id
-      )
+      name, level, amount, 
+      in_amount, out_amount, car_status, 
+      car_id, start_time, stop_time, 
+      open_id, union_id, record_id, 
+      device_id, qr_id, description, 
+      giving, price)
     values (#{customerId,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
-      #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
-      #{amount,jdbcType=DOUBLE}, #{inAmount,jdbcType=DOUBLE}, #{outAmount,jdbcType=DOUBLE}, 
-      #{carStatus,jdbcType=INTEGER}, #{carId,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
-      #{stopTime,jdbcType=TIMESTAMP}, #{openId,jdbcType=VARCHAR}, #{unionId,jdbcType=VARCHAR}, 
-      #{recordId,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, #{qrId,jdbcType=BIGINT}
-      )
+      #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, #{amount,jdbcType=DOUBLE}, 
+      #{inAmount,jdbcType=DOUBLE}, #{outAmount,jdbcType=DOUBLE}, #{carStatus,jdbcType=INTEGER}, 
+      #{carId,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, 
+      #{openId,jdbcType=VARCHAR}, #{unionId,jdbcType=VARCHAR}, #{recordId,jdbcType=VARCHAR}, 
+      #{deviceId,jdbcType=VARCHAR}, #{qrId,jdbcType=BIGINT}, #{description,jdbcType=VARCHAR}, 
+      #{giving,jdbcType=DOUBLE}, #{price,jdbcType=DOUBLE})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.VCustomer" >
     insert into v_customer
@@ -134,9 +136,6 @@
       </if>
       <if test="name != null" >
         name,
-      </if>
-      <if test="description != null" >
-        description,
       </if>
       <if test="level != null" >
         level,
@@ -177,6 +176,15 @@
       <if test="qrId != null" >
         qr_id,
       </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="giving != null" >
+        giving,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="customerId != null" >
@@ -190,9 +198,6 @@
       </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="description != null" >
-        #{description,jdbcType=VARCHAR},
       </if>
       <if test="level != null" >
         #{level,jdbcType=INTEGER},
@@ -233,6 +238,15 @@
       <if test="qrId != null" >
         #{qrId,jdbcType=BIGINT},
       </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="giving != null" >
+        #{giving,jdbcType=DOUBLE},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DOUBLE},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.pythe.pojo.VCustomerExample" resultType="java.lang.Integer" >
@@ -255,9 +269,6 @@
       </if>
       <if test="record.name != null" >
         name = #{record.name,jdbcType=VARCHAR},
-      </if>
-      <if test="record.description != null" >
-        description = #{record.description,jdbcType=VARCHAR},
       </if>
       <if test="record.level != null" >
         level = #{record.level,jdbcType=INTEGER},
@@ -298,6 +309,15 @@
       <if test="record.qrId != null" >
         qr_id = #{record.qrId,jdbcType=BIGINT},
       </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.giving != null" >
+        giving = #{record.giving,jdbcType=DOUBLE},
+      </if>
+      <if test="record.price != null" >
+        price = #{record.price,jdbcType=DOUBLE},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -309,7 +329,6 @@
       phone_num = #{record.phoneNum,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=INTEGER},
       name = #{record.name,jdbcType=VARCHAR},
-      description = #{record.description,jdbcType=VARCHAR},
       level = #{record.level,jdbcType=INTEGER},
       amount = #{record.amount,jdbcType=DOUBLE},
       in_amount = #{record.inAmount,jdbcType=DOUBLE},
@@ -322,12 +341,12 @@
       union_id = #{record.unionId,jdbcType=VARCHAR},
       record_id = #{record.recordId,jdbcType=VARCHAR},
       device_id = #{record.deviceId,jdbcType=VARCHAR},
-      qr_id = #{record.qrId,jdbcType=BIGINT}
+      qr_id = #{record.qrId,jdbcType=BIGINT},
+      description = #{record.description,jdbcType=VARCHAR},
+      giving = #{record.giving,jdbcType=DOUBLE},
+      price = #{record.price,jdbcType=DOUBLE}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  
-  
-  
 </mapper>

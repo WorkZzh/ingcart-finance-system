@@ -74,7 +74,6 @@ public class BagController {
 	
 	
 	
-	
 	@RequestMapping(value = "/combo/detail", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult selectComboDetailList() {
@@ -135,6 +134,24 @@ public class BagController {
 		ModelAndView mv = new ModelAndView(new RedirectView("https://wx.ingcart.com/source/todownload.html"));
 		return mv;
 	}
+	
+	/**
+	 * 查看所有门店
+	 * https://ingcart.com/select/all/store
+	 */
+	@RequestMapping(value = "/select/all/store", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectAllStore() throws Exception {
+		try {
+			return service.selectAllStore();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
 	
   
 }

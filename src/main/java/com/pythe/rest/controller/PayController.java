@@ -119,5 +119,26 @@ public class PayController {
 			return e.toString();
 		}
 	}
+	
+	
+	/**
+	 * 订单退款
+	 * 
+	 * @param url
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/user/pay/refund", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult refundByOrderInWX(@RequestBody String url) throws Exception {
+	
+
+		try {
+			return service.refundByOrderInWX(url);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
     
 }  
