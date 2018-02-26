@@ -25,8 +25,9 @@
 	<!-- 定义触发器 -->
 	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="paymentOrderJobDetail" />
-		<!-- 每天04:04:04执行一次 -->
-		<property name="cronExpression" value="0 0/2 * * * ?" />
+		<!-- 每天12点执行一次执行一次 0 0 12 * * ? -->
+		
+		<property name="cronExpression" value="*/5 * * * * ?" />
 	</bean>
 	
 	<!-- 定义调度器 -->

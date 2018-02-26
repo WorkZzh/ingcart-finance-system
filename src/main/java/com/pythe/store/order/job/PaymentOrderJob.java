@@ -15,6 +15,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.FactoryUtils;
+import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblBillMapper;
 import com.pythe.mapper.TblCarMapper;
@@ -47,94 +48,104 @@ public class PaymentOrderJob extends QuartzJobBean {
 	private static Integer NOT_PAY_STATUS = 0;
 	private static Integer PAY_TYPE = 1;
 	private static Integer CAR_FREE_STATUS = 0;
+	private static String url="http://localhost:8084/auto/lock";
 	
 	
 
 	
-
-    @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        //System.out.println("========>开始自动检测,是否忘记关锁");
-    	
-    	final ApplicationContext applicationContext = (ApplicationContext) context.getJobDetail().getJobDataMap()
-                .get("applicationContext");
-        
-       TblCarExample carExample = new TblCarExample();
-       carExample.createCriteria().andStatusEqualTo(4).andEndtimeLessThanOrEqualTo(new DateTime().minusMinutes(1).toDate());
-       List<TblCar> carList = applicationContext.getBean(TblCarMapper.class).selectByExample(carExample);
-       
-       if (!carList.isEmpty()) {
-	    	   for (TblCar car: carList) {
-	    		
-	    		   final String  recordId  = car.getRecordid();
-
-	    			// 更新停止时间和停止位置和记录用的钱
-	    			int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
-	    			Double amount = null;
-	    			// 处理Bug如果钱是负数就说明用户报的时间不对
-	    			if (time<0) {
-	    				PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
-	    			}
-	    			
-	    			int tmp = time -2;
-	    			if (tmp>0) {
-	    				// 前2分钟不算钱,所以这里要减去2
-	    				if (time % 30 == 0) {
-	    					amount = Math.floor(tmp / 30);
-	    				} else {
-	    					amount = (Math.floor(tmp / 30) + 1);
-	    				}
-	    			}else{
-	    				amount = 0d;
-	    			}
-	    			amount = EACH_HOUR_PRICE* amount;
-	    			
-	    			final String billId = FactoryUtils.getUUID();
-	    			new Thread() {
-	    				@Override
-	    				public void run() {
-	    					TblRecord line = applicationContext.getBean(TblRecordMapper.class).selectByPrimaryKey(recordId);
-	    					line.setStopTime(new Date());
-	    					line.setBillId(billId);
-	    					applicationContext.getBean(TblRecordMapper.class).updateByPrimaryKey(line);
-	    				}
-	    			}.start();
-
-	    			final Long customerId = car.getUser();
-	    			// 生成账单
-	    			final TblAccount account = applicationContext.getBean(TblAccountMapper.class).selectByPrimaryKey(customerId);
-	    			account.setAmount(account.getAmount() - amount);
-	    			account.setOutAmount(account.getOutAmount() - amount);
-	    			applicationContext.getBean(TblAccountMapper.class).updateByPrimaryKey(account);
-
-	    			// 更新车的位置和使用情况和结束时间
-	    			//让车处于空闲状态，让后续的人可以使用
-	    			car.setStatus(CAR_FREE_STATUS);
-	    			//将停止的时间作为最终时间更新
-	    			car.setUser(null);
-	    			car.setStarttime(null);
-	    			car.setEndtime(null);
-	    			applicationContext.getBean(TblCarMapper.class).updateByPrimaryKey(car);
-	    			
-	    			// 更新流水
-					final TblBill bill = new TblBill();
-					bill.setId(billId);
-					bill.setRecordId(recordId);
-					bill.setAmount(amount);
-					bill.setType(BILL_PAY_TYPE);
-					bill.setCustomerId(customerId);
-					bill.setTime(new Date());
-					bill.setRecordId(recordId);
-					if (account.getAmount() < EACH_HOUR_PRICE) {
-						bill.setStatus(NOT_PAY_STATUS);
-					} else {
-						bill.setStatus(PAY_TYPE);
-					}
-
-					applicationContext.getBean(TblBillMapper.class).insert(bill);
-				}
+	 @Override
+	    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+		 		HttpClientUtil.doGet(url);
 	    }
-        
-    }
+	 
+	 
+	 
+	 
+	
+
+//    @Override
+//    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+//        //System.out.println("========>开始自动检测,是否忘记关锁");
+//    	
+//    	final ApplicationContext applicationContext = (ApplicationContext) context.getJobDetail().getJobDataMap()
+//                .get("applicationContext");
+//        
+//       TblCarExample carExample = new TblCarExample();
+//       carExample.createCriteria().andStatusEqualTo(4).andEndtimeLessThanOrEqualTo(new DateTime().minusMinutes(1).toDate());
+//       List<TblCar> carList = applicationContext.getBean(TblCarMapper.class).selectByExample(carExample);
+//       
+//       if (!carList.isEmpty()) {
+//	    	   for (TblCar car: carList) {
+//	    		
+//	    		   final String  recordId  = car.getRecordid();
+//
+//	    			// 更新停止时间和停止位置和记录用的钱
+//	    			int time = DateUtils.minusForPartHour(car.getEndtime(), car.getStarttime());
+//	    			Double amount = null;
+//	    			// 处理Bug如果钱是负数就说明用户报的时间不对
+//	    			if (time<0) {
+//	    				PytheResult.build(400, "时间不合法，结束时间不能小于开始时间");
+//	    			}
+//	    			
+//	    			int tmp = time -2;
+//	    			if (tmp>0) {
+//	    				// 前2分钟不算钱,所以这里要减去2
+//	    				if (time % 30 == 0) {
+//	    					amount = Math.floor(tmp / 30);
+//	    				} else {
+//	    					amount = (Math.floor(tmp / 30) + 1);
+//	    				}
+//	    			}else{
+//	    				amount = 0d;
+//	    			}
+//	    			amount = EACH_HOUR_PRICE* amount;
+//	    			
+//	    			final String billId = FactoryUtils.getUUID();
+//	    			new Thread() {
+//	    				@Override
+//	    				public void run() {
+//	    					TblRecord line = applicationContext.getBean(TblRecordMapper.class).selectByPrimaryKey(recordId);
+//	    					line.setStopTime(new Date());
+//	    					line.setBillId(billId);
+//	    					applicationContext.getBean(TblRecordMapper.class).updateByPrimaryKey(line);
+//	    				}
+//	    			}.start();
+//
+//	    			final Long customerId = car.getUser();
+//	    			// 生成账单
+//	    			final TblAccount account = applicationContext.getBean(TblAccountMapper.class).selectByPrimaryKey(customerId);
+//	    			account.setAmount(account.getAmount() - amount);
+//	    			account.setOutAmount(account.getOutAmount() - amount);
+//	    			applicationContext.getBean(TblAccountMapper.class).updateByPrimaryKey(account);
+//
+//	    			// 更新车的位置和使用情况和结束时间
+//	    			//让车处于空闲状态，让后续的人可以使用
+//	    			car.setStatus(CAR_FREE_STATUS);
+//	    			//将停止的时间作为最终时间更新
+//	    			car.setUser(null);
+//	    			car.setStarttime(null);
+//	    			car.setEndtime(null);
+//	    			applicationContext.getBean(TblCarMapper.class).updateByPrimaryKey(car);
+//	    			
+//	    			// 更新流水
+//					final TblBill bill = new TblBill();
+//					bill.setId(billId);
+//					bill.setRecordId(recordId);
+//					bill.setAmount(amount);
+//					bill.setType(BILL_PAY_TYPE);
+//					bill.setCustomerId(customerId);
+//					bill.setTime(new Date());
+//					bill.setRecordId(recordId);
+//					if (account.getAmount() < EACH_HOUR_PRICE) {
+//						bill.setStatus(NOT_PAY_STATUS);
+//					} else {
+//						bill.setStatus(PAY_TYPE);
+//					}
+//
+//					applicationContext.getBean(TblBillMapper.class).insert(bill);
+//				}
+//	    }
+//        
+//    }
 
 }

@@ -44,7 +44,9 @@ public class CartController {
     /**
 	 * 管理员紧急关锁
 	 * @return
-	 * localhost:8084/manage/urgent/lock?phoneNum=13828494261&date=2018-01-30 20:49:22
+	 * localhost:8084/manage/urgent/lock
+	 * phoneNum=13828494261
+	 * date=2018-01-30 20:49:22
 	 */
     @RequestMapping(value = "/manage/urgent/lock/", method = RequestMethod.POST)
 	@ResponseBody
@@ -58,6 +60,49 @@ public class CartController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+    
+    
+    
+    /**
+	 * 管理员紧急关锁并返回用户20元
+	 * @return
+	 * localhost:8084/manage/urgent/refund
+	 * phoneNum=13828494261&date=2018-01-30 20:49:22
+	 */
+    @RequestMapping(value = "/manage/urgent/refund/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult manageUrgentRefund(
+			@RequestBody String parameters
+			) throws Exception {
+		try {
+			return service.manageUrgentRefund(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
+    
+    
+    
+    /**
+	 *定时给用户关锁
+	 * @return
+	 * localhost:8084/auto/lock
+	 */
+    @RequestMapping(value = "/auto/lock", method = RequestMethod.GET)
+	@ResponseBody
+	public void autoLock() throws Exception {
+			service.autoLock();
+	}
+    
+    
+    
+    
+    
+    
+    
     
     
     /**
@@ -142,10 +187,7 @@ public class CartController {
 		}
 	}
 	
-	
-	
-	
-	
+
 	
 	/**
 	 * 开锁失败后，需要重置车的状态并删除记录
@@ -199,7 +241,6 @@ public class CartController {
 	@RequestMapping(value = "/use/hold", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult holdCartByCustomerId(@RequestBody String parameters) throws Exception {
-
 		try {
 			return service.holdCartByCustomerId(parameters);
 		} catch (Exception e) {

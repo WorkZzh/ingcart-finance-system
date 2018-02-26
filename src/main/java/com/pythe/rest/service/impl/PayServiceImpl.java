@@ -1,5 +1,6 @@
 package com.pythe.rest.service.impl;
 
+import java.io.File;
 import java.util.Date;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -494,6 +495,54 @@ public class PayServiceImpl implements PayService {
 		System.out.println("=======================================> order query : " + str);
 		
 		return (str);
+	}
+	
+	
+	
+	@Override
+	public PytheResult refundByOrderInWX(String url) {
+
+		JSONObject json = JSONObject.parseObject(url);
+		
+		String appid = WX_APPID;// appid
+		String mch_id = WX_MCH_ID;// 微信支付商户号
+		String nonce_str = FactoryUtils.getUUID();// 随机码
+		String sign = "";
+		String out_trade_no  = json.getString("out_trade_no");
+		String out_refund_no = FactoryUtils.getUUID();
+		String total_fee = json.getString("total_fee");
+		String refund_fee = json.getString("refund_fee");
+		String op_user_id = WX_MCH_ID;
+		 //sign
+		 SortedMap<String, String> params = new TreeMap<String, String>();
+		 params.put("appid", appid);
+		 params.put("mch_id", mch_id);
+		 params.put("nonce_str", nonce_str);
+		 params.put("out_trade_no", out_trade_no);
+		 params.put("out_refund_no", out_refund_no);
+		 params.put("out_trade_no", out_trade_no);
+		 params.put("total_fee", total_fee);
+		 params.put("refund_fee", refund_fee);
+		 params.put("op_user_id", op_user_id);
+
+		// 1第一次签名
+		sign = FactoryUtils.getSign(params, WX_KEY);
+		// 参数xml化
+		String xmlParams = FactoryUtils.parseString2Xml(params, sign);
+		// 判断返回码
+		String str = "";
+		String xw_url = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+		try {
+			//resource/apiclient_cert.p12
+			//System.out.println("===============>我我我"+this.getClass().getClassLoader().getResource("resource/apiclient_cert.p12").getPath());
+			str = HttpClientUtil.doPostXmlSafely(xw_url, xmlParams, mch_id,
+					new File(this.getClass().getClassLoader().getResource("resource/apiclient_cert.p12").getPath()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return PytheResult.ok(str);
 	}
 
 }
