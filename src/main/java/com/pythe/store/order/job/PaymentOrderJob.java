@@ -48,7 +48,7 @@ public class PaymentOrderJob extends QuartzJobBean {
 	private static Integer NOT_PAY_STATUS = 0;
 	private static Integer PAY_TYPE = 1;
 	private static Integer CAR_FREE_STATUS = 0;
-	private static String url="http://localhost:8084/auto/lock";
+	private static String url="https://ingcart.com/auto/lock";
 	
 	
 
