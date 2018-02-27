@@ -147,9 +147,11 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		for (VAcountRecord vAcountRecord : result) {
 			JSONObject json = new JSONObject();
 			key = DateUtils.formatDate(vAcountRecord.getStopTime());
-			json.put("duration", DateUtils.formatDateToHour2Minute(vAcountRecord.getStartTime()) +"-"+DateUtils.formatDateToHour2Minute(vAcountRecord.getStopTime()));
+			//json.put("duration", DateUtils.formatDateToHour2Minute(vAcountRecord.getStartTime()) +"-"+DateUtils.formatDateToHour2Minute(vAcountRecord.getStopTime()));
+			json.put("duration", "行程结束");
 			json.put("billId", vAcountRecord.getBillId());
-			json.put("minute", DateUtils.minusForPartHour(vAcountRecord.getStopTime(),vAcountRecord.getStartTime()));
+			//json.put("minute", DateUtils.minusForPartHour(vAcountRecord.getStopTime(),vAcountRecord.getStartTime()));
+			json.put("minute",null);
 			json.put("amount", vAcountRecord.getAmount());
 			if (!map.containsKey(key)) {
 				list = new LinkedList<JSONObject>();

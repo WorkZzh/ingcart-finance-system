@@ -120,7 +120,7 @@ public class CartController {
     
     
 //    /**
-//	 *开锁
+//	 *扫描跳转
 //	 * @return
 //	 */
 //	@RequestMapping(value = "/unlock", method = RequestMethod.GET)
