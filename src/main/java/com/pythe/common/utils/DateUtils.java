@@ -20,14 +20,15 @@ public class DateUtils {
 	public static final SimpleDateFormat TIME_FORMAT_ = new SimpleDateFormat("yyyyMMddHHmmss");
 	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	public static final SimpleDateFormat DATE_FORMAT_Hour_Minue = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-	
+
 	public static final SimpleDateFormat HOUR_MINUE_FORMAT = new SimpleDateFormat("HH:mm");
-	
+
 	public static final SimpleDateFormat DATEKEY_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("MMddHHmmss");
 
 	/**
 	 * 判断一个时间是否在另一个时间之前
+	 * 
 	 * @param time1
 	 *            第一个时间
 	 * @param time2
@@ -93,8 +94,7 @@ public class DateUtils {
 		}
 		return 0;
 	}
-	
-	
+
 	/**
 	 * 计算时间差值（单位为秒）
 	 * 
@@ -104,16 +104,16 @@ public class DateUtils {
 	 *            时间2
 	 * @return 差值为多少分钟
 	 */
-	public static int minusForPartHour(Date datetime1 , Date datetime2) {
+	public static int minusForPartHour(Date datetime1, Date datetime2) {
 		try {
 
 			long millisecond = datetime1.getTime() - datetime2.getTime();
 
-			double time = millisecond / 1000d/60d;
+			double time = millisecond / 1000d / 60d;
 			Double result = Math.ceil(time);
-			
+
 			return result.intValue();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -131,17 +131,17 @@ public class DateUtils {
 	 * 
 	 */
 	public static String getTimeDefference(String time1, String time2) throws ParseException {
-		
+
 		if (before(time1, time2)) {
 			return null;
 		}
-		
+
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		Date datetime1 = TIME_FORMAT.parse(time1);
 		Date datetime2 = TIME_FORMAT.parse(time2);
-		
-		//System.out.println(new Timestamp(System.currentTimeMillis()));
+
+		// System.out.println(new Timestamp(System.currentTimeMillis()));
 
 		long l = datetime1.getTime() - datetime2.getTime();
 
@@ -168,7 +168,7 @@ public class DateUtils {
 			m = "0" + min;
 		if (second < 10)
 			s = "0" + second;
-	
+
 		return (d + ":" + h + ":" + m + ":" + s);
 	}
 
@@ -194,8 +194,7 @@ public class DateUtils {
 	public static String getTodayDate() {
 		return DATE_FORMAT.format(new Date());
 	}
-	
-	
+
 	/**
 	 * 获取当天日期（yyyy-MM-dd HH-ss）
 	 * 
@@ -230,8 +229,7 @@ public class DateUtils {
 	public static String formatDate(Date date) {
 		return DATE_FORMAT.format(date);
 	}
-	
-	
+
 	/**
 	 * 格式化日期（HH:mm）
 	 * 
@@ -242,8 +240,6 @@ public class DateUtils {
 	public static String formatDateToHour2Minute(Date date) {
 		return HOUR_MINUE_FORMAT.format(date);
 	}
-	
-	
 
 	/**
 	 * 格式化时间（yyyy-MM-dd HH:mm:ss）
@@ -255,10 +251,7 @@ public class DateUtils {
 	public static String formatTime(Date date) {
 		return TIME_FORMAT.format(date);
 	}
-	
-	
-	
-	
+
 	/**
 	 * 格式化时间（yyyyMMddHHmmss）
 	 * 
@@ -269,7 +262,6 @@ public class DateUtils {
 	public static String formatTimeByNumber(Date date) {
 		return TIME_FORMAT_.format(date);
 	}
-	
 
 	/**
 	 * 解析时间字符串
@@ -296,7 +288,7 @@ public class DateUtils {
 	public static String formatDateKey(Date date) {
 		return DATEKEY_FORMAT.format(date);
 	}
-	
+
 	/**
 	 * 格式化日期key
 	 * 
@@ -336,79 +328,83 @@ public class DateUtils {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHMM");
 		return simpleDateFormat.format(date);
 	}
-	
-	
-    /**
-     * 判断当前日期是星期几
-     */
-	 public static int todayForWeek() throws Exception {
-	  //SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-	  Calendar c = Calendar.getInstance();
-	  //c.setTime(format.parse(pTime));
-	  c.setTime(new Date());
-	  int dayForWeek = 0;
-	  if(c.get(Calendar.DAY_OF_WEEK) == 1){
-	   dayForWeek = 7;
-	  }else{
-	   dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
-	  }
-	  return dayForWeek;
-	 }
-	 
-	 
-	 
-	    /**
-	     * 判断当前日期是星期几
-	     */
-		 public static String todayForWeekByString() throws Exception {
-		  //SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		  Calendar c = Calendar.getInstance();
-		  //c.setTime(format.parse(pTime));
-		  c.setTime(new Date());
-		  int dayForWeek = 0;
-		  if(c.get(Calendar.DAY_OF_WEEK) == 1){
-		   dayForWeek = 7;
-		  }else{
-		   dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
-		  }
-		  
-		  
-		  switch (dayForWeek)
-  		{
-	    		case 1:
-	    		{
-	    			return "周一";
-	    		}
-	    		case 2:
-	    		{
-	    			return "周二";
-	    		}
-	    		case 3:
-	    		{
-	    			return "周三";
-	    		}
-	    		case 4:
-	    		{
-	    			return "周四";
-	    		}
-	    		case 5:
-	    		{
-	    			return "周五";
-	    		}
-	    		case 6:
-	    		{
-	    			return "周六";
-	    		}
-	    		case 7:
-	    		{
-	    			return "周日";
-	    		}
-  			default :
-  			{
-  				return null;
-  			}
-		  
-		 }
-		 }
- 
+
+	/**
+	 * 判断当前日期是星期几
+	 */
+	public static int todayForWeek() throws Exception {
+		// SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar c = Calendar.getInstance();
+		// c.setTime(format.parse(pTime));
+		c.setTime(new Date());
+		int dayForWeek = 0;
+		if (c.get(Calendar.DAY_OF_WEEK) == 1) {
+			dayForWeek = 7;
+		} else {
+			dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+		}
+		return dayForWeek;
+	}
+
+	public static String toHourMinute(long minutes) {
+		String str = "";
+		Double hour = Math.floor(minutes / 60);
+		if (hour <= 9l) {
+			str = str + "0" + hour.intValue();
+		} else {
+			str = str + hour.intValue();
+		}
+		long mi = minutes % 60l;
+		if (mi < 9l) {
+			str = str + ":" + "0" + mi;
+		} else {
+			str = str + ":" + mi;
+		}
+		return str;
+	}
+
+	/**
+	 * 判断当前日期是星期几
+	 */
+	public static String todayForWeekByString() throws Exception {
+		// SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar c = Calendar.getInstance();
+		// c.setTime(format.parse(pTime));
+		c.setTime(new Date());
+		int dayForWeek = 0;
+		if (c.get(Calendar.DAY_OF_WEEK) == 1) {
+			dayForWeek = 7;
+		} else {
+			dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+		}
+
+		switch (dayForWeek) {
+		case 1: {
+			return "周一";
+		}
+		case 2: {
+			return "周二";
+		}
+		case 3: {
+			return "周三";
+		}
+		case 4: {
+			return "周四";
+		}
+		case 5: {
+			return "周五";
+		}
+		case 6: {
+			return "周六";
+		}
+		case 7: {
+			return "周日";
+		}
+		default: {
+			return null;
+		}
+
+		}
+	}
+
 }

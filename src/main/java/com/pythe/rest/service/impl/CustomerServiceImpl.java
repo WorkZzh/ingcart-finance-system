@@ -157,7 +157,7 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer type = customerInformation.getInteger("type");
 		VCustomerExample vCustomerExample = new VCustomerExample();
 		String openId = customerInformation.getString("openId");
-		vCustomerExample.createCriteria().andOpenIdEqualTo(openId);
+		vCustomerExample.createCriteria().andXcxOpenIdEqualTo(openId);
 		// if (type == 0) {
 		// }
 		// else {

@@ -71,6 +71,12 @@ public class CartServiceImpl implements CartService {
 
 	@Value("${PAY_TYPE}")
 	private Integer PAY_TYPE;
+	
+	
+	@Value("${GRADE_FEE}")
+	private String GRADE_FEE;
+	
+	
 
 	// CAR
 	@Value("${CAR_FREE_STATUS}")
@@ -562,7 +568,8 @@ public class CartServiceImpl implements CartService {
 		Date startTime = car.getStarttime();
 		long time = currentTime.getTime() - startTime.getTime();
 		JSONObject json = new JSONObject();
-		json.put("time", time / 1000l / 60l);
+		
+		json.put("time", DateUtils.toHourMinute(time / 1000l / 60l));
 		return PytheResult.ok(json);
 	}
 
@@ -881,7 +888,7 @@ public class CartServiceImpl implements CartService {
 		// 检测该园区是否符合收费标准
 		String level = null;
 		if (null == car.getDescription()) {
-			level = "A";
+			level = GRADE_FEE;
 		} else {
 			level = car.getDescription();
 		}

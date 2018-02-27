@@ -11,6 +11,8 @@ public class VCustomer {
 
     private String name;
 
+    private String description;
+
     private Integer level;
 
     private Double amount;
@@ -37,7 +39,7 @@ public class VCustomer {
 
     private Long qrId;
 
-    private String description;
+    private String xcxOpenId;
 
     private Double giving;
 
@@ -73,6 +75,14 @@ public class VCustomer {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
     }
 
     public Integer getLevel() {
@@ -179,12 +189,12 @@ public class VCustomer {
         this.qrId = qrId;
     }
 
-    public String getDescription() {
-        return description;
+    public String getXcxOpenId() {
+        return xcxOpenId;
     }
 
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
+    public void setXcxOpenId(String xcxOpenId) {
+        this.xcxOpenId = xcxOpenId == null ? null : xcxOpenId.trim();
     }
 
     public Double getGiving() {

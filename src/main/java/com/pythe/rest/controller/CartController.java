@@ -307,8 +307,7 @@ public class CartController {
     @RequestMapping(value = "/use/car/time", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult selectUseCarTimeByCarId
-	(@RequestParam(required = true,value = "carId") String carId
-			) {
+	(@RequestParam(required = true,value = "carId") String carId) {
 		try {
 			return service.selectUseCarTimeByCarId(carId);
 		} catch (Exception e) {
