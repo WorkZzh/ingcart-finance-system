@@ -44,7 +44,7 @@ public class ManagerController {
      */
     @RequestMapping(value = "/count/car/condition", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult countCarCondition(			@RequestParam(defaultValue="1") Integer pageNum,
+	public PytheResult countCarCondition(	@RequestParam(defaultValue="1") Integer pageNum,
 			@RequestParam(defaultValue="10") Integer pageSize	){
     	try {
 			return service.countCarCondition(pageNum,pageSize);
@@ -120,6 +120,51 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	
+	/**
+	 * 更新车的位置
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/update/car/loc", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult updateLocation(@RequestBody String parameters) throws Exception {
+		try {
+			return service.updateLocation(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+
+	
+	
+	
+	
+	
+	
+	/**
+	 * 插入一个管理员
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/insert/manager/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult insertManager(@RequestBody String parameters) throws Exception {
+		try {
+			return service.insertManager(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
 	
 	@RequestMapping(value = "/select/attraction/car/", method = RequestMethod.POST)
 	@ResponseBody

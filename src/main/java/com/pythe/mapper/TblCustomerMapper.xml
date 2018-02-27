@@ -11,6 +11,8 @@
     <result column="level" property="level" jdbcType="INTEGER" />
     <result column="created" property="created" jdbcType="TIMESTAMP" />
     <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="xcx_open_id" property="xcxOpenId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -71,7 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, open_id, union_id, phone_num, name, description, level, created, type
+    id, open_id, union_id, phone_num, name, description, level, created, type, status, 
+    xcx_open_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblCustomerExample" >
     select
@@ -106,12 +109,12 @@
   <insert id="insert" parameterType="com.pythe.pojo.TblCustomer" >
     insert into tbl_customer (id, open_id, union_id, 
       phone_num, name, description, 
-      level, created, type
-      )
+      level, created, type, 
+      status, xcx_open_id)
     values (#{id,jdbcType=BIGINT}, #{openId,jdbcType=VARCHAR}, #{unionId,jdbcType=VARCHAR}, 
       #{phoneNum,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
-      #{level,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}
-      )
+      #{level,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{xcxOpenId,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblCustomer" >
     insert into tbl_customer
@@ -143,6 +146,12 @@
       <if test="type != null" >
         type,
       </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="xcxOpenId != null" >
+        xcx_open_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -171,6 +180,12 @@
       </if>
       <if test="type != null" >
         #{type,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="xcxOpenId != null" >
+        #{xcxOpenId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -210,6 +225,12 @@
       <if test="record.type != null" >
         type = #{record.type,jdbcType=INTEGER},
       </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.xcxOpenId != null" >
+        xcx_open_id = #{record.xcxOpenId,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -225,7 +246,9 @@
       description = #{record.description,jdbcType=VARCHAR},
       level = #{record.level,jdbcType=INTEGER},
       created = #{record.created,jdbcType=TIMESTAMP},
-      type = #{record.type,jdbcType=INTEGER}
+      type = #{record.type,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      xcx_open_id = #{record.xcxOpenId,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -257,6 +280,12 @@
       <if test="type != null" >
         type = #{type,jdbcType=INTEGER},
       </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="xcxOpenId != null" >
+        xcx_open_id = #{xcxOpenId,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -269,7 +298,9 @@
       description = #{description,jdbcType=VARCHAR},
       level = #{level,jdbcType=INTEGER},
       created = #{created,jdbcType=TIMESTAMP},
-      type = #{type,jdbcType=INTEGER}
+      type = #{type,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      xcx_open_id = #{xcxOpenId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

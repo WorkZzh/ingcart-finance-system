@@ -20,8 +20,18 @@ public class TblMaintenance {
     private Double latitude;
 
     private String annotation;
+    
+    private String time;
 
-    public Long getId() {
+    public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public Long getId() {
         return id;
     }
 

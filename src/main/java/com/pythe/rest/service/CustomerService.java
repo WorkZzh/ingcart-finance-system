@@ -20,6 +20,11 @@ public interface CustomerService  {
 
 	PytheResult selectCustomerByPhoneNum(String parameters);
 
+	PytheResult registerByManager(String parameters);
+
+	PytheResult registerCheckByManger(String parameters);
+
+
 //	PytheResult userLoginByVerificationCode(String parameters);
     
 	

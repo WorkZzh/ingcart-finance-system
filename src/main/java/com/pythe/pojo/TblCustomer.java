@@ -21,6 +21,10 @@ public class TblCustomer {
 
     private Integer type;
 
+    private Integer status;
+
+    private String xcxOpenId;
+
     public Long getId() {
         return id;
     }
@@ -91,5 +95,21 @@ public class TblCustomer {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getXcxOpenId() {
+        return xcxOpenId;
+    }
+
+    public void setXcxOpenId(String xcxOpenId) {
+        this.xcxOpenId = xcxOpenId == null ? null : xcxOpenId.trim();
     }
 }

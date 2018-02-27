@@ -5,6 +5,7 @@
     <id column="level" property="level" jdbcType="VARCHAR" />
     <result column="price" property="price" jdbcType="DOUBLE" />
     <result column="giving" property="giving" jdbcType="DOUBLE" />
+    <result column="annotation" property="annotation" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -65,7 +66,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    level, price, giving
+    level, price, giving, annotation
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblPriceExample" >
     select
@@ -98,10 +99,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblPrice" >
-    insert into tbl_price (level, price, giving
-      )
-    values (#{level,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, #{giving,jdbcType=DOUBLE}
-      )
+    insert into tbl_price (level, price, giving, 
+      annotation)
+    values (#{level,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, #{giving,jdbcType=DOUBLE}, 
+      #{annotation,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblPrice" >
     insert into tbl_price
@@ -115,6 +116,9 @@
       <if test="giving != null" >
         giving,
       </if>
+      <if test="annotation != null" >
+        annotation,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="level != null" >
@@ -125,6 +129,9 @@
       </if>
       <if test="giving != null" >
         #{giving,jdbcType=DOUBLE},
+      </if>
+      <if test="annotation != null" >
+        #{annotation,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -146,6 +153,9 @@
       <if test="record.giving != null" >
         giving = #{record.giving,jdbcType=DOUBLE},
       </if>
+      <if test="record.annotation != null" >
+        annotation = #{record.annotation,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -155,7 +165,8 @@
     update tbl_price
     set level = #{record.level,jdbcType=VARCHAR},
       price = #{record.price,jdbcType=DOUBLE},
-      giving = #{record.giving,jdbcType=DOUBLE}
+      giving = #{record.giving,jdbcType=DOUBLE},
+      annotation = #{record.annotation,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -169,13 +180,17 @@
       <if test="giving != null" >
         giving = #{giving,jdbcType=DOUBLE},
       </if>
+      <if test="annotation != null" >
+        annotation = #{annotation,jdbcType=VARCHAR},
+      </if>
     </set>
     where level = #{level,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.pythe.pojo.TblPrice" >
     update tbl_price
     set price = #{price,jdbcType=DOUBLE},
-      giving = #{giving,jdbcType=DOUBLE}
+      giving = #{giving,jdbcType=DOUBLE},
+      annotation = #{annotation,jdbcType=VARCHAR}
     where level = #{level,jdbcType=VARCHAR}
   </update>
 </mapper>

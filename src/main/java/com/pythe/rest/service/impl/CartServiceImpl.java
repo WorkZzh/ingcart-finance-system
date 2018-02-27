@@ -798,14 +798,12 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public String bluetoothDecrypt(String parameter) {
-
 		JSONObject j = JSONObject.parseObject(parameter);
 		String id = j.getString("carId");
 		String content = j.getString("content");
 
 		TblCar car = carMapper.selectByPrimaryKey(id);
 		String decryptedStr = DecodeUtils.bluetoothDecrypt(content, car.getLockKey());
-
 		return decryptedStr;
 	}
 
@@ -874,10 +872,6 @@ public class CartServiceImpl implements CartService {
 		example2.createCriteria().andQrIdEqualTo(qrId);
 		List<TblCar> carList2 = carMapper.selectByExample(example2);
 
-		// 改变检测费用情况
-		// if (account.getAmount() < EACH_HOUR_PRICE) {
-		// return PytheResult.build(300, "余额不足前往充值", account.getAmount());
-		// }
 
 		if (carList2.isEmpty()) {
 			PytheResult.build(100, "该车信息尚未录入，暂无法使用");
@@ -885,16 +879,28 @@ public class CartServiceImpl implements CartService {
 		TblCar car = carList2.get(0);
 
 		// 检测该园区是否符合收费标准
-		TblPrice price = priceMapper.selectByPrimaryKey(car.getDescription());
-
-		if (account.getAmount() < price.getPrice()) {
-			return PytheResult.build(300, "余额不满足此次旅程费用，点击确定前往充值", account.getAmount());
+		String level = null;
+		if (null == car.getDescription()) {
+			level = "A";
+		} else {
+			level = car.getDescription();
 		}
+		TblPrice price = priceMapper.selectByPrimaryKey(level);
+
+		//300
+		if (account.getAmount() < price.getPrice()) {
+			JSONObject json =new JSONObject();
+			json.put("amount",account.getAmount() );
+			json.put("annotation",JsonUtils.jsonToList(price.getAnnotation(), String.class));
+			return PytheResult.build(300, "余额不满足此次旅程费用，请前往充值", json);
+		}
+		
 
 		Integer status = car.getStatus();
 		switch (status) {
 		case 1: {
-			return PytheResult.build(400, "此车正在使用中");
+			//return PytheResult.build(400, "此车正在使用中");
+			return PytheResult.build(400, "该车已被预约使用中");
 		}
 		case 2: {
 			// 是否是该用户继续使用
@@ -1106,7 +1112,7 @@ public class CartServiceImpl implements CartService {
 			int tmp = time - 10;
 
 			if (tmp > 0) {
-				amount = 30d;
+				amount = customer.getPrice();
 				givingAmount = 20d;
 				// 前2分钟不算钱,所以这里要减去2
 				// if (time % 30 == 0) {
@@ -1160,18 +1166,12 @@ public class CartServiceImpl implements CartService {
 		bill.setTime(new Date());
 		bill.setRecordId(recordId);
 
-		new Thread() {
-			@Override
-			public void run() {
-				if (account.getAmount() < EACH_HOUR_PRICE) {
-					bill.setStatus(NOT_PAY_STATUS);
-				} else {
-					bill.setStatus(PAY_TYPE);
-				}
-				billMapper.insert(bill);
-			}
-		}.start();
-
+		if (account.getAmount() < amount) {
+			bill.setStatus(NOT_PAY_STATUS);
+		} else {
+			bill.setStatus(PAY_TYPE);
+		}
+		billMapper.insert(bill);
 		// 退回用户20元现金
 		TblBillExample example2 = new TblBillExample();
 		example2.createCriteria().andStatusEqualTo(1).andTypeEqualTo(BILL_CHARGE_TYPE).andCustomerIdEqualTo(customerId);
@@ -1245,7 +1245,7 @@ public class CartServiceImpl implements CartService {
 	public void autoLock() {
 		// TODO Auto-generated method stub
 
-		final Date date_ = DateUtils.parseTime(DateUtils.getTodayDate() + " 20:00:00");
+		final Date date_ = DateUtils.parseTime(DateUtils.getTodayDate() + " 23:59:00");
 
 		VCustomerExample example = new VCustomerExample();
 		example.createCriteria().andCarStatusEqualTo(CAR_USER_STATUS);
@@ -1259,8 +1259,7 @@ public class CartServiceImpl implements CartService {
 			Double amount = null;
 			Double givingAmount = 0d;
 
-			
-			//因为用户在使用所以车一定是存在的
+			// 因为用户在使用所以车一定是存在的
 			car = carMapper.selectByPrimaryKey(carId);
 			// 更新停止时间和停止位置和记录用的钱
 			time = DateUtils.minusForPartHour(date_, car.getStarttime());
@@ -1290,14 +1289,15 @@ public class CartServiceImpl implements CartService {
 					recordMapper.updateByPrimaryKey(line);
 				}
 			}.start();
-			
-			//更新车的信息
+
+			// 更新车的信息
 			car.setId(customer.getCarId());
 			car.setStatus(CAR_FREE_STATUS);
 			car.setStarttime(null);
 			car.setEndtime(null);
 			car.setUser(null);
-			car.setRecordid(null);;
+			car.setRecordid(null);
+			;
 			carMapper.updateByPrimaryKey(car);
 
 			// 生成账单
@@ -1318,14 +1318,14 @@ public class CartServiceImpl implements CartService {
 			bill.setTime(new Date());
 			bill.setRecordId(recordId);
 
-			//amount就是那个钱
+			// amount就是那个钱
 			if (account.getAmount() < amount) {
 				bill.setStatus(NOT_PAY_STATUS);
 			} else {
 				bill.setStatus(PAY_TYPE);
 			}
 			billMapper.insert(bill);
-			
+
 		}
 
 	}

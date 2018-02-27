@@ -293,6 +293,76 @@ public class TblPriceExample {
             addCriterion("giving not between", value1, value2, "giving");
             return (Criteria) this;
         }
+
+        public Criteria andAnnotationIsNull() {
+            addCriterion("annotation is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationIsNotNull() {
+            addCriterion("annotation is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationEqualTo(String value) {
+            addCriterion("annotation =", value, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationNotEqualTo(String value) {
+            addCriterion("annotation <>", value, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationGreaterThan(String value) {
+            addCriterion("annotation >", value, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationGreaterThanOrEqualTo(String value) {
+            addCriterion("annotation >=", value, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationLessThan(String value) {
+            addCriterion("annotation <", value, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationLessThanOrEqualTo(String value) {
+            addCriterion("annotation <=", value, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationLike(String value) {
+            addCriterion("annotation like", value, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationNotLike(String value) {
+            addCriterion("annotation not like", value, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationIn(List<String> values) {
+            addCriterion("annotation in", values, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationNotIn(List<String> values) {
+            addCriterion("annotation not in", values, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationBetween(String value1, String value2) {
+            addCriterion("annotation between", value1, value2, "annotation");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnnotationNotBetween(String value1, String value2) {
+            addCriterion("annotation not between", value1, value2, "annotation");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

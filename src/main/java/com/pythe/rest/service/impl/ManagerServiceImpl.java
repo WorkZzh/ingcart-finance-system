@@ -15,6 +15,7 @@ import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.FactoryUtils;
 import com.pythe.common.utils.JsonUtils;
 import com.pythe.mapper.TblCarMapper;
+import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblDistributionMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
 import com.pythe.mapper.TblPriceMapper;
@@ -22,6 +23,8 @@ import com.pythe.mapper.TblVersionMapper;
 import com.pythe.mapper.VCustomerMapper;
 import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
+import com.pythe.pojo.TblCustomer;
+import com.pythe.pojo.TblCustomerExample;
 import com.pythe.pojo.TblDistribution;
 import com.pythe.pojo.TblDistributionExample;
 import com.pythe.pojo.TblMaintenance;
@@ -57,6 +60,11 @@ public class ManagerServiceImpl implements ManagerService{
 	
 	@Autowired
 	private TblMaintenanceMapper maintenanceMapper;
+	
+	@Autowired
+	private TblCustomerMapper customerMapper;
+	
+	
 
 	@Override
 	public PytheResult updateVersion(String parameters) {
@@ -280,8 +288,22 @@ public class ManagerServiceImpl implements ManagerService{
 		if (maintenanceList.isEmpty()) {
 			return PytheResult.build(400, "暂无客户维修反馈");
 		}
+		
+		for (TblMaintenance tblMaintenance : maintenanceList) {
+			List<String> type = JsonUtils.jsonToList(tblMaintenance.getType(), String.class);
+			String str = "";
+			for (String string : type) {
+				str = str +string+" ";
+			}
+			tblMaintenance.setType(str);
+			tblMaintenance.setTime(DateUtils.formatTime(tblMaintenance.getCallTime()));
+			tblMaintenance.setCallTime(null);
+		}
 		return PytheResult.ok(maintenanceList);
 	}
+	
+	
+	
 
 	@Override
 	public PytheResult selectPriceLevel() {
@@ -298,6 +320,78 @@ public class ManagerServiceImpl implements ManagerService{
 		maintenance.setStatus(1);
 		maintenanceMapper.updateByPrimaryKeyWithBLOBs(maintenance);
 		return PytheResult.ok("修改成功");
+	}
+
+	@Override
+	public PytheResult insertManager(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		String phoneNum = information.getString("phoneNum");
+		VCustomerExample example5 = new VCustomerExample();
+		example5.createCriteria().andPhoneNumEqualTo(phoneNum);
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example5);
+		
+		if (customerList.isEmpty()) {
+			TblCustomer newCustomer = new TblCustomer();
+			newCustomer.setLevel(1);
+			newCustomer.setPhoneNum(phoneNum);
+			newCustomer.setCreated(new Date());
+			newCustomer.setType(0);
+			customerMapper.insert(newCustomer);
+			return PytheResult.ok("添加成功");
+		}
+		
+		VCustomer customer = customerList.get(0);
+		if (1!=customer.getLevel() && 2!=customer.getLevel()) {
+			TblCustomer newCustomer = new TblCustomer();
+			newCustomer.setId(customer.getCustomerId());
+			newCustomer.setLevel(1);
+			newCustomer.setType(0);
+			newCustomer.setCreated(new Date());
+			customerMapper.updateByPrimaryKeySelective(newCustomer);
+			
+			
+			
+			return PytheResult.ok("添加成功");
+		}else{
+			return PytheResult.build(400, "已添加，无需重复添加");
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+
+		
+		
+	}
+
+	@Override
+	public PytheResult updateLocation(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		Long qrId = information.getLong("qrId");
+		Double longitude = information.getDouble("longitude");
+		Double latitude = information.getDouble("latitude");
+		
+		TblCarExample carExample = new TblCarExample();
+		carExample.createCriteria().andQrIdEqualTo(qrId);
+		List<TblCar> cars = carMapper.selectByExample(carExample);
+		
+		if (cars.isEmpty()) {
+			PytheResult.build(400, "车信息不存在或编码输入不正确");
+		}
+		
+		TblCar car =cars.get(0);
+		car.setLatitude(latitude);
+		car.setLongitude(longitude);
+		// car.setRecordid(recordId); 因为第一次开锁时候就已经记录的该车属于那条记录
+		carMapper.updateByPrimaryKey(car);
+		
+		return PytheResult.ok("更新成功");
 	}
 
 

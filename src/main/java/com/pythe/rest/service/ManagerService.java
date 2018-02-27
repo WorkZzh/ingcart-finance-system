@@ -32,6 +32,10 @@ public interface ManagerService {
 
 	PytheResult updateMaintenanceStatus(Long id);
 
+	PytheResult insertManager(String parameters);
+
+	PytheResult updateLocation(String parameters);
+
 
 
 

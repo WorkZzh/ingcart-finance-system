@@ -7,6 +7,8 @@ public class TblPrice {
 
     private Double giving;
 
+    private String annotation;
+
     public String getLevel() {
         return level;
     }
@@ -29,5 +31,13 @@ public class TblPrice {
 
     public void setGiving(Double giving) {
         this.giving = giving;
+    }
+
+    public String getAnnotation() {
+        return annotation;
+    }
+
+    public void setAnnotation(String annotation) {
+        this.annotation = annotation == null ? null : annotation.trim();
     }
 }

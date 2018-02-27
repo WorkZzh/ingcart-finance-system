@@ -56,6 +56,9 @@ public class CustomerController {
 	}
 	
 	
+	
+	
+	
 	/**
 	 * 客户注册
 	 * @return
@@ -73,6 +76,39 @@ public class CustomerController {
 	}
 	
 	
+	
+	/**
+	 * 检查管理员是否已存在
+	 * @return
+	 */
+	@RequestMapping(value = "/manage/register/check/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult registerCheckByManger(@RequestBody String parameters)
+	{
+		try {
+			return customerService.registerCheckByManger(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	/**
+	 * 管理员注册
+	 * @return
+	 */
+	@RequestMapping(value = "/manage/register", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult registerByManager(@RequestBody String parameters)
+	{
+		try {
+			return customerService.registerByManager(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 	
 	
 	/**

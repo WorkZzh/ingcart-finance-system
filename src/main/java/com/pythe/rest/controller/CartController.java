@@ -22,24 +22,8 @@ public class CartController {
 	@Autowired
 	private CartService service;
 	
-    /**
-	 *开锁检测
-	 * @return
-	 * localhost:8084/rest/unlock/prepare?customerId=9&carId=C8:FD:19:92:17:29
-	 */
-    @RequestMapping(value = "/unlock/prepare", method = RequestMethod.GET)
-	@ResponseBody
-	public PytheResult prepareUnlock(
-			@RequestParam(required = true,value = "customerId") Long customerId,
-			@RequestParam(required = true,value = "carId") String carId) throws Exception {
-		try {
-			return service.prepareUnlock(customerId,carId);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
-    
+
+//    
     
     /**
 	 * 管理员紧急关锁
@@ -83,9 +67,6 @@ public class CartController {
 	}
     
     
-    
-    
-    
     /**
 	 *定时给用户关锁
 	 * @return
@@ -96,11 +77,6 @@ public class CartController {
 	public void autoLock() throws Exception {
 			service.autoLock();
 	}
-    
-    
-    
-    
-    
     
     
     
@@ -126,7 +102,7 @@ public class CartController {
     /**
 	 *开锁检测_IOS
 	 * @return
-	 * localhost:8084/rest/unlock/prepare?customerId=9&carId=C8:FD:19:92:17:29
+	 * localhost:8084/rest/unlock/prepare?customerId=9&qrId=100001
 	 */
     @RequestMapping(value = "/qr/unlock/prepare", method = RequestMethod.GET)
 	@ResponseBody
@@ -172,7 +148,6 @@ public class CartController {
 	
 	
 	
-	
     /**
 	 *关锁
 	 */
@@ -205,19 +180,19 @@ public class CartController {
 	
 	
 	
-    /**
-	 *管理员关锁
-	 */
-	@RequestMapping(value = "/manager/lock", method = RequestMethod.POST)
-	@ResponseBody
-	public PytheResult managerLock(@RequestBody String parameters) throws Exception {
-		try {
-			return service.managerLock(parameters);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
+//    /**
+//	 *管理员关锁
+//	 */
+//	@RequestMapping(value = "/manager/lock", method = RequestMethod.POST)
+//	@ResponseBody
+//	public PytheResult managerLock(@RequestBody String parameters) throws Exception {
+//		try {
+//			return service.managerLock(parameters);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+//		}
+//	}
 	
     /**
 	 *确认结算

@@ -694,6 +694,136 @@ public class TblCustomerExample {
             addCriterion("type not between", value1, value2, "type");
             return (Criteria) this;
         }
+
+        public Criteria andStatusIsNull() {
+            addCriterion("status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusIsNotNull() {
+            addCriterion("status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusEqualTo(Integer value) {
+            addCriterion("status =", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusNotEqualTo(Integer value) {
+            addCriterion("status <>", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusGreaterThan(Integer value) {
+            addCriterion("status >", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("status >=", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusLessThan(Integer value) {
+            addCriterion("status <", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("status <=", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusIn(List<Integer> values) {
+            addCriterion("status in", values, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusNotIn(List<Integer> values) {
+            addCriterion("status not in", values, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusBetween(Integer value1, Integer value2) {
+            addCriterion("status between", value1, value2, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("status not between", value1, value2, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdIsNull() {
+            addCriterion("xcx_open_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdIsNotNull() {
+            addCriterion("xcx_open_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdEqualTo(String value) {
+            addCriterion("xcx_open_id =", value, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdNotEqualTo(String value) {
+            addCriterion("xcx_open_id <>", value, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdGreaterThan(String value) {
+            addCriterion("xcx_open_id >", value, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdGreaterThanOrEqualTo(String value) {
+            addCriterion("xcx_open_id >=", value, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdLessThan(String value) {
+            addCriterion("xcx_open_id <", value, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdLessThanOrEqualTo(String value) {
+            addCriterion("xcx_open_id <=", value, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdLike(String value) {
+            addCriterion("xcx_open_id like", value, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdNotLike(String value) {
+            addCriterion("xcx_open_id not like", value, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdIn(List<String> values) {
+            addCriterion("xcx_open_id in", values, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdNotIn(List<String> values) {
+            addCriterion("xcx_open_id not in", values, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdBetween(String value1, String value2) {
+            addCriterion("xcx_open_id between", value1, value2, "xcxOpenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andXcxOpenIdNotBetween(String value1, String value2) {
+            addCriterion("xcx_open_id not between", value1, value2, "xcxOpenId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
