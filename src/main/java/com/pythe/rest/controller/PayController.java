@@ -75,7 +75,7 @@ public class PayController {
 	 *微信确认
 	 * @return
 	 */
-	@RequestMapping(value = "/account/wxChargeConfirm", method = RequestMethod.POST)
+	@RequestMapping(value = "/wx/account/wxChargeConfirm", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult wxChargeConfirm(@RequestBody String parameters) throws Exception {
 
