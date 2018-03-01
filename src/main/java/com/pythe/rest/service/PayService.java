@@ -11,7 +11,7 @@ public interface PayService {
 
 	PytheResult chargeForAccountInApp(String parameters) throws Exception;
 
-	String wxChargeConfirmInApp(String parameters) throws Exception;
+	PytheResult wxChargeConfirmInApp(String parameters) throws Exception;
 
 	PytheResult hiddleCharge();
 
