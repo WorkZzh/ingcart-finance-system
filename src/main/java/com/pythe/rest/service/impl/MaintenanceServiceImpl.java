@@ -72,7 +72,7 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		example3.createCriteria().andQrIdEqualTo(qrId);
 		List<TblMaintenance> maintenanceList = maintenanceMapper.selectByExampleWithBLOBs(example3);
 		if (!maintenanceList.isEmpty()) {
-			PytheResult.ok("该车已被报修过，已排工作人员前往维修");
+			return PytheResult.build(400,"该车已被报修过，已排工作人员前往维修");
 		}
 		
 		//看看车牌号是否存在
@@ -84,9 +84,9 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		}
 		
 		TblCar car = carList.get(0);
-		if(CAR_MAINTENCE_STATUS ==car.getStatus()){
-			return PytheResult.build(200, "报修成功");
-		}
+//		if(CAR_MAINTENCE_STATUS ==car.getStatus()){
+//			return PytheResult.build(200, "谢谢反馈");
+//		}
 		
 		//改变报修的状态码
 		car.setStatus(CAR_MAINTENCE_STATUS);
@@ -113,7 +113,7 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		
 		maintenanceMapper.insert(record);
 		
-		return PytheResult.ok("报修成功");
+		return PytheResult.ok("谢谢反馈");
 	}
 
 	@Override
@@ -125,8 +125,9 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		List<VAcountRecord> result = aCountRecordMapper.selectByExample(example);
 		
 		if (result.isEmpty()) {
-			PytheResult.ok("暂无任何行程记录");
+			PytheResult.build(400, "暂无任何行程记录");
 		}
+		
 		
 		String key =null;
 		LinkedList<JSONObject> list  =null;

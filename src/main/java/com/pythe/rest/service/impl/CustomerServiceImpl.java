@@ -136,18 +136,25 @@ public class CustomerServiceImpl implements CustomerService {
 			// return PytheResult.build(202, "抱歉，该小程序暂供管理员使用，如需使用请下载APP");
 		}
 		
-
 		//用户存在
 		VCustomer customer = customerList2.get(0);
 
 		//说明在APP和管理员工具上注册过，若需要免密码登录，需要加上xcxopenId
-			if (customer.getLevel()>=1 || customer.getType()>=1  ) {
-				TblCustomer record = new TblCustomer();
-				record.setXcxOpenId(openId);
-				TblCustomerExample example3 = new TblCustomerExample();
-				example3.createCriteria().andPhoneNumEqualTo(phoneNum);
-				customerMapper.updateByExampleSelective(record, example3);
-			}
+		//如果存在都会去更新openId
+//			if (customer.getLevel()>=1 || customer.getType()>=1  ) {
+//				TblCustomer record = new TblCustomer();
+//				record.setXcxOpenId(openId);
+//				TblCustomerExample example3 = new TblCustomerExample();
+//				example3.createCriteria().andPhoneNumEqualTo(phoneNum);
+//				customerMapper.updateByExampleSelective(record, example3);
+//			}
+		
+			TblCustomer record = new TblCustomer();
+			record.setXcxOpenId(openId);
+			TblCustomerExample example3 = new TblCustomerExample();
+			example3.createCriteria().andPhoneNumEqualTo(phoneNum);
+			customerMapper.updateByExampleSelective(record, example3);
+		
 			return PytheResult.ok(customer);
 	}
 

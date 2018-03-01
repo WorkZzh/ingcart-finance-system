@@ -216,21 +216,20 @@ public class PayServiceImpl implements PayService {
 
 		// 先改变amount的钱的金额
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
-		Double GIVING_ACCOUNT = null;
-
-		if (50 == inAmount) {
-			GIVING_ACCOUNT = 30d;
-			inAmount = inAmount + GIVING_ACCOUNT;
-			account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
-		} else if (100 == inAmount) {
-			GIVING_ACCOUNT = 80d;
-			inAmount = inAmount + GIVING_ACCOUNT;
-			account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
-		} else if (200 == inAmount) {
-			GIVING_ACCOUNT = 200d;
-			inAmount = inAmount + GIVING_ACCOUNT;
-			account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
-		}
+//		Double GIVING_ACCOUNT = null;
+//		if (50 == inAmount) {
+//			GIVING_ACCOUNT = 30d;
+//			inAmount = inAmount + GIVING_ACCOUNT;
+//			account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
+//		} else if (100 == inAmount) {
+//			GIVING_ACCOUNT = 80d;
+//			inAmount = inAmount + GIVING_ACCOUNT;
+//			account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
+//		} else if (200 == inAmount) {
+//			GIVING_ACCOUNT = 200d;
+//			inAmount = inAmount + GIVING_ACCOUNT;
+//			account.setGivingAmount(account.getGivingAmount() + GIVING_ACCOUNT);
+//		}
 
 		account.setAmount(account.getAmount() + inAmount);
 		account.setInAmount(account.getInAmount() + inAmount);

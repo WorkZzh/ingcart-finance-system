@@ -1434,7 +1434,7 @@ public class CartServiceImpl implements CartService {
 		}
 
 		// 前面10分钟不要钱
-		int tmp = time - 10;
+		int tmp = time - 2;
 
 		if (tmp > 0) {
 			amount = customer.getPrice();
