@@ -372,6 +372,22 @@ public class CartController {
 	}
 	
 	/**
+     * 查锁状态加密
+     */
+	@RequestMapping(value = "/checkLockStatus/encode", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult checkLockStatusEncode(@RequestBody String parameters) throws Exception {
+
+		try {
+			return service.checkLockStatusEncode(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	/**
 	 *记录车锁的设备UUID
 	 * @return
 	 */
