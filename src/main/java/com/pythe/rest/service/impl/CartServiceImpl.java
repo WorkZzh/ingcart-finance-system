@@ -1552,7 +1552,7 @@ public class CartServiceImpl implements CartService {
 
 		TblCar car = carMapper.selectByPrimaryKey(carId);
 
-		byte head[] = { 05, 14, 01, 01 };
+		byte head[] = { 05, 0x0E, 01, 01 };
 		byte passwordBytes[] = NumberUtils.parseHexArray2ByteArray(car.getLockPassword().split(","));
 		byte tokenBytes[] = NumberUtils.parseHexStr2Byte(token);
 		byte[] s = new byte[tokenBytes.length];
