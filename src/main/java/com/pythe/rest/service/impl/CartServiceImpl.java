@@ -1389,16 +1389,16 @@ public class CartServiceImpl implements CartService {
 		Double longitude = information.getDouble("longitude");
 		Double latitude = information.getDouble("latitude");
 		Long customerId = information.getLong("customerId");
-		String formId = information.getString("formId");
+		//String formId = information.getString("formId");
 
 		String carId = null;
-		if (null == information.getString("carId")) {
+		if (null!=information.getString("carId")) {
 			carId = information.getString("carId");
 		} else {
-			return PytheResult.build(400, "该车已结束，祝你旅途愉快");
+			return PytheResult.build(400, "该车已结束过，无需重复点击");
 		}
 		String recordId = information.getString("recordId");
-
+		
 		TblCar car = null;
 		// 车信息
 		// TblCar car = carMapper.selectByPrimaryKey(carId);
