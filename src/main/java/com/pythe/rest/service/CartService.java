@@ -53,5 +53,9 @@ public interface CartService {
 
 	void autoLock();
 
+	PytheResult lockHold(String parameters);
+
+	PytheResult customerUrgentLock(String parameters);
+
 
 }

@@ -140,7 +140,7 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 			json.put("duration", "行程结束");
 			json.put("billId", vAcountRecord.getBillId());
 			//json.put("minute", DateUtils.minusForPartHour(vAcountRecord.getStopTime(),vAcountRecord.getStartTime()));
-			json.put("minute",null);
+			json.put("minute","1");
 			json.put("amount", vAcountRecord.getAmount());
 			if (!map.containsKey(key)) {
 				list = new LinkedList<JSONObject>();

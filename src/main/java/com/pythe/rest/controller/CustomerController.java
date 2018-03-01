@@ -31,7 +31,6 @@ public class CustomerController {
 			@RequestParam(required = true, value = "code") String code,
 			@RequestParam(defaultValue="0") Integer userType) {
 		try {
-			
 			return (customerService.wxSessionRequest(code, userType));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -115,16 +114,16 @@ public class CustomerController {
 	 * 查询用户个人信息查询
 	 * @return
 	 */
-//	@RequestMapping(value = "/customer/select", method = RequestMethod.GET)
-//	@ResponseBody
-//	public PytheResult selectPersonalImformationByCustomerId(@RequestParam(required = true, value = "customerId") Long customerId) {
-//		try {
-//			return (customerService.selectPersonalImformationByCustomerId(customerId));
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-//		}
-//	}
+	@RequestMapping(value = "/customer/select", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectPersonalImformationByCustomerId(@RequestParam(required = true, value = "customerId") Long customerId) {
+		try {
+			return (customerService.selectPersonalImformationByCustomerId(customerId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 	
 	/**
 	 * 使用赠品券，领取赠品

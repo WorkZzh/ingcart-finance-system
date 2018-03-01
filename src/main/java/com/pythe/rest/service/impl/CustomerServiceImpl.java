@@ -190,7 +190,6 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public PytheResult wxSessionRequest(String code, Integer userType) {
-
 		String url = null;
 		if (userType.equals(INGCART_MANAGER_TYPE)) {
 			url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + INGCART_MANAGE_MNP_APPID + "&secret="
@@ -200,9 +199,9 @@ public class CustomerServiceImpl implements CustomerService {
 			url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + WX_APPID + "&secret=" + WX_APPSECRET
 					+ "&js_code=" + code + "&grant_type=authorization_code";
 		}
-		System.out.println("========================================> js_code !!! " + url);
+		//System.out.println("========================================> js_code !!! " + url);
 		String prePayResult = HttpClientUtil.doGet(url, null);
-		System.out.println("========================================> get openid !!! " + prePayResult);
+		//System.out.println("========================================> get openid !!! " + prePayResult);
 		String session_id = FactoryUtils.getUUID();
 		String session_key = JSONObject.parseObject(prePayResult).getString("session_key");
 		String openid = JSONObject.parseObject(prePayResult).getString("openid");
@@ -243,7 +242,6 @@ public class CustomerServiceImpl implements CustomerService {
 		} else {
 			return PytheResult.build(400, "券码错误");
 		}
-
 	}
 
 	@Override
@@ -251,10 +249,15 @@ public class CustomerServiceImpl implements CustomerService {
 		// TODO Auto-generated method stub
 		JSONObject params = JSONObject.parseObject(parameters);
 		String phoneNum = params.getString("phoneNum").trim();
-		VCustomerExample vCustomerExample = new VCustomerExample();
-		vCustomerExample.createCriteria().andPhoneNumEqualTo(phoneNum);
+		VCustomerExample example= new VCustomerExample();
+	
+		if (phoneNum.length() == 11) {
+			example.createCriteria().andPhoneNumEqualTo(phoneNum);
+		} else {
+			example.createCriteria().andQrIdEqualTo(Long.valueOf(phoneNum));
+		}
 
-		List<VCustomer> customerList = vCustomerMapper.selectByExample(vCustomerExample);
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
 
 		// System.out.println("===========>customerList"+ customerList.size());
 		if (customerList.isEmpty()) {
