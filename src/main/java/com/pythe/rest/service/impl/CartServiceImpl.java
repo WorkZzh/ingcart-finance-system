@@ -1544,4 +1544,40 @@ public class CartServiceImpl implements CartService {
 		return PytheResult.build(200, "该车成功结束,祝你旅途愉快", json);
 	}
 
+	@Override
+	public PytheResult checkLockStatusEncode(String parameters) {
+		JSONObject information = JSONObject.parseObject(parameters);
+		String carId = information.getString("carId");
+		String token = information.getString("token");
+
+		TblCar car = carMapper.selectByPrimaryKey(carId);
+
+		byte head[] = { 05, 14, 01, 01 };
+		byte passwordBytes[] = NumberUtils.parseHexArray2ByteArray(car.getLockPassword().split(","));
+		byte tokenBytes[] = NumberUtils.parseHexStr2Byte(token);
+		byte[] s = new byte[tokenBytes.length];
+		System.arraycopy(tokenBytes, 0, s, 0, tokenBytes.length);
+		
+
+		try {
+			byte[] sSrc = new byte[head.length + s.length + 8];
+			System.arraycopy(head, 0, sSrc, 0, head.length);
+			System.arraycopy(s, 0, sSrc, head.length, s.length);
+			System.out.println(
+					"============================> check lock status frame: " + NumberUtils.parseByteArray2HexArray(sSrc));
+			SecretKeySpec skeySpec = new SecretKeySpec(NumberUtils.parseHexArray2ByteArray(car.getLockKey().split(",")),
+					"AES");
+			Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+			cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+			byte[] encrypted = cipher.doFinal(sSrc);
+			String encryptedStr = new String(Base64.encodeBase64(encrypted));
+
+			return PytheResult.ok(encryptedStr);
+		} catch (Exception ex) {
+			System.out.println("==================> exception: " + ex);
+			return PytheResult.build(400, "异常错误，解密失败");
+		}
+
+	}
+
 }
