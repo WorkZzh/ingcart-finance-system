@@ -776,7 +776,7 @@ public class CartServiceImpl implements CartService {
 		case 2: {
 			// 是否是该用户继续使用
 			if (car.getUser() != customerId) {
-				return PytheResult.build(500, "抱歉，该车已被预约保留");
+				return PytheResult.build(500, "抱歉，该车已被其他用户预约保留");
 			}
 			break;
 		}
@@ -916,7 +916,7 @@ public class CartServiceImpl implements CartService {
 			if (!car.getUser().equals(customerId)) {
 				// System.out.println("=============>car.getUser()"+car.getUser());
 				// System.out.println("============>customerId"+customerId);
-				return PytheResult.build(400, "该车已被预约使用中");
+				return PytheResult.build(400, "该车已被其他用户预约使用中");
 			} else {
 				break;
 			}
@@ -924,7 +924,7 @@ public class CartServiceImpl implements CartService {
 		case 2: {
 			// 是否是该用户继续使用
 			if (car.getUser() != customerId) {
-				return PytheResult.build(500, "抱歉，该车已被预约保留");
+				return PytheResult.build(500, "抱歉，该车已被其他用户预约保留");
 			}
 			break;
 		}
