@@ -87,8 +87,6 @@ public class PayServiceImpl implements PayService {
 	@Value("${HIDDLE_CHARE_STATUS}")
 	private Integer HIDDLE_CHARE_STATUS;
 	
-	
-	
 
 	@Autowired
 	private TblAccountMapper accountMapper;
@@ -115,7 +113,7 @@ public class PayServiceImpl implements PayService {
 		Long customerId = json.getLong("customerId");
 		Double giving = json.getDouble("giving");
 
-		String body = json.getString("body");// 商品描述
+		String body = "";// 商品描述
 		String out_trade_no = System.currentTimeMillis() + "" + new java.util.Random().nextInt(8);// 商品订单号
 		String product_id = FactoryUtils.getUUID();// 商品编号
 		Double a = json.getDouble("total_fee") * 100;
@@ -129,7 +127,7 @@ public class PayServiceImpl implements PayService {
 
 		SortedMap<String, String> params = new TreeMap<String, String>();
 		params.put("appid", appid);
-		params.put("body", body);// 商品描述
+		params.put("body", "充值"+json.getDouble("total_fee").intValue()+"元");// 商品描述
 		params.put("mch_id", mch_id);
 		params.put("nonce_str", nonce_str);
 		params.put("notify_url", notify_url);

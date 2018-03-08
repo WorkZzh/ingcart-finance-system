@@ -197,10 +197,8 @@ public class ManagerController {
 //		}
 //	}
 	
-	
-	
 	/**
-	 * 查看所有景区
+	 * 查看某个城市，所有景区
 	 * https://ingcart.com/select/all/area?city=广州市&pageNum=1&pageSize=10
 	 */
 	@RequestMapping(value = "/select/all/area", method = RequestMethod.GET)
@@ -268,6 +266,26 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	
+	/**
+	 * 解修
+	 * https://ingcart.com/delete/maintenance/status?qrId=1
+	 */
+	@RequestMapping(value = "/delete/maintenance/status", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult deleteMaintenanceStatus(@RequestParam(required = true,value = "qrId") Long qrId) throws Exception {
+		try {
+			return service.deleteMaintenanceStatus(qrId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
 	
 	
 	/**

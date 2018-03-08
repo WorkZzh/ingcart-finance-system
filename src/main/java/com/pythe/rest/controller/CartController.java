@@ -495,6 +495,19 @@ public class CartController {
 	
 	
 	
+	@RequestMapping(value = "/customer/account", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult updateCustomerAccount() {
+		try {
+			return service.updateCustomerAccount();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
 	
 	
 	

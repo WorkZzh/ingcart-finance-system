@@ -36,6 +36,7 @@ import com.pythe.mapper.TblRecordMapper;
 import com.pythe.mapper.TblStoreMapper;
 import com.pythe.mapper.VCustomerMapper;
 import com.pythe.pojo.TblAccount;
+import com.pythe.pojo.TblAccountExample;
 import com.pythe.pojo.TblBill;
 import com.pythe.pojo.TblBillExample;
 import com.pythe.pojo.TblCar;
@@ -44,6 +45,7 @@ import com.pythe.pojo.TblHoldRecord;
 import com.pythe.pojo.TblHoldRecordExample;
 import com.pythe.pojo.TblPrice;
 import com.pythe.pojo.TblRecord;
+import com.pythe.pojo.TblRecordExample;
 import com.pythe.pojo.TblStore;
 import com.pythe.pojo.TblStoreExample;
 import com.pythe.pojo.VCustomer;
@@ -561,8 +563,15 @@ public class CartServiceImpl implements CartService {
 	public PytheResult selectUseCarTimeByCarId(String carId) {
 		// 说明用户已经计时完成
 		Date currentTime = new Date();
-		TblCar car = carMapper.selectByPrimaryKey(carId);
-		Date startTime = car.getStarttime();
+		VCustomerExample example =new VCustomerExample();
+		example.createCriteria().andCarIdEqualTo(carId);
+		List<VCustomer> list = vCustomerMapper.selectByExample(example);
+		if (list.isEmpty()) {
+			return PytheResult.build(400,"已结束行程");
+		}
+		VCustomer car = list.get(0);
+
+		Date startTime = car.getStartTime();
 		long time = currentTime.getTime() - startTime.getTime();
 		JSONObject json = new JSONObject();
 
@@ -900,13 +909,7 @@ public class CartServiceImpl implements CartService {
 		}
 		TblPrice price = priceMapper.selectByPrimaryKey(level);
 
-		// 300
-		if (account.getAmount() < price.getPrice()) {
-			JSONObject json = new JSONObject();
-			json.put("amount", account.getAmount());
-			json.put("annotation", JsonUtils.jsonToList(price.getAnnotation(), String.class));
-			return PytheResult.build(300, "余额不满足此次旅程费用，请前往充值", json);
-		}
+
 
 		Integer status = car.getStatus();
 		switch (status) {
@@ -932,6 +935,16 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.build(600, "此车有故障，请换车扫码");
 		}
 		}
+		
+		// 先判断车是否有问题，在判断是否钱够？
+		if (account.getAmount() < price.getPrice()) {
+			JSONObject json = new JSONObject();
+			json.put("amount", account.getAmount());
+			json.put("annotation", JsonUtils.jsonToList(price.getAnnotation(), String.class));
+			return PytheResult.build(300, "余额不满足此次旅程费用，请前往充值", json);
+		}
+		
+		
 		return PytheResult.build(200, "车安全检测通过，请放心使用", car.getId());
 	}
 
@@ -1066,7 +1079,7 @@ public class CartServiceImpl implements CartService {
 		json.put("time", time);
 		json.put("amount", account.getAmount());
 		if (account.getAmount() > 0) {
-			return PytheResult.build(200, "支付成功", json);
+			return PytheResult.build(200, "结算成功", json);
 		} else {
 			return PytheResult.build(300, "余额不足，前往充值", json);
 		}
@@ -1113,6 +1126,8 @@ public class CartServiceImpl implements CartService {
 		Long customerId = customer.getCustomerId();
 		TblCar car = null;
 		String carId = customer.getCarId();
+		//用于返回给用户使用
+		int gString = customer.getGiving().intValue() ;
 		String giving = String.valueOf((customer.getGiving().intValue() * 100));
 		int time = 0;
 		Double amount = null;
@@ -1131,8 +1146,8 @@ public class CartServiceImpl implements CartService {
 			tmp = time - 10;
 
 			if (tmp > 0) {
-				amount = customer.getPrice() - customer.getGiving();
-				System.out.println("=====================>amount!!!!!!" + amount);
+				amount = customer.getPrice();
+				//System.out.println("=====================>amount!!!!!!" + amount);
 				givingAmount = 20d;
 				// 前2分钟不算钱,所以这里要减去2
 				// if (time % 30 == 0) {
@@ -1195,7 +1210,7 @@ public class CartServiceImpl implements CartService {
 			json.put("price", amount.intValue());
 			json.put("time", time);
 			json.put("amount", account.getAmount());
-			return PytheResult.build(200, "支付成功", json);
+			return PytheResult.build(200, "结算成功", json);
 		}
 
 		// 退回用户20元现金
@@ -1214,7 +1229,9 @@ public class CartServiceImpl implements CartService {
 					giving);
 			// System.out.println("=================>str" + str);
 
-			if (str.indexOf("SUCCESS") != -1) {
+			//System.out.println("============>"+str);
+			System.out.println("============>"+str);
+			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") &&!str.contains("累计退款金额大于支付金额")) {
 				// 看看更新后的账单是否为正数，如果是，证明扣费成功
 				JSONObject json = new JSONObject();
 				json.put("price", amount.intValue());
@@ -1224,11 +1241,11 @@ public class CartServiceImpl implements CartService {
 					json.put("time", time);
 				}
 				json.put("amount", account.getAmount());
-				return PytheResult.build(200, "支付成功", json);
+				return PytheResult.build(200, "结算成功", json);
 			}
 		}
-		// refundByOrderInWX(url);
-		return PytheResult.build(400, "支付失败，请手动退还用户");
+		
+		return PytheResult.build(400, "扣费成功，但未退还"+gString+"元，请手动退还用户");
 	}
 
 	private String refundByOrderInWX(String out_trade_no, String total_fee, String refund_fee) {
@@ -1434,9 +1451,9 @@ public class CartServiceImpl implements CartService {
 		}
 
 		// 前面10分钟不要钱
-		int tmp = time - 2;
+		int tmp = time;
 
-		if (tmp > 0) {
+		if (tmp >= 0) {
 			amount = customer.getPrice();
 		} else {
 			amount = 0d;
@@ -1578,6 +1595,29 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.build(400, "异常错误，解密失败");
 		}
 
+	}
+
+	@Override
+	public PytheResult updateCustomerAccount() {
+		// TODO Auto-generated method stub
+		TblRecordExample example =new TblRecordExample();
+		example.createCriteria()
+		.andStartTimeBetween(DateUtils.parseTime("2018-03-03 01:01:13"), DateUtils.parseTime("2018-03-04 23:15:59"));
+		List<TblRecord> recordList = recordMapper.selectByExample(example);
+		TblAccountExample aexample =new TblAccountExample();
+		List<TblAccount> accountList = accountMapper.selectByExample(aexample);
+
+		for (TblRecord tblRecord : recordList) {
+			for (TblAccount tblAccount : accountList) {
+				if (tblRecord.getCustomerId().equals(tblAccount.getCustomerId()) && tblAccount.getLevel()!=1l ) {
+					tblAccount.setAmount(0d);
+					accountMapper.updateByPrimaryKey(tblAccount);
+					break;
+				}
+			}
+		}
+		
+		return PytheResult.ok("更新成功");
 	}
 
 }
