@@ -187,12 +187,10 @@ public class CustomerServiceImpl implements CustomerService {
 		example.createCriteria().andCustomerIdEqualTo(customerId);
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
 		if (!customerList.isEmpty()) {
-			System.out.println("====================================> normal update !!!");
+			//System.out.println("====================================> normal update !!!");
 			return PytheResult.ok(customerList.get(0));
 		}
-
 		return PytheResult.build(400, "该用户不存在");
-
 	}
 
 	@Override
@@ -369,6 +367,22 @@ public class CustomerServiceImpl implements CustomerService {
 		} else {
 			return PytheResult.ok(customers.get(0));
 		}
+	}
+
+	@Override
+	public PytheResult Loginout(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject Information = JSONObject.parseObject(parameters);
+		String phoneNum = Information.getString("phoneNum");
+		TblCustomerExample example =new TblCustomerExample();
+		example.createCriteria().andPhoneNumEqualTo(phoneNum);
+		List<TblCustomer> list = customerMapper.selectByExample(example);
+		
+		TblCustomer customer = list.get(0);
+		
+		customer.setXcxOpenId(null);
+		customerMapper.updateByPrimaryKey(customer);
+		return PytheResult.ok("退出成功");
 	}
 
 }

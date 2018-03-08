@@ -36,6 +36,8 @@ public interface ManagerService {
 
 	PytheResult updateLocation(String parameters);
 
+	PytheResult deleteMaintenanceStatus(Long qrId);
+
 
 
 

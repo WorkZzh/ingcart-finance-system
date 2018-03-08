@@ -55,7 +55,7 @@ public class MaintenanceController {
     
 	
 	/**
-	 * 维修记录录入成功
+	 * 检修
 	 * @return
 	 */
 	@RequestMapping(value = "/record/maintenance", method = RequestMethod.POST)

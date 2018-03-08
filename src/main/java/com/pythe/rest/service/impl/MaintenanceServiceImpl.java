@@ -90,6 +90,8 @@ public class MaintenanceServiceImpl implements MaintenanceService{
 		
 		//改变报修的状态码
 		car.setStatus(CAR_MAINTENCE_STATUS);
+//		car.setUser(null);
+		
 		carMapper.updateByPrimaryKey(car);
 		
 //		Integer type = 0;

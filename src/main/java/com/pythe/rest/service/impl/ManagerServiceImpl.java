@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
@@ -42,6 +43,10 @@ import com.pythe.rest.service.ManagerService;
 
 @Service
 public class ManagerServiceImpl implements ManagerService{
+	
+	
+	@Value("${CAR_FREE_STATUS}")
+	private Integer CAR_FREE_STATUS;
 	
 	@Autowired
 	private TblVersionMapper versionMapper;
@@ -142,7 +147,6 @@ public class ManagerServiceImpl implements ManagerService{
 
 	@Override
 	public PytheResult updateFixedPointForCar(String parameters) {
-		// TODO Auto-generated method stub
 		//关联景区和车
 		JSONObject information = JSONObject.parseObject(parameters);
 		Long qrId = information.getLong("qrId");
@@ -392,6 +396,36 @@ public class ManagerServiceImpl implements ManagerService{
 		carMapper.updateByPrimaryKey(car);
 		
 		return PytheResult.ok("更新成功");
+	}
+
+	@Override
+	public PytheResult deleteMaintenanceStatus(Long qrId) {
+		// TODO Auto-generated method stub
+		
+		TblMaintenanceExample example = new TblMaintenanceExample();
+		example.createCriteria().andQrIdEqualTo(qrId);
+		List<TblMaintenance> maintenanceList = maintenanceMapper.selectByExampleWithBLOBs(example);
+		
+		if (maintenanceList.isEmpty()) {
+			return PytheResult.build(400, "该车没有被报修");
+		}
+		
+		TblMaintenance maintenance = maintenanceList.get(0);
+		maintenanceMapper.deleteByPrimaryKey(maintenance.getId());
+		
+		//看看车牌号是否存在
+		TblCarExample example2  =  new TblCarExample();
+		example2.createCriteria().andQrIdEqualTo(qrId);
+		
+		List<TblCar> carList = carMapper.selectByExample(example2);
+
+		TblCar car = carList.get(0);
+		
+		//改变报修的状态码
+		car.setStatus(CAR_FREE_STATUS);
+		carMapper.updateByPrimaryKey(car);
+		
+		return PytheResult.ok("解修成功");
 	}
 
 

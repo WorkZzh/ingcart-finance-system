@@ -59,5 +59,7 @@ public interface CartService {
 
 	PytheResult checkLockStatusEncode(String parameters);
 
+	PytheResult updateCustomerAccount();
+
 
 }
