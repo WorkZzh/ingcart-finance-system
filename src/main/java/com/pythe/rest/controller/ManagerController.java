@@ -305,6 +305,22 @@ public class ManagerController {
 	
 	
 	
+	/**
+	 * 管理员对特定用户账户清零
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/manage/account/zeroClean", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult zeroCleanAccount(@RequestBody String parameters) throws Exception {
+		try {
+			return service.zeroCleanAccount(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 	
 	
 }
