@@ -533,8 +533,8 @@ public class PayServiceImpl implements PayService {
 	@Override
 	public PytheResult chargeToAnotherMerchant(String prepayment_imforamtion) throws Exception {
 		
-		String WX_MCH_ID = "1495762062";
-		String WX_KEY = "cf46f468dadca60f0733611df0b15682";
+		String WX_MCH_ID = "1438382702";
+		String WX_KEY = "dcf791c946697a7c4398cfee0b2a57f4";
 		
 		String appid = WX_APPID;// appid
 		String mch_id = WX_MCH_ID;// 微信支付商户号
