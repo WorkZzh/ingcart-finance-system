@@ -191,6 +191,8 @@ public class BagServiceImpl implements BagService {
 		return PytheResult.ok(store);
 	}
 
+	
+	
 	@Override
 	public PytheResult selectComboDetailList() {
 		// TODO Auto-generated method stub
