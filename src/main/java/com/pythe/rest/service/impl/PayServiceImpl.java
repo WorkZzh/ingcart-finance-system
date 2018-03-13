@@ -530,4 +530,97 @@ public class PayServiceImpl implements PayService {
 		return PytheResult.ok(str);
 	}
 
+	@Override
+	public PytheResult chargeToAnotherMerchant(String prepayment_imforamtion) throws Exception {
+		
+		String WX_MCH_ID = "1495762062";
+		String WX_KEY = "cf46f468dadca60f0733611df0b15682";
+		
+		String appid = WX_APPID;// appid
+		String mch_id = WX_MCH_ID;// 微信支付商户号
+		String nonce_str = FactoryUtils.getUUID();// 随机码
+
+		prepayment_imforamtion = DecodeUtils.decode(prepayment_imforamtion);
+		JSONObject json = JSONObject.parseObject(prepayment_imforamtion);
+
+		Long customerId = json.getLong("customerId");
+		Double giving = json.getDouble("giving");
+
+		String body = "";// 商品描述
+		String out_trade_no = System.currentTimeMillis() + "" + new java.util.Random().nextInt(8);// 商品订单号
+		String product_id = FactoryUtils.getUUID();// 商品编号
+		Double a = json.getDouble("total_fee") * 100;
+		String total_fee = a.intValue() + "";// 总金额
+		// String time_start = getCurrTime();// 交易起始时间(订单生成时间非必须)
+		String trade_type = json.getString("trade_type");// 公众号支付
+		String notify_url = WX_PAY_CONFIRM_NOTIFY_URL;// 回调函数
+		// String sessionId
+		// =JSONObject.parseObject(prepayment_imforamtion).getString("sessionId");
+		String openid = json.getString("openId");
+
+		SortedMap<String, String> params = new TreeMap<String, String>();
+		params.put("appid", appid);
+		params.put("body", "充值"+json.getDouble("total_fee").intValue()+"元");// 商品描述
+		params.put("mch_id", mch_id);
+		params.put("nonce_str", nonce_str);
+		params.put("notify_url", notify_url);
+		params.put("openid", openid);
+		params.put("out_trade_no", out_trade_no);
+		params.put("product_id", product_id);
+		params.put("total_fee", total_fee);
+		params.put("trade_type", trade_type);
+
+		// 1第一次签名
+		String sign = "";// 签名(该签名本应使用微信商户平台的API证书中的密匙key,但此处使用的是微信公众号的密匙APP_SECRET)
+		sign = FactoryUtils.getSign(params, WX_KEY);
+		// 参数xml化
+		String xmlParams = FactoryUtils.parseString2Xml(params, sign);
+		// 判断返回码
+		String str = "";
+		String xw_url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+		str = HttpClientUtil.doPostJson(xw_url, xmlParams);
+
+		// 2第二步签名
+		JSONObject strJson = Xml2JsonUtil.xml2Json(str);
+		
+		String prepay_id = strJson.getString("prepay_id");
+		String sign2 = strJson.getString("sign");
+		String nonce_str2 = FactoryUtils.getUUID();
+		String signType = "MD5";
+		SortedMap<String, String> params2 = new TreeMap<String, String>();
+		
+		String timeStamp = String.valueOf(System.currentTimeMillis());
+
+		params2.put("appId", appid);
+
+		params2.put("nonceStr", nonce_str2);
+		params2.put("package", "prepay_id=" + prepay_id);
+		params2.put("signType", signType);
+		params2.put("timeStamp", timeStamp);
+		String signB = "";// 签名(该签名本应使用微信商户平台的API证书中的密匙key,但此处使用的是微信公众号的密匙APP_SECRET)
+		signB = FactoryUtils.getSign(params2, WX_KEY);
+
+		
+		strJson.put("paySign", signB);
+		strJson.put("timeStamp", timeStamp);
+		strJson.put("nonceStr", nonce_str2);
+		strJson.put("out_trade_no", out_trade_no);
+		
+
+		// 插入账单，设置未确定支付结果状态，等待微信支付回调确认再更新
+		TblBill bill = new TblBill();
+		bill.setId(FactoryUtils.getUUID());
+		bill.setAmount(json.getDouble("total_fee"));
+		bill.setType(BILL_CHARGE_TYPE);
+		bill.setOutTradeNo(out_trade_no);
+		bill.setPrepayId(prepay_id);
+		bill.setGivingAmount(giving);
+		bill.setStatus(NOT_PAY_STATUS);
+		bill.setTime(new Date());
+		bill.setCustomerId(customerId);
+		billMapper.insert(bill);
+
+		return PytheResult.ok(strJson.toString());
+	}
+
 }
