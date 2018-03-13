@@ -1,6 +1,8 @@
 package com.pythe.rest.service;
 
 
+import org.dom4j.DocumentException;
+
 import com.pythe.common.pojo.PytheResult;
 
 public interface PayService {
@@ -19,6 +21,8 @@ public interface PayService {
 
 
 	PytheResult refundByOrderInWX(String url);
+
+	PytheResult chargeToAnotherMerchant(String parameters) throws Exception;
 
 
 	

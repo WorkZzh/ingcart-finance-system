@@ -40,7 +40,20 @@ public class PayController {
 		}
 	}
 	
-	
+	/**
+	 *另一商户充值下单
+	 * @return
+	 */
+	@RequestMapping(value = "/account/another", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult chargeToAnotherMerchant(@RequestBody String parameters) throws Exception {
+		try {
+			return service.chargeToAnotherMerchant(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 	
 	@RequestMapping(value = "/hiddle/charge", method = RequestMethod.GET)
 	@ResponseBody

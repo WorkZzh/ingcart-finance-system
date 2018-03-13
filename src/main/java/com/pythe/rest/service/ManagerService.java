@@ -38,6 +38,8 @@ public interface ManagerService {
 
 	PytheResult deleteMaintenanceStatus(Long qrId);
 
+	PytheResult zeroCleanAccount(String parameters);
+
 
 
 

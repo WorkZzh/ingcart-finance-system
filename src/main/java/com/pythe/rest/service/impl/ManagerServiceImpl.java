@@ -15,6 +15,7 @@ import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.FactoryUtils;
 import com.pythe.common.utils.JsonUtils;
+import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblDistributionMapper;
@@ -22,6 +23,7 @@ import com.pythe.mapper.TblMaintenanceMapper;
 import com.pythe.mapper.TblPriceMapper;
 import com.pythe.mapper.TblVersionMapper;
 import com.pythe.mapper.VCustomerMapper;
+import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
 import com.pythe.pojo.TblCustomer;
@@ -69,7 +71,8 @@ public class ManagerServiceImpl implements ManagerService{
 	@Autowired
 	private TblCustomerMapper customerMapper;
 	
-	
+	@Autowired
+	private TblAccountMapper accountMapper;
 
 	@Override
 	public PytheResult updateVersion(String parameters) {
@@ -426,6 +429,35 @@ public class ManagerServiceImpl implements ManagerService{
 		carMapper.updateByPrimaryKey(car);
 		
 		return PytheResult.ok("解修成功");
+	}
+
+	@Override
+	public PytheResult zeroCleanAccount(String parameters) {
+		
+		JSONObject information = JSONObject.parseObject(parameters);
+		String phoneNumStr = information.getString("phoneNum");
+		List<Long> phoneNums = JsonUtils.jsonToList(phoneNumStr, Long.class);
+		
+		TblCustomerExample customerExample = new TblCustomerExample();
+		for (Long phoneNum : phoneNums) {
+			
+			customerExample.createCriteria().andPhoneNumEqualTo(phoneNum.toString());
+			List<TblCustomer> results = customerMapper.selectByExample(customerExample);
+			if(results.isEmpty())
+			{
+				return PytheResult.build(400, "无此用户", phoneNum);
+			}
+			else
+			{
+				TblCustomer customer = results.get(0);
+				TblAccount account = accountMapper.selectByPrimaryKey(customer.getId());
+				account.setAmount(0d);
+				accountMapper.updateByPrimaryKeySelective(account);
+			}
+			customerExample.clear();
+		}
+		
+		return PytheResult.ok("已全部清零");
 	}
 
 
