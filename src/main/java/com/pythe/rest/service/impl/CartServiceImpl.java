@@ -1408,9 +1408,21 @@ public class CartServiceImpl implements CartService {
 		Long customerId = information.getLong("customerId");
 		//String formId = information.getString("formId");
 
+		// 结算计费
+		Date date_ = new Date();
+		// 让车处于空闲状态，让后续的人可以使用
+		VCustomerExample example = new VCustomerExample();
+
+		example.createCriteria().andCustomerIdEqualTo(customerId);
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+		if (customerList.isEmpty()) {
+			return PytheResult.build(400, "该用户不存在");
+		}
+		VCustomer customer = customerList.get(0);
+		
 		String carId = null;
-		if (null!=information.getString("carId")) {
-			carId = information.getString("carId");
+		if (null!=customer.getCarId()) {
+			carId = customer.getCarId();
 		} else {
 			return PytheResult.build(400, "该车已结束过，无需重复点击");
 		}
@@ -1426,18 +1438,9 @@ public class CartServiceImpl implements CartService {
 		// car.setEndtime(new Date());
 		// carMapper.updateByPrimaryKey(car);
 
-		// 结算计费
-		Date date_ = new Date();
-		// 让车处于空闲状态，让后续的人可以使用
-		VCustomerExample example = new VCustomerExample();
 
-		example.createCriteria().andCustomerIdEqualTo(customerId);
-		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
-		if (customerList.isEmpty()) {
-			return PytheResult.build(400, "该用户不存在");
-		}
 
-		VCustomer customer = customerList.get(0);
+		
 		int time = 0;
 		Double amount = null;
 		Double givingAmount = 0d;
