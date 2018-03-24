@@ -61,5 +61,7 @@ public interface CartService {
 
 	PytheResult updateCustomerAccount();
 
+	PytheResult autoRefundByCustomer(String parameters);
+
 
 }

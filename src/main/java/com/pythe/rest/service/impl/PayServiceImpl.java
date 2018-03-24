@@ -9,6 +9,7 @@ import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
 import com.pythe.common.pojo.PytheResult;
@@ -100,6 +101,7 @@ public class PayServiceImpl implements PayService {
 	private TblComboMapper comboMapper;
 
 	@Override
+	@Transactional
 	public PytheResult chargeForAccount(String prepayment_imforamtion) throws Exception {
 
 		// TODO Auto-generated method stub
@@ -215,6 +217,7 @@ public class PayServiceImpl implements PayService {
 	}
 
 	@Override
+	@Transactional
 	public PytheResult wxChargeConfirm(String parameters) throws Exception {
 		JSONObject strJson = Xml2JsonUtil.xml2Json(parameters);
 		String appId = strJson.getString("appid");
@@ -485,6 +488,7 @@ public class PayServiceImpl implements PayService {
 	
 	
 	@Override
+	@Transactional
 	public PytheResult refundByOrderInWX(String url) {
 
 		JSONObject json = JSONObject.parseObject(url);

@@ -66,6 +66,26 @@ public class CartController {
 	}
     
     
+    /**
+	 * 用户可以自己退款
+	 * @return
+	 * localhost:8084/customer/auto/refund/
+	 * phoneNum=13828494261&date=2018-01-30 20:49:22
+	 */
+    @RequestMapping(value = "/customer/auto/refund/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult autoRefundByCustomer(
+			@RequestBody String parameters
+			) throws Exception {
+		try {
+			return service.autoRefundByCustomer(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
     
     
     /**
