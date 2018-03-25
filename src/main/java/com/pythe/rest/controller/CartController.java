@@ -111,7 +111,7 @@ public class CartController {
     
     
     /**
-	 *定时给用户关锁
+	 *凌晨定时给用户关锁
 	 * @return
 	 * localhost:8084/auto/lock
 	 */
