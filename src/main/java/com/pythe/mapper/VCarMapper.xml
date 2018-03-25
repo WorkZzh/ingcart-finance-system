@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pythe.mapper.VCarMapper" >
+  <resultMap id="BaseResultMap" type="com.pythe.pojo.VCar" >
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="lock_key" property="lockKey" jdbcType="VARCHAR" />
+    <result column="lock_password" property="lockPassword" jdbcType="VARCHAR" />
+    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
+    <result column="qr_id" property="qrId" jdbcType="BIGINT" />
+    <result column="record_id" property="recordId" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="user" property="user" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="c1_id" property="c1Id" jdbcType="VARCHAR" />
+    <result column="c1_name" property="c1Name" jdbcType="VARCHAR" />
+    <result column="c2_id" property="c2Id" jdbcType="VARCHAR" />
+    <result column="c2_name" property="c2Name" jdbcType="VARCHAR" />
+    <result column="c3_id" property="c3Id" jdbcType="VARCHAR" />
+    <result column="c3_name" property="c3Name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    description, device_id, end_time, latitude, level, lock_key, lock_password, longitude, 
+    qr_id, record_id, start_time, user, status, c1_id, c1_name, c2_id, c2_name, c3_id, 
+    c3_name
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.VCarExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from v_car
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.pythe.pojo.VCarExample" >
+    delete from v_car
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.pythe.pojo.VCar" >
+    insert into v_car (description, device_id, end_time, 
+      latitude, level, lock_key, 
+      lock_password, longitude, qr_id, 
+      record_id, start_time, user, 
+      status, c1_id, c1_name, 
+      c2_id, c2_name, c3_id, 
+      c3_name)
+    values (#{description,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{latitude,jdbcType=DOUBLE}, #{level,jdbcType=INTEGER}, #{lockKey,jdbcType=VARCHAR}, 
+      #{lockPassword,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{qrId,jdbcType=BIGINT}, 
+      #{recordId,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{user,jdbcType=BIGINT}, 
+      #{status,jdbcType=INTEGER}, #{c1Id,jdbcType=VARCHAR}, #{c1Name,jdbcType=VARCHAR}, 
+      #{c2Id,jdbcType=VARCHAR}, #{c2Name,jdbcType=VARCHAR}, #{c3Id,jdbcType=VARCHAR}, 
+      #{c3Name,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pythe.pojo.VCar" >
+    insert into v_car
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="deviceId != null" >
+        device_id,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="level != null" >
+        level,
+      </if>
+      <if test="lockKey != null" >
+        lock_key,
+      </if>
+      <if test="lockPassword != null" >
+        lock_password,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="qrId != null" >
+        qr_id,
+      </if>
+      <if test="recordId != null" >
+        record_id,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="user != null" >
+        user,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="c1Id != null" >
+        c1_id,
+      </if>
+      <if test="c1Name != null" >
+        c1_name,
+      </if>
+      <if test="c2Id != null" >
+        c2_id,
+      </if>
+      <if test="c2Name != null" >
+        c2_name,
+      </if>
+      <if test="c3Id != null" >
+        c3_id,
+      </if>
+      <if test="c3Name != null" >
+        c3_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null" >
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="lockKey != null" >
+        #{lockKey,jdbcType=VARCHAR},
+      </if>
+      <if test="lockPassword != null" >
+        #{lockPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="qrId != null" >
+        #{qrId,jdbcType=BIGINT},
+      </if>
+      <if test="recordId != null" >
+        #{recordId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="user != null" >
+        #{user,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="c1Id != null" >
+        #{c1Id,jdbcType=VARCHAR},
+      </if>
+      <if test="c1Name != null" >
+        #{c1Name,jdbcType=VARCHAR},
+      </if>
+      <if test="c2Id != null" >
+        #{c2Id,jdbcType=VARCHAR},
+      </if>
+      <if test="c2Name != null" >
+        #{c2Name,jdbcType=VARCHAR},
+      </if>
+      <if test="c3Id != null" >
+        #{c3Id,jdbcType=VARCHAR},
+      </if>
+      <if test="c3Name != null" >
+        #{c3Name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.pythe.pojo.VCarExample" resultType="java.lang.Integer" >
+    select count(*) from v_car
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update v_car
+    <set >
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deviceId != null" >
+        device_id = #{record.deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.endTime != null" >
+        end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.latitude != null" >
+        latitude = #{record.latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="record.level != null" >
+        level = #{record.level,jdbcType=INTEGER},
+      </if>
+      <if test="record.lockKey != null" >
+        lock_key = #{record.lockKey,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lockPassword != null" >
+        lock_password = #{record.lockPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="record.longitude != null" >
+        longitude = #{record.longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="record.qrId != null" >
+        qr_id = #{record.qrId,jdbcType=BIGINT},
+      </if>
+      <if test="record.recordId != null" >
+        record_id = #{record.recordId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startTime != null" >
+        start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.user != null" >
+        user = #{record.user,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.c1Id != null" >
+        c1_id = #{record.c1Id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.c1Name != null" >
+        c1_name = #{record.c1Name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.c2Id != null" >
+        c2_id = #{record.c2Id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.c2Name != null" >
+        c2_name = #{record.c2Name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.c3Id != null" >
+        c3_id = #{record.c3Id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.c3Name != null" >
+        c3_name = #{record.c3Name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update v_car
+    set description = #{record.description,jdbcType=VARCHAR},
+      device_id = #{record.deviceId,jdbcType=VARCHAR},
+      end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      latitude = #{record.latitude,jdbcType=DOUBLE},
+      level = #{record.level,jdbcType=INTEGER},
+      lock_key = #{record.lockKey,jdbcType=VARCHAR},
+      lock_password = #{record.lockPassword,jdbcType=VARCHAR},
+      longitude = #{record.longitude,jdbcType=DOUBLE},
+      qr_id = #{record.qrId,jdbcType=BIGINT},
+      record_id = #{record.recordId,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      user = #{record.user,jdbcType=BIGINT},
+      status = #{record.status,jdbcType=INTEGER},
+      c1_id = #{record.c1Id,jdbcType=VARCHAR},
+      c1_name = #{record.c1Name,jdbcType=VARCHAR},
+      c2_id = #{record.c2Id,jdbcType=VARCHAR},
+      c2_name = #{record.c2Name,jdbcType=VARCHAR},
+      c3_id = #{record.c3Id,jdbcType=VARCHAR},
+      c3_name = #{record.c3Name,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>
