@@ -37,5 +37,19 @@ public class FactoryController {
 
 
 	
+	
+	@RequestMapping(value = "/car/pay", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult insetCarPay() {
+		try {
+			return service.insetCarPay();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
   
 }

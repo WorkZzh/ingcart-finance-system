@@ -24,25 +24,25 @@ public class CartController {
 	
 
 
-    /**
-	 * 管理员紧急关锁
-	 * @return
-	 * localhost:8084/manage/urgent/lock
-	 * phoneNum=13828494261
-	 * date=2018-01-30 20:49:22
-	 */
-    @RequestMapping(value = "/manage/urgent/lock/", method = RequestMethod.POST)
-	@ResponseBody
-	public PytheResult urgentUnlock(
-			@RequestBody String parameters
-			) throws Exception {
-		try {
-			return service.urgentUnlock(parameters);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
+//    /**
+//	 * 管理员紧急关锁
+//	 * @return
+//	 * localhost:8084/manage/urgent/lock
+//	 * phoneNum=13828494261
+//	 * date=2018-01-30 20:49:22
+//	 */
+//    @RequestMapping(value = "/manage/urgent/lock/", method = RequestMethod.POST)
+//	@ResponseBody
+//	public PytheResult urgentUnlock(
+//			@RequestBody String parameters
+//			) throws Exception {
+//		try {
+//			return service.urgentUnlock(parameters);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+//		}
+//	}
     
     
     

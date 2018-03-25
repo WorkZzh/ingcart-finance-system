@@ -32,10 +32,27 @@ import com.pythe.rest.service.PayService;
 public class PayServiceImpl implements PayService {
 
 	
-	// BILL
+	// 充值
 	@Value("${BILL_CHARGE_TYPE}")
 	private Integer BILL_CHARGE_TYPE;
 	
+	//管理人员使用和测试的钱
+	@Value("${MANAGER_PAY_TYPE}")
+	private Integer MANAGER_PAY_TYPE;
+	
+	
+	@Value("${DEVELOPER_LEVEL}")
+	private Integer DEVELOPER_LEVEL;
+	
+	
+	//LEVEL等级
+	@Value("${TEST_PAY_TYPE}")
+	private Integer TEST_PAY_TYPE;
+	
+	
+	@Value("${MANAGER_LEVEL}")
+	private Integer MANAGER_LEVEL;
+
 	
 	@Value("${BILL_GIVE_TYPE}")
 	private Integer BILL_GIVE_TYPE;
@@ -123,8 +140,6 @@ public class PayServiceImpl implements PayService {
 		// String time_start = getCurrTime();// 交易起始时间(订单生成时间非必须)
 		String trade_type = json.getString("trade_type");// 公众号支付
 		String notify_url = WX_PAY_CONFIRM_NOTIFY_URL;// 回调函数
-		// String sessionId
-		// =JSONObject.parseObject(prepayment_imforamtion).getString("sessionId");
 		String openid = json.getString("openId");
 
 		SortedMap<String, String> params = new TreeMap<String, String>();
@@ -201,6 +216,9 @@ public class PayServiceImpl implements PayService {
 		// strJson.put("signType", "signType");
 
 		// 插入账单，设置未确定支付结果状态，等待微信支付回调确认再更新
+		
+		
+		
 		TblBill bill = new TblBill();
 		bill.setId(FactoryUtils.getUUID());
 		bill.setAmount(json.getDouble("total_fee"));
@@ -236,10 +254,9 @@ public class PayServiceImpl implements PayService {
 				TblBill originalBill = billMapper.selectByExample(billExample).get(0);
 				if (originalBill.getStatus().equals(NOT_PAY_STATUS)) {
 					//System.out.println("============================> charge fee !!! " + totalFee);
-					originalBill.setStatus(PAY_STATUS);
-					billMapper.updateByPrimaryKey(originalBill);
 
-					// 更新充值支付账单状态后，继续更新账户信息、优惠券信息等等
+
+					//更新
 					Double inAmount = originalBill.getAmount();
 					Double givingAmount = originalBill.getGivingAmount();
 					TblAccount account = accountMapper.selectByPrimaryKey(originalBill.getCustomerId());
@@ -249,6 +266,18 @@ public class PayServiceImpl implements PayService {
 
 					account.setAmount(account.getAmount() + inAmount + givingAmount);
 					account.setInAmount(account.getInAmount() + inAmount + givingAmount );
+					
+					
+					//更新充值人员，管理员还是测试人员。
+					originalBill.setStatus(PAY_STATUS);
+					if (account.getLevel().equals(DEVELOPER_LEVEL)) {
+						originalBill.setType(TEST_PAY_TYPE);
+					}else if(account.getLevel().equals(MANAGER_LEVEL)){
+						originalBill.setType(MANAGER_PAY_TYPE);
+					}
+					billMapper.updateByPrimaryKey(originalBill);
+					
+					
 					accountMapper.updateByPrimaryKey(account);
 					
 					SortedMap<String, String> params = new TreeMap<String, String>();

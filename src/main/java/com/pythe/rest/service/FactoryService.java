@@ -7,6 +7,8 @@ public interface FactoryService {
 
 	PytheResult insetRecordIncar(String storeId);
 
+	PytheResult insetCarPay();
+
 
 
 	
