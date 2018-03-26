@@ -9,7 +9,7 @@ public interface ManagerService {
 	PytheResult selectVersion(String parameters);
 
 
-	PytheResult countCarCondition(Integer pageNum, Integer pageSize);
+	PytheResult countCarCondition(String level,Integer pageNum, Integer pageSize);
 
 	PytheResult updateFixedPointForCar(String parameters);
 

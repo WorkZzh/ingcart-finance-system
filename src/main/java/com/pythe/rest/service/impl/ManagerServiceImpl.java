@@ -1,6 +1,7 @@
 package com.pythe.rest.service.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.pythe.common.utils.FactoryUtils;
 import com.pythe.common.utils.JsonUtils;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblCarMapper;
+import com.pythe.mapper.TblCatalogMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblDistributionMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
@@ -28,6 +30,8 @@ import com.pythe.mapper.VRecordBillMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
+import com.pythe.pojo.TblCatalog;
+import com.pythe.pojo.TblCatalogExample;
 import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblCustomerExample;
 import com.pythe.pojo.TblDistribution;
@@ -81,6 +85,12 @@ public class ManagerServiceImpl implements ManagerService{
 	
 	@Autowired
 	private VRecordBillMapper recordBillMapper;
+	
+	
+	
+	@Autowired
+	private TblCatalogMapper catalogMapper;
+	
 
 	@Override
 	public PytheResult updateVersion(String parameters) {
@@ -126,17 +136,29 @@ public class ManagerServiceImpl implements ManagerService{
 
 
 	@Override
-	public PytheResult countCarCondition(Integer pageNum, Integer pageSize) {
+	public PytheResult countCarCondition(String level,Integer pageNum, Integer pageSize) {
+		
 		PageHelper.startPage(pageNum, pageSize);
 		
 		VCustomerExample example = new VCustomerExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andCarStatusEqualTo(1);
+		ArrayList<String> list = new ArrayList<String>();
+		if (!"0".equals(level)) {
+			TblCatalogExample example2 =new TblCatalogExample();
+			example2.createCriteria().andHigherLevelIdEqualTo(level);
+			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+			if (!catalogList.isEmpty()) {
+				for (TblCatalog tblCatalog : catalogList) {
+					list.add(tblCatalog.getId());
+				}
+				criteria.andDescriptionIn(list);
+			}
+		}
+		
 		example.setOrderByClause("qr_id asc");
 		
-		
-		example.createCriteria().andCarStatusEqualTo(1);
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
-		
-	
 		int size = vCustomerMapper.countByExample(example);
 		JSONArray arr =new JSONArray();
 		JSONObject json =new JSONObject();

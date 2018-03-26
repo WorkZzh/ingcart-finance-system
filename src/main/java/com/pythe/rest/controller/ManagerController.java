@@ -45,11 +45,11 @@ public class ManagerController {
     @RequestMapping(value = "/count/car/condition", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult countCarCondition(
-			
+			@RequestParam(defaultValue="0") String level,
 			@RequestParam(defaultValue="1") Integer pageNum,
 			@RequestParam(defaultValue="10") Integer pageSize	){
     	try {
-			return service.countCarCondition(pageNum,pageSize);
+			return service.countCarCondition(level,pageNum,pageSize);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
