@@ -122,8 +122,16 @@ public class CartServiceImpl implements CartService {
 	@Value("${REFUND_SUM}")
 	private Double REFUND_SUM;
 	
-	@Value("${BILL_REFUND_TYPE}")
-	private Integer BILL_REFUND_TYPE;
+	@Value("${PART_REFUND_TYPE}")
+	private Integer PART_REFUND_TYPE;
+	
+	@Value("${TOTAL_REFUND_TYPE}")
+	private Integer TOTAL_REFUND_TYPE;
+	
+	@Value("${AUTO_PAY_TYPE}")
+	private Integer AUTO_PAY_TYPE;
+	
+	
 	 
 
 	@Autowired
@@ -1111,6 +1119,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
+	@Transactional
 	public PytheResult manageUrgentRefund(String parameters) {
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum").trim();
@@ -1195,13 +1204,13 @@ public class CartServiceImpl implements CartService {
 		accountMapper.updateByPrimaryKey(account);
 
 		// 更新流水
+		//即使是人工，这20元也一定给，但是人工给用户退款。
 		final TblBill bill = new TblBill();
 		bill.setId(billId);
 		bill.setRecordId(recordId);
 		bill.setAmount(amount);
-
 		bill.setGivingAmount(givingAmount);
-		bill.setType(BILL_PAY_TYPE);
+		bill.setType(PART_REFUND_TYPE);
 		bill.setCustomerId(customerId);
 		bill.setTime(new Date());
 		bill.setRecordId(recordId);
@@ -1211,7 +1220,7 @@ public class CartServiceImpl implements CartService {
 		} else {
 			bill.setStatus(PAY_TYPE);
 		}
-		billMapper.insert(bill);
+		
 
 		// 如果giving 为0 就直接返回回去就行，不用再微信退款请求
 		if ("0".equals(giving)) {
@@ -1219,6 +1228,8 @@ public class CartServiceImpl implements CartService {
 			json.put("price", amount.intValue());
 			json.put("time", time);
 			json.put("amount", account.getAmount());
+			//如果是没有退，就不更新腾讯的退款订单号
+			billMapper.insert(bill);
 			return PytheResult.build(200, "结算成功", json);
 		}
 
@@ -1229,18 +1240,19 @@ public class CartServiceImpl implements CartService {
 		List<TblBill> billList = billMapper.selectByExample(example2);
 		if (!billList.isEmpty()) {
 			TblBill bi = billList.get(0);
-			// System.out.println("============>OutTradeNo!" +
-			// bi.getOutTradeNo());
-			// 这里要后面要改一下
-			// System.out.println("============>Bi!!" +
-			// String.valueOf((bi.getAmount().intValue() * 100)));
+			//如果是要退，更新腾讯订单号
+			bill.setOutTradeNo(bi.getOutTradeNo());
+			bill.setPrepayId(bi.getPrepayId());
+			billMapper.insert(bill);
 			String str = refundByOrderInWX(bi.getOutTradeNo(), String.valueOf((bi.getAmount().intValue() * 100)),
 					giving);
+			
 			// System.out.println("=================>str" + str);
 
 			//System.out.println("============>"+str);
-			System.out.println("============>"+str);
+			//System.out.println("============>"+str);
 			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") &&!str.contains("累计退款金额大于支付金额")) {
+				
 				// 看看更新后的账单是否为正数，如果是，证明扣费成功
 				JSONObject json = new JSONObject();
 				json.put("price", amount.intValue());
@@ -1298,6 +1310,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
+	@Transactional
 	public void autoLock() {
 		// TODO Auto-generated method stub
 
@@ -1353,7 +1366,6 @@ public class CartServiceImpl implements CartService {
 			car.setEndtime(null);
 			car.setUser(null);
 			car.setRecordid(null);
-			;
 			carMapper.updateByPrimaryKey(car);
 
 			// 生成账单
@@ -1369,7 +1381,7 @@ public class CartServiceImpl implements CartService {
 			bill.setAmount(amount);
 
 			bill.setGivingAmount(givingAmount);
-			bill.setType(BILL_PAY_TYPE);
+			bill.setType(AUTO_PAY_TYPE);
 			bill.setCustomerId(customerId);
 			bill.setTime(new Date());
 			bill.setRecordId(recordId);
@@ -1676,11 +1688,11 @@ public class CartServiceImpl implements CartService {
 		bill.setId(FactoryUtils.getUUID());
 		bill.setAmount(REFUND_SUM);
 		bill.setGivingAmount(0d);
-		bill.setType(BILL_REFUND_TYPE);
+		bill.setType(TOTAL_REFUND_TYPE);
 		bill.setCustomerId(customerId);
 		bill.setTime(new Date());
 		bill.setStatus(PAY_TYPE);
-		billMapper.insert(bill);
+		
 
 		// 退回用户20元现金
 		TblBillExample example2 = new TblBillExample();
@@ -1688,11 +1700,14 @@ public class CartServiceImpl implements CartService {
 		example2.setOrderByClause("time DESC");
 		List<TblBill> billList = billMapper.selectByExample(example2);
 		if (!billList.isEmpty()) {
+			//更新bill退款订单号
 			TblBill bi = billList.get(0);
+			bill.setPrepayId(bi.getPrepayId());
+			bill.setOutTradeNo(bi.getOutTradeNo());
+			billMapper.insert(bill);
 			String refundMoney = String.valueOf((REFUND_SUM.intValue() * 100));
 			String str = refundByOrderInWX(bi.getOutTradeNo(), refundMoney,refundMoney);
 
-			System.out.println("============>"+str);
 			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") &&!str.contains("累计退款金额大于支付金额")) {
 				// 看看更新后的账单是否为正数，如果是，证明扣费成功
 				JSONObject json = new JSONObject();

@@ -16,6 +16,7 @@ import com.pythe.mapper.TblBagRecordMapper;
 import com.pythe.mapper.TblBillMapper;
 import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblComboMapper;
+import com.pythe.mapper.TblPayMapper;
 import com.pythe.mapper.TblStoreMapper;
 import com.pythe.mapper.TblTmpCarMapper;
 import com.pythe.pojo.TblAccount;
@@ -25,6 +26,8 @@ import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
 import com.pythe.pojo.TblCombo;
 import com.pythe.pojo.TblComboExample;
+import com.pythe.pojo.TblPay;
+import com.pythe.pojo.TblPayExample;
 import com.pythe.pojo.TblStore;
 import com.pythe.pojo.TblStoreExample;
 import com.pythe.pojo.TblTmpCar;
@@ -40,6 +43,10 @@ public class FactoryServiceImpl implements FactoryService {
 
 	@Autowired
 	private TblCarMapper carMapper;
+	
+	
+	@Autowired
+	private TblPayMapper payMapper;
 
 
 	// BILL
@@ -75,9 +82,18 @@ public class FactoryServiceImpl implements FactoryService {
 			}
 		}
 		
-		
-
 		return PytheResult.ok("插入成功");
+	}
+
+
+	@Override
+	public PytheResult insetCarPay() {
+		TblPayExample example =new TblPayExample();
+		List<TblPay> payList = payMapper.selectByExample(example);
+		for (TblPay tblPay : payList) {
+			
+		}
+		return null;
 	}
 
 }

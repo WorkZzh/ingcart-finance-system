@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pythe.mapper.TblPayMapper" >
+  <resultMap id="BaseResultMap" type="com.pythe.pojo.TblPay" >
+    <result column="DATE" property="date" jdbcType="TIMESTAMP" />
+    <result column="orderNum" property="ordernum" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <result column="recordId" property="recordid" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="VARCHAR" />
+    <result column="stop_time" property="stopTime" jdbcType="VARCHAR" />
+    <result column="qrId" property="qrid" jdbcType="BIGINT" />
+    <result column="customerId" property="customerid" jdbcType="BIGINT" />
+    <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="prepay_id" property="prepayId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    DATE, orderNum, amount, recordId, start_time, stop_time, qrId, customerId, phone_num, 
+    description, id, type, prepay_id
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblPayExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tbl_pay
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.pythe.pojo.TblPayExample" >
+    delete from tbl_pay
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.pythe.pojo.TblPay" >
+    insert into tbl_pay (DATE, orderNum, amount, 
+      recordId, start_time, stop_time, 
+      qrId, customerId, phone_num, 
+      description, id, type, 
+      prepay_id)
+    values (#{date,jdbcType=TIMESTAMP}, #{ordernum,jdbcType=VARCHAR}, #{amount,jdbcType=DOUBLE}, 
+      #{recordid,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, #{stopTime,jdbcType=VARCHAR}, 
+      #{qrid,jdbcType=BIGINT}, #{customerid,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{prepayId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pythe.pojo.TblPay" >
+    insert into tbl_pay
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="date != null" >
+        DATE,
+      </if>
+      <if test="ordernum != null" >
+        orderNum,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="recordid != null" >
+        recordId,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="stopTime != null" >
+        stop_time,
+      </if>
+      <if test="qrid != null" >
+        qrId,
+      </if>
+      <if test="customerid != null" >
+        customerId,
+      </if>
+      <if test="phoneNum != null" >
+        phone_num,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="prepayId != null" >
+        prepay_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="date != null" >
+        #{date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ordernum != null" >
+        #{ordernum,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DOUBLE},
+      </if>
+      <if test="recordid != null" >
+        #{recordid,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="stopTime != null" >
+        #{stopTime,jdbcType=VARCHAR},
+      </if>
+      <if test="qrid != null" >
+        #{qrid,jdbcType=BIGINT},
+      </if>
+      <if test="customerid != null" >
+        #{customerid,jdbcType=BIGINT},
+      </if>
+      <if test="phoneNum != null" >
+        #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="prepayId != null" >
+        #{prepayId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.pythe.pojo.TblPayExample" resultType="java.lang.Integer" >
+    select count(*) from tbl_pay
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tbl_pay
+    <set >
+      <if test="record.date != null" >
+        DATE = #{record.date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.ordernum != null" >
+        orderNum = #{record.ordernum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.amount != null" >
+        amount = #{record.amount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.recordid != null" >
+        recordId = #{record.recordid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startTime != null" >
+        start_time = #{record.startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stopTime != null" >
+        stop_time = #{record.stopTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.qrid != null" >
+        qrId = #{record.qrid,jdbcType=BIGINT},
+      </if>
+      <if test="record.customerid != null" >
+        customerId = #{record.customerid,jdbcType=BIGINT},
+      </if>
+      <if test="record.phoneNum != null" >
+        phone_num = #{record.phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.prepayId != null" >
+        prepay_id = #{record.prepayId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tbl_pay
+    set DATE = #{record.date,jdbcType=TIMESTAMP},
+      orderNum = #{record.ordernum,jdbcType=VARCHAR},
+      amount = #{record.amount,jdbcType=DOUBLE},
+      recordId = #{record.recordid,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=VARCHAR},
+      stop_time = #{record.stopTime,jdbcType=VARCHAR},
+      qrId = #{record.qrid,jdbcType=BIGINT},
+      customerId = #{record.customerid,jdbcType=BIGINT},
+      phone_num = #{record.phoneNum,jdbcType=VARCHAR},
+      description = #{record.description,jdbcType=VARCHAR},
+      id = #{record.id,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=INTEGER},
+      prepay_id = #{record.prepayId,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>
