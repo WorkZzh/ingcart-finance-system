@@ -323,4 +323,16 @@ public class ManagerController {
 	}
 	
 	
+	
+	@RequestMapping(value = "/record/bill/query", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult queryRecordBill(@RequestBody String parameters) throws Exception {
+		try {
+			return service.queryRecordBill(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
 }
