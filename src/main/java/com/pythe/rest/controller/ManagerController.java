@@ -44,7 +44,9 @@ public class ManagerController {
      */
     @RequestMapping(value = "/count/car/condition", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult countCarCondition(	@RequestParam(defaultValue="1") Integer pageNum,
+	public PytheResult countCarCondition(
+			
+			@RequestParam(defaultValue="1") Integer pageNum,
 			@RequestParam(defaultValue="10") Integer pageSize	){
     	try {
 			return service.countCarCondition(pageNum,pageSize);

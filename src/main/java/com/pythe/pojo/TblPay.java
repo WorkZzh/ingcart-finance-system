@@ -9,8 +9,6 @@ public class TblPay {
 
     private Long ordernum;
 
-    private Double sum;
-
     private String recordid;
 
     private Date startTime;
@@ -28,6 +26,20 @@ public class TblPay {
     private Integer type;
 
     private String prepayId;
+
+    private Double sum;
+
+    private Double longitudeStart;
+
+    private Double latitudeStart;
+
+    private Double longitudeStop;
+
+    private Double latitudeStop;
+
+    private String billId;
+
+    private String carId;
 
     public Long getId() {
         return id;
@@ -51,14 +63,6 @@ public class TblPay {
 
     public void setOrdernum(Long ordernum) {
         this.ordernum = ordernum;
-    }
-
-    public Double getSum() {
-        return sum;
-    }
-
-    public void setSum(Double sum) {
-        this.sum = sum;
     }
 
     public String getRecordid() {
@@ -131,5 +135,61 @@ public class TblPay {
 
     public void setPrepayId(String prepayId) {
         this.prepayId = prepayId == null ? null : prepayId.trim();
+    }
+
+    public Double getSum() {
+        return sum;
+    }
+
+    public void setSum(Double sum) {
+        this.sum = sum;
+    }
+
+    public Double getLongitudeStart() {
+        return longitudeStart;
+    }
+
+    public void setLongitudeStart(Double longitudeStart) {
+        this.longitudeStart = longitudeStart;
+    }
+
+    public Double getLatitudeStart() {
+        return latitudeStart;
+    }
+
+    public void setLatitudeStart(Double latitudeStart) {
+        this.latitudeStart = latitudeStart;
+    }
+
+    public Double getLongitudeStop() {
+        return longitudeStop;
+    }
+
+    public void setLongitudeStop(Double longitudeStop) {
+        this.longitudeStop = longitudeStop;
+    }
+
+    public Double getLatitudeStop() {
+        return latitudeStop;
+    }
+
+    public void setLatitudeStop(Double latitudeStop) {
+        this.latitudeStop = latitudeStop;
+    }
+
+    public String getBillId() {
+        return billId;
+    }
+
+    public void setBillId(String billId) {
+        this.billId = billId == null ? null : billId.trim();
+    }
+
+    public String getCarId() {
+        return carId;
+    }
+
+    public void setCarId(String carId) {
+        this.carId = carId == null ? null : carId.trim();
     }
 }

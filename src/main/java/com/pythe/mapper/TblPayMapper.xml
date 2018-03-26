@@ -5,7 +5,6 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="date" property="date" jdbcType="TIMESTAMP" />
     <result column="orderNum" property="ordernum" jdbcType="BIGINT" />
-    <result column="sum" property="sum" jdbcType="DOUBLE" />
     <result column="recordId" property="recordid" jdbcType="VARCHAR" />
     <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
     <result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
@@ -15,6 +14,13 @@
     <result column="description" property="description" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="prepay_id" property="prepayId" jdbcType="VARCHAR" />
+    <result column="sum" property="sum" jdbcType="DOUBLE" />
+    <result column="longitude_start" property="longitudeStart" jdbcType="DOUBLE" />
+    <result column="latitude_start" property="latitudeStart" jdbcType="DOUBLE" />
+    <result column="longitude_stop" property="longitudeStop" jdbcType="DOUBLE" />
+    <result column="latitude_stop" property="latitudeStop" jdbcType="DOUBLE" />
+    <result column="bill_id" property="billId" jdbcType="VARCHAR" />
+    <result column="car_id" property="carId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -75,8 +81,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, date, orderNum, sum, recordId, start_time, stop_time, qrId, customer_id, phone_num, 
-    description, type, prepay_id
+    id, date, orderNum, recordId, start_time, stop_time, qrId, customer_id, phone_num, 
+    description, type, prepay_id, sum, longitude_start, latitude_start, longitude_stop, 
+    latitude_stop, bill_id, car_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblPayExample" >
     select
@@ -110,15 +117,19 @@
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblPay" >
     insert into tbl_pay (id, date, orderNum, 
-      sum, recordId, start_time, 
-      stop_time, qrId, customer_id, 
-      phone_num, description, type, 
-      prepay_id)
+      recordId, start_time, stop_time, 
+      qrId, customer_id, phone_num, 
+      description, type, prepay_id, 
+      sum, longitude_start, latitude_start, 
+      longitude_stop, latitude_stop, bill_id, 
+      car_id)
     values (#{id,jdbcType=BIGINT}, #{date,jdbcType=TIMESTAMP}, #{ordernum,jdbcType=BIGINT}, 
-      #{sum,jdbcType=DOUBLE}, #{recordid,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
-      #{stopTime,jdbcType=TIMESTAMP}, #{qrid,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, 
-      #{phoneNum,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
-      #{prepayId,jdbcType=VARCHAR})
+      #{recordid,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, 
+      #{qrid,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{prepayId,jdbcType=VARCHAR}, 
+      #{sum,jdbcType=DOUBLE}, #{longitudeStart,jdbcType=DOUBLE}, #{latitudeStart,jdbcType=DOUBLE}, 
+      #{longitudeStop,jdbcType=DOUBLE}, #{latitudeStop,jdbcType=DOUBLE}, #{billId,jdbcType=VARCHAR}, 
+      #{carId,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblPay" >
     insert into tbl_pay
@@ -131,9 +142,6 @@
       </if>
       <if test="ordernum != null" >
         orderNum,
-      </if>
-      <if test="sum != null" >
-        sum,
       </if>
       <if test="recordid != null" >
         recordId,
@@ -162,6 +170,27 @@
       <if test="prepayId != null" >
         prepay_id,
       </if>
+      <if test="sum != null" >
+        sum,
+      </if>
+      <if test="longitudeStart != null" >
+        longitude_start,
+      </if>
+      <if test="latitudeStart != null" >
+        latitude_start,
+      </if>
+      <if test="longitudeStop != null" >
+        longitude_stop,
+      </if>
+      <if test="latitudeStop != null" >
+        latitude_stop,
+      </if>
+      <if test="billId != null" >
+        bill_id,
+      </if>
+      <if test="carId != null" >
+        car_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -172,9 +201,6 @@
       </if>
       <if test="ordernum != null" >
         #{ordernum,jdbcType=BIGINT},
-      </if>
-      <if test="sum != null" >
-        #{sum,jdbcType=DOUBLE},
       </if>
       <if test="recordid != null" >
         #{recordid,jdbcType=VARCHAR},
@@ -203,6 +229,27 @@
       <if test="prepayId != null" >
         #{prepayId,jdbcType=VARCHAR},
       </if>
+      <if test="sum != null" >
+        #{sum,jdbcType=DOUBLE},
+      </if>
+      <if test="longitudeStart != null" >
+        #{longitudeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="latitudeStart != null" >
+        #{latitudeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="longitudeStop != null" >
+        #{longitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="latitudeStop != null" >
+        #{latitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="billId != null" >
+        #{billId,jdbcType=VARCHAR},
+      </if>
+      <if test="carId != null" >
+        #{carId,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.pythe.pojo.TblPayExample" resultType="java.lang.Integer" >
@@ -222,9 +269,6 @@
       </if>
       <if test="record.ordernum != null" >
         orderNum = #{record.ordernum,jdbcType=BIGINT},
-      </if>
-      <if test="record.sum != null" >
-        sum = #{record.sum,jdbcType=DOUBLE},
       </if>
       <if test="record.recordid != null" >
         recordId = #{record.recordid,jdbcType=VARCHAR},
@@ -253,6 +297,27 @@
       <if test="record.prepayId != null" >
         prepay_id = #{record.prepayId,jdbcType=VARCHAR},
       </if>
+      <if test="record.sum != null" >
+        sum = #{record.sum,jdbcType=DOUBLE},
+      </if>
+      <if test="record.longitudeStart != null" >
+        longitude_start = #{record.longitudeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="record.latitudeStart != null" >
+        latitude_start = #{record.latitudeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="record.longitudeStop != null" >
+        longitude_stop = #{record.longitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="record.latitudeStop != null" >
+        latitude_stop = #{record.latitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="record.billId != null" >
+        bill_id = #{record.billId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.carId != null" >
+        car_id = #{record.carId,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -263,7 +328,6 @@
     set id = #{record.id,jdbcType=BIGINT},
       date = #{record.date,jdbcType=TIMESTAMP},
       orderNum = #{record.ordernum,jdbcType=BIGINT},
-      sum = #{record.sum,jdbcType=DOUBLE},
       recordId = #{record.recordid,jdbcType=VARCHAR},
       start_time = #{record.startTime,jdbcType=TIMESTAMP},
       stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
@@ -272,7 +336,14 @@
       phone_num = #{record.phoneNum,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=INTEGER},
-      prepay_id = #{record.prepayId,jdbcType=VARCHAR}
+      prepay_id = #{record.prepayId,jdbcType=VARCHAR},
+      sum = #{record.sum,jdbcType=DOUBLE},
+      longitude_start = #{record.longitudeStart,jdbcType=DOUBLE},
+      latitude_start = #{record.latitudeStart,jdbcType=DOUBLE},
+      longitude_stop = #{record.longitudeStop,jdbcType=DOUBLE},
+      latitude_stop = #{record.latitudeStop,jdbcType=DOUBLE},
+      bill_id = #{record.billId,jdbcType=VARCHAR},
+      car_id = #{record.carId,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -285,9 +356,6 @@
       </if>
       <if test="ordernum != null" >
         orderNum = #{ordernum,jdbcType=BIGINT},
-      </if>
-      <if test="sum != null" >
-        sum = #{sum,jdbcType=DOUBLE},
       </if>
       <if test="recordid != null" >
         recordId = #{recordid,jdbcType=VARCHAR},
@@ -316,6 +384,27 @@
       <if test="prepayId != null" >
         prepay_id = #{prepayId,jdbcType=VARCHAR},
       </if>
+      <if test="sum != null" >
+        sum = #{sum,jdbcType=DOUBLE},
+      </if>
+      <if test="longitudeStart != null" >
+        longitude_start = #{longitudeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="latitudeStart != null" >
+        latitude_start = #{latitudeStart,jdbcType=DOUBLE},
+      </if>
+      <if test="longitudeStop != null" >
+        longitude_stop = #{longitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="latitudeStop != null" >
+        latitude_stop = #{latitudeStop,jdbcType=DOUBLE},
+      </if>
+      <if test="billId != null" >
+        bill_id = #{billId,jdbcType=VARCHAR},
+      </if>
+      <if test="carId != null" >
+        car_id = #{carId,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -323,7 +412,6 @@
     update tbl_pay
     set date = #{date,jdbcType=TIMESTAMP},
       orderNum = #{ordernum,jdbcType=BIGINT},
-      sum = #{sum,jdbcType=DOUBLE},
       recordId = #{recordid,jdbcType=VARCHAR},
       start_time = #{startTime,jdbcType=TIMESTAMP},
       stop_time = #{stopTime,jdbcType=TIMESTAMP},
@@ -332,7 +420,14 @@
       phone_num = #{phoneNum,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
-      prepay_id = #{prepayId,jdbcType=VARCHAR}
+      prepay_id = #{prepayId,jdbcType=VARCHAR},
+      sum = #{sum,jdbcType=DOUBLE},
+      longitude_start = #{longitudeStart,jdbcType=DOUBLE},
+      latitude_start = #{latitudeStart,jdbcType=DOUBLE},
+      longitude_stop = #{longitudeStop,jdbcType=DOUBLE},
+      latitude_stop = #{latitudeStop,jdbcType=DOUBLE},
+      bill_id = #{billId,jdbcType=VARCHAR},
+      car_id = #{carId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

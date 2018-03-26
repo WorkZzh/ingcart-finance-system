@@ -20,7 +20,13 @@ public class DateUtils {
 	public static final SimpleDateFormat TIME_FORMAT_ = new SimpleDateFormat("yyyyMMddHHmmss");
 	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	public static final SimpleDateFormat DATE_FORMAT_Hour_Minue = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	
+	
+	public static final SimpleDateFormat DATE_FORMAT_Month_Day = new SimpleDateFormat("MM-dd");
 
+	
+	
+	
 	public static final SimpleDateFormat HOUR_MINUE_FORMAT = new SimpleDateFormat("HH:mm");
 
 	public static final SimpleDateFormat DATEKEY_FORMAT = new SimpleDateFormat("yyyyMMdd");
@@ -203,6 +209,22 @@ public class DateUtils {
 	public static String getTodayDateHourMinute() {
 		return DATE_FORMAT_Hour_Minue.format(new Date());
 	}
+	
+	
+	
+	
+	/**
+	 * 获取当天月和日（MM-dd）
+	 * @param date 
+	 * 
+	 * @return 当天日期
+	 */
+	public static String getMonthDay(Date date) {
+		return DATE_FORMAT_Month_Day.format(new Date());
+	}
+	
+	
+	
 
 	/**
 	 * 获取昨天的日期（yyyy-MM-dd）
@@ -320,7 +342,6 @@ public class DateUtils {
 	 * 格式化时间，保留分钟级别
 	 * 
 	 * @param date
-	 *            Unix timestamp
 	 * @return string yyyyMMddHHmm
 	 */
 	public static String formatTimeMinute(Date date) {

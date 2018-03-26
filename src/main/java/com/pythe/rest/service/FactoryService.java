@@ -9,6 +9,8 @@ public interface FactoryService {
 
 	PytheResult insetCarPay();
 
+	PytheResult insertBillRecord();
+
 
 
 	

@@ -41,6 +41,7 @@ import com.pythe.pojo.TblStoreExample;
 import com.pythe.pojo.TblVersion;
 import com.pythe.pojo.VCustomer;
 import com.pythe.pojo.VCustomerExample;
+import com.pythe.pojo.VCustomerExample.Criteria;
 import com.pythe.pojo.VRecordBill;
 import com.pythe.pojo.VRecordBillExample;
 import com.pythe.rest.service.ManagerService;
@@ -127,11 +128,15 @@ public class ManagerServiceImpl implements ManagerService{
 	@Override
 	public PytheResult countCarCondition(Integer pageNum, Integer pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
+		
 		VCustomerExample example = new VCustomerExample();
 		example.setOrderByClause("qr_id asc");
+		
+		
 		example.createCriteria().andCarStatusEqualTo(1);
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
 		
+	
 		int size = vCustomerMapper.countByExample(example);
 		JSONArray arr =new JSONArray();
 		JSONObject json =new JSONObject();
@@ -140,7 +145,8 @@ public class ManagerServiceImpl implements ManagerService{
 			json.put("size",size);
 			for (VCustomer vCustomer : customerList) {
 				JSONObject json2 = new JSONObject();
-				json2.put("start_time",DateUtils.formatTime(vCustomer.getStartTime()));
+				
+				json2.put("start_time",DateUtils.getMonthDay(vCustomer.getStartTime()));
 				json2.put("phone_num", vCustomer.getPhoneNum());
 				json2.put("car_code", vCustomer.getQrId());
 				json2.put("level", vCustomer.getLevel());

@@ -34,10 +34,14 @@ public class FactoryController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	
 
 
 	
-	
+	//生产账单
 	@RequestMapping(value = "/car/pay", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult insetCarPay() {
@@ -49,6 +53,19 @@ public class FactoryController {
 		}
 	}
 	
+	
+	
+	//生产数据
+	@RequestMapping(value = "/insert/bill/record", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult insertBillRecord() {
+		try {
+			return service.insertBillRecord();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 	
 	
   

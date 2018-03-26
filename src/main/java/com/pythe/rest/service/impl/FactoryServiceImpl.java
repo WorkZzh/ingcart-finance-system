@@ -20,6 +20,7 @@ import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblComboMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblPayMapper;
+import com.pythe.mapper.TblRecordMapper;
 import com.pythe.mapper.TblStoreMapper;
 import com.pythe.mapper.TblTmpCarMapper;
 import com.pythe.pojo.TblAccount;
@@ -33,6 +34,8 @@ import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblCustomerExample;
 import com.pythe.pojo.TblPay;
 import com.pythe.pojo.TblPayExample;
+import com.pythe.pojo.TblRecord;
+import com.pythe.pojo.TblRecordExample;
 import com.pythe.pojo.TblStore;
 import com.pythe.pojo.TblStoreExample;
 import com.pythe.pojo.TblTmpCar;
@@ -53,9 +56,17 @@ public class FactoryServiceImpl implements FactoryService {
 	@Autowired
 	private TblPayMapper payMapper;
 	
+	@Autowired
+	private TblRecordMapper recordMapper;
+	
 	
 	@Autowired
 	private TblCustomerMapper customerMapper;
+	
+	
+	
+	@Autowired
+	private TblBillMapper billMapper;
 
 	
 	// BILL
@@ -77,6 +88,9 @@ public class FactoryServiceImpl implements FactoryService {
 	
 	@Value("${TEST_PAY_TYPE}")
 	private Integer TEST_PAY_TYPE;
+	
+	@Value("${PAY_STATUS}")
+	private Integer PAY_STATUS;
 	
 	
 
@@ -139,6 +153,11 @@ public class FactoryServiceImpl implements FactoryService {
 		List<TblCustomer> managerList = customerMapper.selectByExample(example3);
 		int managerSize = managerList.size();
 		
+		//插入
+		TblRecordExample example6 =new TblRecordExample();
+		List<TblRecord> recordList = recordMapper.selectByExample(example6);
+		int recordSize= recordList.size();
+		
 		
 		//随机抽取A类车
 		TblCarExample example4 =new TblCarExample();
@@ -160,7 +179,20 @@ public class FactoryServiceImpl implements FactoryService {
 		
 		for (TblPay tblPay : payList) {
 			tblPay.setRecordid(FactoryUtils.getUUID());
-			
+			tblPay.setBillId(FactoryUtils.getUUID());
+			num = RandomUtils.nextInt(0,recordSize);
+			TblRecord record = recordList.get(num);
+			for(int i=0;i<10;i++){
+				if (record.getLatitudeStop()!=null && record.getLongitdeStart()!=null) {
+					tblPay.setLatitudeStart(record.getLatitudeStart());
+					tblPay.setLatitudeStop(record.getLatitudeStop());
+					tblPay.setLongitudeStart(record.getLongitdeStart());
+					tblPay.setLongitudeStop(record.getLongitudeStop());
+					break;
+				}
+			}
+
+
 			if (tblPay.getSum().equals(30d) ||tblPay.getSum().equals(50d) || tblPay.getSum().equals(20d)) {
 				tblPay.setType(BILL_PAY_TYPE);
 				num = RandomUtils.nextInt(0,customerSize);
@@ -176,11 +208,15 @@ public class FactoryServiceImpl implements FactoryService {
 				if (tblPay.getSum().equals(20d)) {
 					tblPay.setDescription("B1");
 					num = RandomUtils.nextInt(0,bCarSize);
-					tblPay.setQrid(bCarList.get(num).getQrId());
+					TblCar car = bCarList.get(num);
+					tblPay.setQrid(car.getQrId());
+					tblPay.setCarId(car.getId());
 				}else{
 					tblPay.setDescription("A1");
 					num = RandomUtils.nextInt(0,aCarSize);
-					tblPay.setQrid(aCarList.get(num).getQrId());
+					TblCar car = aCarList.get(num);
+					tblPay.setQrid(car.getQrId());
+					tblPay.setCarId(car.getId());
 				}
 			}else{
 				tblPay.setDescription("A1");
@@ -191,15 +227,16 @@ public class FactoryServiceImpl implements FactoryService {
 				tblPay.setPhoneNum(customer.getPhoneNum());
 				
 				num = RandomUtils.nextInt(0,aCarSize);
-				tblPay.setQrid(aCarList.get(num).getQrId());
+				
+				TblCar car = aCarList.get(num);
+				tblPay.setQrid(car.getQrId());
+				tblPay.setCarId(car.getId());
 				
 				//使用小时
 				num = RandomUtils.nextInt(1,19);
 				date = new DateTime(tblPay.getDate()).plusMinutes(num).plusSeconds(num).toDate();
 				tblPay.setStopTime(date);
 			}
-			
-
 			
 			//产生随机时间
 			num = RandomUtils.nextInt(1, 3);
@@ -213,6 +250,46 @@ public class FactoryServiceImpl implements FactoryService {
 			tblPay.setStartTime(date);
 			payMapper.updateByPrimaryKey(tblPay);
 		}
+		return PytheResult.ok("更新成功");
+	}
+
+
+	@Override
+	public PytheResult insertBillRecord() {
+		// TODO Auto-generated method stub
+		TblPayExample example =new TblPayExample();
+		List<TblPay> payList = payMapper.selectByExample(example);
+		int num =0;
+		Date date =null;
+		for (TblPay tblPay : payList) {
+			TblBill bill =new TblBill();
+			bill.setId(tblPay.getBillId());
+			bill.setAmount(tblPay.getSum());
+			bill.setGivingAmount(0d);
+			bill.setCustomerId(tblPay.getCustomerId());
+			bill.setOutTradeNo(String.valueOf(tblPay.getOrdernum()));
+			bill.setStatus(PAY_STATUS);
+			num = RandomUtils.nextInt(1,3);
+			date = new DateTime(tblPay.getStartTime()).minusMinutes(num).minusSeconds(num).toDate();
+			bill.setTime(date);
+			bill.setRecordId(tblPay.getRecordid());
+			bill.setType(tblPay.getType());
+			billMapper.insert(bill);
+			
+			TblRecord record =new TblRecord();
+			record.setBillId(tblPay.getBillId());
+			record.setCarId(tblPay.getCarId());
+			record.setCustomerId(tblPay.getCustomerId());
+			record.setLatitudeStart(tblPay.getLatitudeStart());
+			record.setId(tblPay.getRecordid());
+			record.setLatitudeStop(tblPay.getLatitudeStop());
+			record.setLongitdeStart(tblPay.getLongitudeStart());
+			record.setLongitudeStop(tblPay.getLongitudeStop());
+			record.setStartTime(tblPay.getStartTime());
+			record.setStopTime(tblPay.getStopTime());
+			recordMapper.insert(record);
+		}
+		
 		return PytheResult.ok("更新成功");
 	}
 
