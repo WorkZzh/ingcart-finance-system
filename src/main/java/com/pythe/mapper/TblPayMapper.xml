@@ -2,17 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.pythe.mapper.TblPayMapper" >
   <resultMap id="BaseResultMap" type="com.pythe.pojo.TblPay" >
-    <result column="DATE" property="date" jdbcType="TIMESTAMP" />
-    <result column="orderNum" property="ordernum" jdbcType="VARCHAR" />
-    <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="date" property="date" jdbcType="TIMESTAMP" />
+    <result column="orderNum" property="ordernum" jdbcType="BIGINT" />
+    <result column="sum" property="sum" jdbcType="DOUBLE" />
     <result column="recordId" property="recordid" jdbcType="VARCHAR" />
-    <result column="start_time" property="startTime" jdbcType="VARCHAR" />
-    <result column="stop_time" property="stopTime" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
     <result column="qrId" property="qrid" jdbcType="BIGINT" />
-    <result column="customerId" property="customerid" jdbcType="BIGINT" />
+    <result column="customer_id" property="customerId" jdbcType="BIGINT" />
     <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
     <result column="description" property="description" jdbcType="VARCHAR" />
-    <result column="id" property="id" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="prepay_id" property="prepayId" jdbcType="VARCHAR" />
   </resultMap>
@@ -75,8 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    DATE, orderNum, amount, recordId, start_time, stop_time, qrId, customerId, phone_num, 
-    description, id, type, prepay_id
+    id, date, orderNum, sum, recordId, start_time, stop_time, qrId, customer_id, phone_num, 
+    description, type, prepay_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblPayExample" >
     select
@@ -92,6 +92,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_pay
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tbl_pay
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.pythe.pojo.TblPayExample" >
     delete from tbl_pay
     <if test="_parameter != null" >
@@ -99,28 +109,31 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblPay" >
-    insert into tbl_pay (DATE, orderNum, amount, 
-      recordId, start_time, stop_time, 
-      qrId, customerId, phone_num, 
-      description, id, type, 
+    insert into tbl_pay (id, date, orderNum, 
+      sum, recordId, start_time, 
+      stop_time, qrId, customer_id, 
+      phone_num, description, type, 
       prepay_id)
-    values (#{date,jdbcType=TIMESTAMP}, #{ordernum,jdbcType=VARCHAR}, #{amount,jdbcType=DOUBLE}, 
-      #{recordid,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, #{stopTime,jdbcType=VARCHAR}, 
-      #{qrid,jdbcType=BIGINT}, #{customerid,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, 
-      #{description,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=BIGINT}, #{date,jdbcType=TIMESTAMP}, #{ordernum,jdbcType=BIGINT}, 
+      #{sum,jdbcType=DOUBLE}, #{recordid,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{stopTime,jdbcType=TIMESTAMP}, #{qrid,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, 
+      #{phoneNum,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
       #{prepayId,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblPay" >
     insert into tbl_pay
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
       <if test="date != null" >
-        DATE,
+        date,
       </if>
       <if test="ordernum != null" >
         orderNum,
       </if>
-      <if test="amount != null" >
-        amount,
+      <if test="sum != null" >
+        sum,
       </if>
       <if test="recordid != null" >
         recordId,
@@ -134,17 +147,14 @@
       <if test="qrid != null" >
         qrId,
       </if>
-      <if test="customerid != null" >
-        customerId,
+      <if test="customerId != null" >
+        customer_id,
       </if>
       <if test="phoneNum != null" >
         phone_num,
       </if>
       <if test="description != null" >
         description,
-      </if>
-      <if test="id != null" >
-        id,
       </if>
       <if test="type != null" >
         type,
@@ -154,38 +164,38 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
       <if test="date != null" >
         #{date,jdbcType=TIMESTAMP},
       </if>
       <if test="ordernum != null" >
-        #{ordernum,jdbcType=VARCHAR},
+        #{ordernum,jdbcType=BIGINT},
       </if>
-      <if test="amount != null" >
-        #{amount,jdbcType=DOUBLE},
+      <if test="sum != null" >
+        #{sum,jdbcType=DOUBLE},
       </if>
       <if test="recordid != null" >
         #{recordid,jdbcType=VARCHAR},
       </if>
       <if test="startTime != null" >
-        #{startTime,jdbcType=VARCHAR},
+        #{startTime,jdbcType=TIMESTAMP},
       </if>
       <if test="stopTime != null" >
-        #{stopTime,jdbcType=VARCHAR},
+        #{stopTime,jdbcType=TIMESTAMP},
       </if>
       <if test="qrid != null" >
         #{qrid,jdbcType=BIGINT},
       </if>
-      <if test="customerid != null" >
-        #{customerid,jdbcType=BIGINT},
+      <if test="customerId != null" >
+        #{customerId,jdbcType=BIGINT},
       </if>
       <if test="phoneNum != null" >
         #{phoneNum,jdbcType=VARCHAR},
       </if>
       <if test="description != null" >
         #{description,jdbcType=VARCHAR},
-      </if>
-      <if test="id != null" >
-        #{id,jdbcType=VARCHAR},
       </if>
       <if test="type != null" >
         #{type,jdbcType=INTEGER},
@@ -204,38 +214,38 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update tbl_pay
     <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
       <if test="record.date != null" >
-        DATE = #{record.date,jdbcType=TIMESTAMP},
+        date = #{record.date,jdbcType=TIMESTAMP},
       </if>
       <if test="record.ordernum != null" >
-        orderNum = #{record.ordernum,jdbcType=VARCHAR},
+        orderNum = #{record.ordernum,jdbcType=BIGINT},
       </if>
-      <if test="record.amount != null" >
-        amount = #{record.amount,jdbcType=DOUBLE},
+      <if test="record.sum != null" >
+        sum = #{record.sum,jdbcType=DOUBLE},
       </if>
       <if test="record.recordid != null" >
         recordId = #{record.recordid,jdbcType=VARCHAR},
       </if>
       <if test="record.startTime != null" >
-        start_time = #{record.startTime,jdbcType=VARCHAR},
+        start_time = #{record.startTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.stopTime != null" >
-        stop_time = #{record.stopTime,jdbcType=VARCHAR},
+        stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.qrid != null" >
         qrId = #{record.qrid,jdbcType=BIGINT},
       </if>
-      <if test="record.customerid != null" >
-        customerId = #{record.customerid,jdbcType=BIGINT},
+      <if test="record.customerId != null" >
+        customer_id = #{record.customerId,jdbcType=BIGINT},
       </if>
       <if test="record.phoneNum != null" >
         phone_num = #{record.phoneNum,jdbcType=VARCHAR},
       </if>
       <if test="record.description != null" >
         description = #{record.description,jdbcType=VARCHAR},
-      </if>
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null" >
         type = #{record.type,jdbcType=INTEGER},
@@ -250,21 +260,79 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update tbl_pay
-    set DATE = #{record.date,jdbcType=TIMESTAMP},
-      orderNum = #{record.ordernum,jdbcType=VARCHAR},
-      amount = #{record.amount,jdbcType=DOUBLE},
+    set id = #{record.id,jdbcType=BIGINT},
+      date = #{record.date,jdbcType=TIMESTAMP},
+      orderNum = #{record.ordernum,jdbcType=BIGINT},
+      sum = #{record.sum,jdbcType=DOUBLE},
       recordId = #{record.recordid,jdbcType=VARCHAR},
-      start_time = #{record.startTime,jdbcType=VARCHAR},
-      stop_time = #{record.stopTime,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
       qrId = #{record.qrid,jdbcType=BIGINT},
-      customerId = #{record.customerid,jdbcType=BIGINT},
+      customer_id = #{record.customerId,jdbcType=BIGINT},
       phone_num = #{record.phoneNum,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
-      id = #{record.id,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=INTEGER},
       prepay_id = #{record.prepayId,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pythe.pojo.TblPay" >
+    update tbl_pay
+    <set >
+      <if test="date != null" >
+        date = #{date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ordernum != null" >
+        orderNum = #{ordernum,jdbcType=BIGINT},
+      </if>
+      <if test="sum != null" >
+        sum = #{sum,jdbcType=DOUBLE},
+      </if>
+      <if test="recordid != null" >
+        recordId = #{recordid,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stopTime != null" >
+        stop_time = #{stopTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="qrid != null" >
+        qrId = #{qrid,jdbcType=BIGINT},
+      </if>
+      <if test="customerId != null" >
+        customer_id = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="phoneNum != null" >
+        phone_num = #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="prepayId != null" >
+        prepay_id = #{prepayId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pythe.pojo.TblPay" >
+    update tbl_pay
+    set date = #{date,jdbcType=TIMESTAMP},
+      orderNum = #{ordernum,jdbcType=BIGINT},
+      sum = #{sum,jdbcType=DOUBLE},
+      recordId = #{recordid,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      stop_time = #{stopTime,jdbcType=TIMESTAMP},
+      qrId = #{qrid,jdbcType=BIGINT},
+      customer_id = #{customerId,jdbcType=BIGINT},
+      phone_num = #{phoneNum,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      prepay_id = #{prepayId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

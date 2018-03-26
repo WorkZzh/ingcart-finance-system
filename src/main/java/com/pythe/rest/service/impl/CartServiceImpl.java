@@ -91,8 +91,20 @@ public class CartServiceImpl implements CartService {
 	@Value("${BILL_CHARGE_TYPE}")
 	private Integer BILL_CHARGE_TYPE;
 
+	@Value("${PART_REFUND_TYPE}")
+	private Integer PART_REFUND_TYPE;
+	
+	@Value("${TOTAL_REFUND_TYPE}")
+	private Integer TOTAL_REFUND_TYPE;
+	
+	@Value("${AUTO_PAY_TYPE}")
+	private Integer AUTO_PAY_TYPE;
+	
 	@Value("${BILL_PAY_TYPE}")
 	private Integer BILL_PAY_TYPE;
+	
+	
+	
 
 	@Value("${WX_APPID}")
 	private String WX_APPID;
@@ -122,14 +134,7 @@ public class CartServiceImpl implements CartService {
 	@Value("${REFUND_SUM}")
 	private Double REFUND_SUM;
 	
-	@Value("${PART_REFUND_TYPE}")
-	private Integer PART_REFUND_TYPE;
-	
-	@Value("${TOTAL_REFUND_TYPE}")
-	private Integer TOTAL_REFUND_TYPE;
-	
-	@Value("${AUTO_PAY_TYPE}")
-	private Integer AUTO_PAY_TYPE;
+
 	
 	
 	 
@@ -1679,10 +1684,6 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.build(400, "累计退款金额大于支付金额");
 		}
 		
-		account.setAmount(account.getAmount() - REFUND_SUM);
-		account.setOutAmount(account.getOutAmount() - REFUND_SUM);
-		accountMapper.updateByPrimaryKey(account);
-
 		// 更新退款流水
 		final TblBill bill = new TblBill();
 		bill.setId(FactoryUtils.getUUID());
@@ -1700,6 +1701,7 @@ public class CartServiceImpl implements CartService {
 		example2.setOrderByClause("time DESC");
 		List<TblBill> billList = billMapper.selectByExample(example2);
 		if (!billList.isEmpty()) {
+			
 			//更新bill退款订单号
 			TblBill bi = billList.get(0);
 			bill.setPrepayId(bi.getPrepayId());
@@ -1707,8 +1709,13 @@ public class CartServiceImpl implements CartService {
 			billMapper.insert(bill);
 			String refundMoney = String.valueOf((REFUND_SUM.intValue() * 100));
 			String str = refundByOrderInWX(bi.getOutTradeNo(), refundMoney,refundMoney);
+			
+			account.setAmount(account.getAmount() - REFUND_SUM);
+			account.setOutAmount(account.getOutAmount() - REFUND_SUM);
+			accountMapper.updateByPrimaryKey(account);
 
 			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") &&!str.contains("累计退款金额大于支付金额")) {
+				
 				// 看看更新后的账单是否为正数，如果是，证明扣费成功
 				JSONObject json = new JSONObject();
 				json.put("price", refundMoney);

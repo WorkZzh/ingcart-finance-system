@@ -10,13 +10,21 @@ public interface TblPayMapper {
 
     int deleteByExample(TblPayExample example);
 
+    int deleteByPrimaryKey(Long id);
+
     int insert(TblPay record);
 
     int insertSelective(TblPay record);
 
     List<TblPay> selectByExample(TblPayExample example);
 
+    TblPay selectByPrimaryKey(Long id);
+
     int updateByExampleSelective(@Param("record") TblPay record, @Param("example") TblPayExample example);
 
     int updateByExample(@Param("record") TblPay record, @Param("example") TblPayExample example);
+
+    int updateByPrimaryKeySelective(TblPay record);
+
+    int updateByPrimaryKey(TblPay record);
 }

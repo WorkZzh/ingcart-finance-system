@@ -3,31 +3,39 @@ package com.pythe.pojo;
 import java.util.Date;
 
 public class TblPay {
+    private Long id;
+
     private Date date;
 
-    private String ordernum;
+    private Long ordernum;
 
-    private Double amount;
+    private Double sum;
 
     private String recordid;
 
-    private String startTime;
+    private Date startTime;
 
-    private String stopTime;
+    private Date stopTime;
 
     private Long qrid;
 
-    private Long customerid;
+    private Long customerId;
 
     private String phoneNum;
 
     private String description;
 
-    private String id;
-
     private Integer type;
 
     private String prepayId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Date getDate() {
         return date;
@@ -37,20 +45,20 @@ public class TblPay {
         this.date = date;
     }
 
-    public String getOrdernum() {
+    public Long getOrdernum() {
         return ordernum;
     }
 
-    public void setOrdernum(String ordernum) {
-        this.ordernum = ordernum == null ? null : ordernum.trim();
+    public void setOrdernum(Long ordernum) {
+        this.ordernum = ordernum;
     }
 
-    public Double getAmount() {
-        return amount;
+    public Double getSum() {
+        return sum;
     }
 
-    public void setAmount(Double amount) {
-        this.amount = amount;
+    public void setSum(Double sum) {
+        this.sum = sum;
     }
 
     public String getRecordid() {
@@ -61,20 +69,20 @@ public class TblPay {
         this.recordid = recordid == null ? null : recordid.trim();
     }
 
-    public String getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime == null ? null : startTime.trim();
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
     }
 
-    public String getStopTime() {
+    public Date getStopTime() {
         return stopTime;
     }
 
-    public void setStopTime(String stopTime) {
-        this.stopTime = stopTime == null ? null : stopTime.trim();
+    public void setStopTime(Date stopTime) {
+        this.stopTime = stopTime;
     }
 
     public Long getQrid() {
@@ -85,12 +93,12 @@ public class TblPay {
         this.qrid = qrid;
     }
 
-    public Long getCustomerid() {
-        return customerid;
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomerid(Long customerid) {
-        this.customerid = customerid;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public String getPhoneNum() {
@@ -107,14 +115,6 @@ public class TblPay {
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
     }
 
     public Integer getType() {
