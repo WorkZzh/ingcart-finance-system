@@ -1,5 +1,6 @@
 package com.pythe.rest.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.pythe.mapper.TblMaintenanceMapper;
 import com.pythe.mapper.TblPriceMapper;
 import com.pythe.mapper.TblVersionMapper;
 import com.pythe.mapper.VCustomerMapper;
+import com.pythe.mapper.VRecordBillMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
@@ -39,6 +41,8 @@ import com.pythe.pojo.TblStoreExample;
 import com.pythe.pojo.TblVersion;
 import com.pythe.pojo.VCustomer;
 import com.pythe.pojo.VCustomerExample;
+import com.pythe.pojo.VRecordBill;
+import com.pythe.pojo.VRecordBillExample;
 import com.pythe.rest.service.ManagerService;
 
 
@@ -73,6 +77,9 @@ public class ManagerServiceImpl implements ManagerService{
 	
 	@Autowired
 	private TblAccountMapper accountMapper;
+	
+	@Autowired
+	private VRecordBillMapper recordBillMapper;
 
 	@Override
 	public PytheResult updateVersion(String parameters) {
@@ -458,6 +465,41 @@ public class ManagerServiceImpl implements ManagerService{
 		}
 		
 		return PytheResult.ok("已全部清零");
+	}
+
+	@Override
+	public PytheResult queryRecordBill(String parameters) {
+		JSONObject params = JSONObject.parseObject(parameters);
+
+		Integer pageNum = params.getInteger("pageNum");
+		Integer pageSize = params.getInteger("pageSize");
+		if (pageNum == null || pageSize == null) {
+			pageNum = 1;
+			pageSize = 10;
+		}
+		PageHelper.startPage(pageNum, pageSize);
+		
+		VRecordBillExample recordBillExample = new VRecordBillExample();
+		recordBillExample.createCriteria();
+		List<VRecordBill> recordBills = recordBillMapper.selectByExample(recordBillExample);
+		
+		List<JSONObject> results = new LinkedList<JSONObject>();
+		
+		for (VRecordBill vRecordBill : recordBills) {
+			JSONObject result = new JSONObject();
+			result.put("car_number", vRecordBill.getQrId());
+			result.put("phone_number", vRecordBill.getPhoneNum());
+			result.put("distribution_name", vRecordBill.getDistributionName());
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			result.put("date", dateFormat.format(vRecordBill.getTime()));
+			SimpleDateFormat  timeFormat= new SimpleDateFormat("HH:mm:ss");
+			result.put("start_time", timeFormat.format(vRecordBill.getStartTime()));
+			result.put("stop_time", timeFormat.format(vRecordBill.getStopTime()));
+			result.put("amount", vRecordBill.getAmount());
+			results.add(result);
+		}
+		
+		return PytheResult.ok(results);
 	}
 
 

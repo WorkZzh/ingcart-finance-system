@@ -40,6 +40,8 @@ public interface ManagerService {
 
 	PytheResult zeroCleanAccount(String parameters);
 
+	PytheResult queryRecordBill(String parameters);
+
 
 
 
