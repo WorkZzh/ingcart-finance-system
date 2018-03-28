@@ -19,8 +19,6 @@ public interface ManagerService {
 
 	PytheResult selectCarAttraction(String parameters);
 
-
-
 	PytheResult selectAllCity();
 
 
@@ -41,6 +39,10 @@ public interface ManagerService {
 	PytheResult zeroCleanAccount(String parameters);
 
 	PytheResult queryRecordBill(String parameters);
+
+	PytheResult selectOneLevel(String level);
+
+	PytheResult selectSumByTime(String parameters);
 
 
 

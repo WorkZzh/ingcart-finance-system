@@ -21,6 +21,8 @@
     <result column="latitude_stop" property="latitudeStop" jdbcType="DOUBLE" />
     <result column="bill_id" property="billId" jdbcType="VARCHAR" />
     <result column="car_id" property="carId" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <result column="giving_amount" property="givingAmount" jdbcType="DOUBLE" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -83,7 +85,7 @@
   <sql id="Base_Column_List" >
     id, date, orderNum, recordId, start_time, stop_time, qrId, customer_id, phone_num, 
     description, type, prepay_id, sum, longitude_start, latitude_start, longitude_stop, 
-    latitude_stop, bill_id, car_id
+    latitude_stop, bill_id, car_id, amount, giving_amount
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblPayExample" >
     select
@@ -122,14 +124,16 @@
       description, type, prepay_id, 
       sum, longitude_start, latitude_start, 
       longitude_stop, latitude_stop, bill_id, 
-      car_id)
+      car_id, amount, giving_amount
+      )
     values (#{id,jdbcType=BIGINT}, #{date,jdbcType=TIMESTAMP}, #{ordernum,jdbcType=BIGINT}, 
       #{recordid,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, 
       #{qrid,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, 
       #{description,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{prepayId,jdbcType=VARCHAR}, 
       #{sum,jdbcType=DOUBLE}, #{longitudeStart,jdbcType=DOUBLE}, #{latitudeStart,jdbcType=DOUBLE}, 
       #{longitudeStop,jdbcType=DOUBLE}, #{latitudeStop,jdbcType=DOUBLE}, #{billId,jdbcType=VARCHAR}, 
-      #{carId,jdbcType=VARCHAR})
+      #{carId,jdbcType=VARCHAR}, #{amount,jdbcType=DOUBLE}, #{givingAmount,jdbcType=DOUBLE}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblPay" >
     insert into tbl_pay
@@ -191,6 +195,12 @@
       <if test="carId != null" >
         car_id,
       </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="givingAmount != null" >
+        giving_amount,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -249,6 +259,12 @@
       </if>
       <if test="carId != null" >
         #{carId,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DOUBLE},
+      </if>
+      <if test="givingAmount != null" >
+        #{givingAmount,jdbcType=DOUBLE},
       </if>
     </trim>
   </insert>
@@ -318,6 +334,12 @@
       <if test="record.carId != null" >
         car_id = #{record.carId,jdbcType=VARCHAR},
       </if>
+      <if test="record.amount != null" >
+        amount = #{record.amount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.givingAmount != null" >
+        giving_amount = #{record.givingAmount,jdbcType=DOUBLE},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -343,7 +365,9 @@
       longitude_stop = #{record.longitudeStop,jdbcType=DOUBLE},
       latitude_stop = #{record.latitudeStop,jdbcType=DOUBLE},
       bill_id = #{record.billId,jdbcType=VARCHAR},
-      car_id = #{record.carId,jdbcType=VARCHAR}
+      car_id = #{record.carId,jdbcType=VARCHAR},
+      amount = #{record.amount,jdbcType=DOUBLE},
+      giving_amount = #{record.givingAmount,jdbcType=DOUBLE}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -405,6 +429,12 @@
       <if test="carId != null" >
         car_id = #{carId,jdbcType=VARCHAR},
       </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DOUBLE},
+      </if>
+      <if test="givingAmount != null" >
+        giving_amount = #{givingAmount,jdbcType=DOUBLE},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -427,7 +457,9 @@
       longitude_stop = #{longitudeStop,jdbcType=DOUBLE},
       latitude_stop = #{latitudeStop,jdbcType=DOUBLE},
       bill_id = #{billId,jdbcType=VARCHAR},
-      car_id = #{carId,jdbcType=VARCHAR}
+      car_id = #{carId,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DOUBLE},
+      giving_amount = #{givingAmount,jdbcType=DOUBLE}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

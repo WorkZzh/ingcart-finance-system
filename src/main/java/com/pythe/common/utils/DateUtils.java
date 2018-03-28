@@ -22,7 +22,7 @@ public class DateUtils {
 	public static final SimpleDateFormat DATE_FORMAT_Hour_Minue = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	
-	public static final SimpleDateFormat DATE_FORMAT_Month_Day = new SimpleDateFormat("MM-dd");
+	public static final SimpleDateFormat DATE_FORMAT_Month_Day = new SimpleDateFormat("MM-dd HH:mm");
 
 	
 	
@@ -251,6 +251,11 @@ public class DateUtils {
 	public static String formatDate(Date date) {
 		return DATE_FORMAT.format(date);
 	}
+	
+	
+	
+
+	
 
 	/**
 	 * 格式化日期（HH:mm）

@@ -225,6 +225,7 @@ public class PayServiceImpl implements PayService {
 		bill.setType(BILL_CHARGE_TYPE);
 		bill.setOutTradeNo(out_trade_no);
 		bill.setPrepayId(prepay_id);
+		bill.setRefundAmount(0d);
 		bill.setGivingAmount(giving);
 		bill.setStatus(NOT_PAY_STATUS);
 		bill.setTime(new Date());
@@ -243,18 +244,17 @@ public class PayServiceImpl implements PayService {
 		String outTradeNo = strJson.getString("out_trade_no");
 		String resultCode = strJson.getString("result_code");
 		String returnCode = strJson.getString("return_code");
-		String totalFee = strJson.getString("total_fee");
+		//String totalFee = strJson.getString("total_fee");
 
 		if (returnCode.equals("SUCCESS") && resultCode.equals("SUCCESS")) {
-			System.out.println("============================> accept return !!! " + returnCode + " && " + resultCode);
+			//System.out.println("============================> accept return !!! " + returnCode + " && " + resultCode);
 			if (appId.equals(WX_APPID) && mchId.equals(WX_MCH_ID)) {
-				System.out.println("=============================> match !!!!!!!!!!!!");
+				//System.out.println("=============================> match !!!!!!!!!!!!");
 				TblBillExample billExample = new TblBillExample();
 				billExample.createCriteria().andOutTradeNoEqualTo(outTradeNo);
 				TblBill originalBill = billMapper.selectByExample(billExample).get(0);
 				if (originalBill.getStatus().equals(NOT_PAY_STATUS)) {
 					//System.out.println("============================> charge fee !!! " + totalFee);
-
 
 					//更新
 					Double inAmount = originalBill.getAmount();
@@ -268,13 +268,18 @@ public class PayServiceImpl implements PayService {
 					account.setInAmount(account.getInAmount() + inAmount + givingAmount );
 					
 					
-					//更新充值人员，管理员还是测试人员。
-					originalBill.setStatus(PAY_STATUS);
-					if (account.getLevel().equals(DEVELOPER_LEVEL)) {
-						originalBill.setType(TEST_PAY_TYPE);
-					}else if(account.getLevel().equals(MANAGER_LEVEL)){
-						originalBill.setType(MANAGER_PAY_TYPE);
-					}
+					
+					//更新充值人员，管理员还是测试人员,必须是充值状态
+
+//					if (account.getLevel().equals(DEVELOPER_LEVEL)) {
+//						originalBill.setType(TEST_PAY_TYPE);
+//					}else if(account.getLevel().equals(MANAGER_LEVEL)){
+//						originalBill.setType(MANAGER_PAY_TYPE);
+//					}
+					
+					
+					
+     				originalBill.setStatus(PAY_STATUS);
 					billMapper.updateByPrimaryKey(originalBill);
 					
 					

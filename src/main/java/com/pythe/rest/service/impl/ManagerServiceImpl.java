@@ -91,6 +91,30 @@ public class ManagerServiceImpl implements ManagerService{
 	@Autowired
 	private TblCatalogMapper catalogMapper;
 	
+	
+	// BILL
+	@Value("${BILL_CHARGE_TYPE}")
+	private Integer BILL_CHARGE_TYPE;
+
+	@Value("${PART_REFUND_TYPE}")
+	private Integer PART_REFUND_TYPE;
+	
+	@Value("${TOTAL_REFUND_TYPE}")
+	private Integer TOTAL_REFUND_TYPE;
+	
+	@Value("${AUTO_PAY_TYPE}")
+	private Integer AUTO_PAY_TYPE;
+	
+	@Value("${BILL_PAY_TYPE}")
+	private Integer BILL_PAY_TYPE;
+	
+	
+	@Value("${TEST_PAY_TYPE}")
+	private Integer TEST_PAY_TYPE;
+	
+	@Value("${PAY_STATUS}")
+	private Integer PAY_STATUS;
+	
 
 	@Override
 	public PytheResult updateVersion(String parameters) {
@@ -138,7 +162,7 @@ public class ManagerServiceImpl implements ManagerService{
 	@Override
 	public PytheResult countCarCondition(String level,Integer pageNum, Integer pageSize) {
 		
-		PageHelper.startPage(pageNum, pageSize);
+		
 		
 		VCustomerExample example = new VCustomerExample();
 		Criteria criteria = example.createCriteria();
@@ -152,13 +176,16 @@ public class ManagerServiceImpl implements ManagerService{
 				for (TblCatalog tblCatalog : catalogList) {
 					list.add(tblCatalog.getId());
 				}
-				criteria.andDescriptionIn(list);
+			}else{
+				list.add(level);
 			}
+			criteria.andDescriptionIn(list);
 		}
 		
-		example.setOrderByClause("qr_id asc");
+		PageHelper.startPage(pageNum, pageSize);
 		
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+		
 		int size = vCustomerMapper.countByExample(example);
 		JSONArray arr =new JSONArray();
 		JSONObject json =new JSONObject();
@@ -167,7 +194,6 @@ public class ManagerServiceImpl implements ManagerService{
 			json.put("size",size);
 			for (VCustomer vCustomer : customerList) {
 				JSONObject json2 = new JSONObject();
-				
 				json2.put("start_time",DateUtils.getMonthDay(vCustomer.getStartTime()));
 				json2.put("phone_num", vCustomer.getPhoneNum());
 				json2.put("car_code", vCustomer.getQrId());
@@ -499,6 +525,34 @@ public class ManagerServiceImpl implements ManagerService{
 	public PytheResult queryRecordBill(String parameters) {
 		JSONObject params = JSONObject.parseObject(parameters);
 
+		String level = params.getString("level");
+		String time = params.getString("time");
+		
+		
+		VRecordBillExample recordBillExample = new VRecordBillExample();
+		com.pythe.pojo.VRecordBillExample.Criteria cretria2 = recordBillExample.createCriteria();
+		
+		
+		ArrayList<String> list = new ArrayList<String>();
+		if (!"0".equals(level)) {
+			TblCatalogExample example2 =new TblCatalogExample();
+			example2.createCriteria().andHigherLevelIdEqualTo(level);
+			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+			if (!catalogList.isEmpty()) {
+				for (TblCatalog tblCatalog : catalogList) {
+					list.add(tblCatalog.getId());
+				}
+			}else{
+				list.add(level);
+			}
+			cretria2.andLevelIn(list);
+		}
+		
+		
+		if (!"0".equals(time)) {
+			cretria2.andTimeBetween(DateUtils.parseTime(time+" 01:00:00"), DateUtils.parseTime(time+" 23:50:00"));
+		}
+		
 		Integer pageNum = params.getInteger("pageNum");
 		Integer pageSize = params.getInteger("pageSize");
 		if (pageNum == null || pageSize == null) {
@@ -506,28 +560,115 @@ public class ManagerServiceImpl implements ManagerService{
 			pageSize = 10;
 		}
 		PageHelper.startPage(pageNum, pageSize);
-		
-		VRecordBillExample recordBillExample = new VRecordBillExample();
-		recordBillExample.createCriteria();
+
 		List<VRecordBill> recordBills = recordBillMapper.selectByExample(recordBillExample);
 		
 		List<JSONObject> results = new LinkedList<JSONObject>();
-		
+		Integer type  =null;
 		for (VRecordBill vRecordBill : recordBills) {
 			JSONObject result = new JSONObject();
 			result.put("car_number", vRecordBill.getQrId());
-			result.put("phone_number", vRecordBill.getPhoneNum());
+			result.put("phone_number", vRecordBill.getPhoneNum().substring(0, 3) + "••••" + vRecordBill.getPhoneNum().substring(7));
 			result.put("distribution_name", vRecordBill.getDistributionName());
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			result.put("date", dateFormat.format(vRecordBill.getTime()));
 			SimpleDateFormat  timeFormat= new SimpleDateFormat("HH:mm:ss");
 			result.put("start_time", timeFormat.format(vRecordBill.getStartTime()));
 			result.put("stop_time", timeFormat.format(vRecordBill.getStopTime()));
-			result.put("amount", vRecordBill.getAmount());
+			result.put("sum", vRecordBill.getSum());
+			type = vRecordBill.getType();
+			if (type.equals(BILL_PAY_TYPE)) {
+				result.put("typeName", "非定点还");
+			}else if(type.equals(PART_REFUND_TYPE)){
+				result.put("typeName", "定点还车");
+			}else if(type.equals(TOTAL_REFUND_TYPE)){
+				result.put("typeName", "全额退款");
+			}else if(type.equals(TEST_PAY_TYPE)){
+				result.put("typeName", "交易测试");
+			}else{
+				result.put("typeName", "未知交易");
+			}
 			results.add(result);
 		}
 		
 		return PytheResult.ok(results);
+	}
+
+	@Override
+	public PytheResult selectOneLevel(String level) {
+		// TODO Auto-generated method stub
+		TblCatalogExample example2 =new TblCatalogExample();
+		example2.createCriteria().andHigherLevelIdEqualTo(level);
+		List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+		if (catalogList.isEmpty()) {
+			return PytheResult.build(400,"没有景区");
+		}
+		return PytheResult.ok(catalogList);
+	}
+
+	@Override
+	public PytheResult selectSumByTime(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject params = JSONObject.parseObject(parameters);
+
+		String level = params.getString("level");
+		String time = params.getString("time");
+		
+		
+		ArrayList<String> list = new ArrayList<String>();
+		if (!"0".equals(level)) {
+			TblCatalogExample example2 =new TblCatalogExample();
+			example2.createCriteria().andHigherLevelIdEqualTo(level);
+			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+			if (!catalogList.isEmpty()) {
+				for (TblCatalog tblCatalog : catalogList) {
+					list.add(tblCatalog.getId());
+				}
+			}else{
+				list.add(level);
+			}
+		}else{
+			list=null;
+		}
+		
+		
+		
+		
+		if ("0".equals(time)) {
+			time =null;
+		}
+		
+		
+		
+		VRecordBill recordLists = recordBillMapper.selectSumByTime(list, time);
+		recordLists.setFrequency(recordLists.getQrId());
+		recordLists.setQrId(null);
+		
+		return PytheResult.ok(recordLists );
+		
+		
+//		VRecordBillExample recordBillExample = new VRecordBillExample();
+//		com.pythe.pojo.VRecordBillExample.Criteria cretria2 = recordBillExample.createCriteria();
+//		
+//		
+//		ArrayList<String> list = new ArrayList<String>();
+//		if (!"0".equals(level)) {
+//			TblCatalogExample example2 =new TblCatalogExample();
+//			example2.createCriteria().andHigherLevelIdEqualTo(level);
+//			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+//			if (!catalogList.isEmpty()) {
+//				for (TblCatalog tblCatalog : catalogList) {
+//					list.add(tblCatalog.getId());
+//				}
+//			}else{
+//				list.add(level);
+//			}
+//			cretria2.andLevelIn(list);
+//		}
+		
+
+//		
+//		return null;
 	}
 
 

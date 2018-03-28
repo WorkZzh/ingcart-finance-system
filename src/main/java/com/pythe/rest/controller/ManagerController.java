@@ -55,6 +55,25 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+    
+    
+	 /**
+     * 统计车的使用情况
+	 * 查看一级目录
+     */
+    @RequestMapping(value = "/select/one/level", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectOneLevel(
+			@RequestParam(defaultValue="0") String level){
+    	try {
+			return service.selectOneLevel(level);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
 	
 	
 	 /**
@@ -325,7 +344,6 @@ public class ManagerController {
 	}
 	
 	
-	
 	@RequestMapping(value = "/record/bill/query", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult queryRecordBill(@RequestBody String parameters) throws Exception {
@@ -336,5 +354,25 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	//按各种维度查看消费总额
+	@RequestMapping(value = "/select/bill/sum", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult selectSumByTime(
+			@RequestBody String parameters
+			) {
+		try {
+			return service.selectSumByTime(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
+
 	
 }

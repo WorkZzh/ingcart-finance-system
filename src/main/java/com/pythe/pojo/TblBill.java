@@ -11,7 +11,7 @@ public class TblBill {
 
     private Double amount;
 
-    private Double givingAmount;
+    private Double refundAmount;
 
     private Integer status;
 
@@ -22,6 +22,10 @@ public class TblBill {
     private Integer type;
 
     private Date time;
+
+    private Double givingAmount;
+
+    private Long managerId;
 
     public String getId() {
         return id;
@@ -55,12 +59,12 @@ public class TblBill {
         this.amount = amount;
     }
 
-    public Double getGivingAmount() {
-        return givingAmount;
+    public Double getRefundAmount() {
+        return refundAmount;
     }
 
-    public void setGivingAmount(Double givingAmount) {
-        this.givingAmount = givingAmount;
+    public void setRefundAmount(Double refundAmount) {
+        this.refundAmount = refundAmount;
     }
 
     public Integer getStatus() {
@@ -101,5 +105,21 @@ public class TblBill {
 
     public void setTime(Date time) {
         this.time = time;
+    }
+
+    public Double getGivingAmount() {
+        return givingAmount;
+    }
+
+    public void setGivingAmount(Double givingAmount) {
+        this.givingAmount = givingAmount;
+    }
+
+    public Long getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(Long managerId) {
+        this.managerId = managerId;
     }
 }

@@ -5,9 +5,14 @@
     <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
     <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
     <result column="stop_time" property="stopTime" jdbcType="TIMESTAMP" />
+    <result column="sum" property="sum" jdbcType="DOUBLE" />
+    <result column="giving_amount" property="givingAmount" jdbcType="DOUBLE" />
+    <result column="refund_amount" property="refundAmount" jdbcType="DOUBLE" />
     <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <result column="type" property="type" jdbcType="INTEGER" />
     <result column="time" property="time" jdbcType="TIMESTAMP" />
     <result column="qr_id" property="qrId" jdbcType="BIGINT" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
     <result column="distribution_name" property="distributionName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -69,7 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    phone_num, start_time, stop_time, amount, time, qr_id, distribution_name
+    phone_num, start_time, stop_time, sum, giving_amount, refund_amount, amount, type, 
+    time, qr_id, level, distribution_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.VRecordBillExample" >
     select
@@ -93,11 +99,15 @@
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.VRecordBill" >
     insert into v_record_bill (phone_num, start_time, stop_time, 
-      amount, time, qr_id, 
-      distribution_name)
+      sum, giving_amount, refund_amount, 
+      amount, type, time, 
+      qr_id, level, distribution_name
+      )
     values (#{phoneNum,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, 
-      #{amount,jdbcType=DOUBLE}, #{time,jdbcType=TIMESTAMP}, #{qrId,jdbcType=BIGINT}, 
-      #{distributionName,jdbcType=VARCHAR})
+      #{sum,jdbcType=DOUBLE}, #{givingAmount,jdbcType=DOUBLE}, #{refundAmount,jdbcType=DOUBLE}, 
+      #{amount,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER}, #{time,jdbcType=TIMESTAMP}, 
+      #{qrId,jdbcType=BIGINT}, #{level,jdbcType=VARCHAR}, #{distributionName,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.VRecordBill" >
     insert into v_record_bill
@@ -111,14 +121,29 @@
       <if test="stopTime != null" >
         stop_time,
       </if>
+      <if test="sum != null" >
+        sum,
+      </if>
+      <if test="givingAmount != null" >
+        giving_amount,
+      </if>
+      <if test="refundAmount != null" >
+        refund_amount,
+      </if>
       <if test="amount != null" >
         amount,
+      </if>
+      <if test="type != null" >
+        type,
       </if>
       <if test="time != null" >
         time,
       </if>
       <if test="qrId != null" >
         qr_id,
+      </if>
+      <if test="level != null" >
+        level,
       </if>
       <if test="distributionName != null" >
         distribution_name,
@@ -134,14 +159,29 @@
       <if test="stopTime != null" >
         #{stopTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="sum != null" >
+        #{sum,jdbcType=DOUBLE},
+      </if>
+      <if test="givingAmount != null" >
+        #{givingAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="refundAmount != null" >
+        #{refundAmount,jdbcType=DOUBLE},
+      </if>
       <if test="amount != null" >
         #{amount,jdbcType=DOUBLE},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
       </if>
       <if test="time != null" >
         #{time,jdbcType=TIMESTAMP},
       </if>
       <if test="qrId != null" >
         #{qrId,jdbcType=BIGINT},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=VARCHAR},
       </if>
       <if test="distributionName != null" >
         #{distributionName,jdbcType=VARCHAR},
@@ -166,14 +206,29 @@
       <if test="record.stopTime != null" >
         stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.sum != null" >
+        sum = #{record.sum,jdbcType=DOUBLE},
+      </if>
+      <if test="record.givingAmount != null" >
+        giving_amount = #{record.givingAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.refundAmount != null" >
+        refund_amount = #{record.refundAmount,jdbcType=DOUBLE},
+      </if>
       <if test="record.amount != null" >
         amount = #{record.amount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
       </if>
       <if test="record.time != null" >
         time = #{record.time,jdbcType=TIMESTAMP},
       </if>
       <if test="record.qrId != null" >
         qr_id = #{record.qrId,jdbcType=BIGINT},
+      </if>
+      <if test="record.level != null" >
+        level = #{record.level,jdbcType=VARCHAR},
       </if>
       <if test="record.distributionName != null" >
         distribution_name = #{record.distributionName,jdbcType=VARCHAR},
@@ -188,12 +243,44 @@
     set phone_num = #{record.phoneNum,jdbcType=VARCHAR},
       start_time = #{record.startTime,jdbcType=TIMESTAMP},
       stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
+      sum = #{record.sum,jdbcType=DOUBLE},
+      giving_amount = #{record.givingAmount,jdbcType=DOUBLE},
+      refund_amount = #{record.refundAmount,jdbcType=DOUBLE},
       amount = #{record.amount,jdbcType=DOUBLE},
+      type = #{record.type,jdbcType=INTEGER},
       time = #{record.time,jdbcType=TIMESTAMP},
       qr_id = #{record.qrId,jdbcType=BIGINT},
+      level = #{record.level,jdbcType=VARCHAR},
       distribution_name = #{record.distributionName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
+  
+  
+    <select id="selectSumByTime"  resultMap="BaseResultMap">
+		SELECT count(*) as qr_id,COALESCE(sum(sum),0) as sum,COALESCE(sum(amount),0) as amount,COALESCE(sum(refund_amount),0) as refund_amount
+	 	,COALESCE(sum(giving_amount),0) AS giving_amount
+	 	FROM v_record_bill r
+	 	WHERE 
+	 <if test="levels != null" >
+        	 r.level IN
+		<foreach collection="levels" item="eachId" index="index" 
+			open="(" separator="," close=")">
+		         #{eachId}
+		</foreach>
+		and
+      </if>
+      
+      <if test="time != null" >
+			r.time like concat(#{time},'%') and 
+      </if>
+      
+      1=1
+		 
+	 </select>
+	 
+	 <!--  type&lt;=9 -->
+	 
+  
 </mapper>

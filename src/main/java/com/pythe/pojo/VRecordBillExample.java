@@ -295,6 +295,186 @@ public class VRecordBillExample {
             return (Criteria) this;
         }
 
+        public Criteria andSumIsNull() {
+            addCriterion("sum is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumIsNotNull() {
+            addCriterion("sum is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumEqualTo(Double value) {
+            addCriterion("sum =", value, "sum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumNotEqualTo(Double value) {
+            addCriterion("sum <>", value, "sum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumGreaterThan(Double value) {
+            addCriterion("sum >", value, "sum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumGreaterThanOrEqualTo(Double value) {
+            addCriterion("sum >=", value, "sum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumLessThan(Double value) {
+            addCriterion("sum <", value, "sum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumLessThanOrEqualTo(Double value) {
+            addCriterion("sum <=", value, "sum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumIn(List<Double> values) {
+            addCriterion("sum in", values, "sum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumNotIn(List<Double> values) {
+            addCriterion("sum not in", values, "sum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumBetween(Double value1, Double value2) {
+            addCriterion("sum between", value1, value2, "sum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSumNotBetween(Double value1, Double value2) {
+            addCriterion("sum not between", value1, value2, "sum");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountIsNull() {
+            addCriterion("giving_amount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountIsNotNull() {
+            addCriterion("giving_amount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountEqualTo(Double value) {
+            addCriterion("giving_amount =", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountNotEqualTo(Double value) {
+            addCriterion("giving_amount <>", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountGreaterThan(Double value) {
+            addCriterion("giving_amount >", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountGreaterThanOrEqualTo(Double value) {
+            addCriterion("giving_amount >=", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountLessThan(Double value) {
+            addCriterion("giving_amount <", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountLessThanOrEqualTo(Double value) {
+            addCriterion("giving_amount <=", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountIn(List<Double> values) {
+            addCriterion("giving_amount in", values, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountNotIn(List<Double> values) {
+            addCriterion("giving_amount not in", values, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountBetween(Double value1, Double value2) {
+            addCriterion("giving_amount between", value1, value2, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountNotBetween(Double value1, Double value2) {
+            addCriterion("giving_amount not between", value1, value2, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountIsNull() {
+            addCriterion("refund_amount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountIsNotNull() {
+            addCriterion("refund_amount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountEqualTo(Double value) {
+            addCriterion("refund_amount =", value, "refundAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountNotEqualTo(Double value) {
+            addCriterion("refund_amount <>", value, "refundAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountGreaterThan(Double value) {
+            addCriterion("refund_amount >", value, "refundAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountGreaterThanOrEqualTo(Double value) {
+            addCriterion("refund_amount >=", value, "refundAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountLessThan(Double value) {
+            addCriterion("refund_amount <", value, "refundAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountLessThanOrEqualTo(Double value) {
+            addCriterion("refund_amount <=", value, "refundAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountIn(List<Double> values) {
+            addCriterion("refund_amount in", values, "refundAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountNotIn(List<Double> values) {
+            addCriterion("refund_amount not in", values, "refundAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountBetween(Double value1, Double value2) {
+            addCriterion("refund_amount between", value1, value2, "refundAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundAmountNotBetween(Double value1, Double value2) {
+            addCriterion("refund_amount not between", value1, value2, "refundAmount");
+            return (Criteria) this;
+        }
+
         public Criteria andAmountIsNull() {
             addCriterion("amount is null");
             return (Criteria) this;
@@ -352,6 +532,66 @@ public class VRecordBillExample {
 
         public Criteria andAmountNotBetween(Double value1, Double value2) {
             addCriterion("amount not between", value1, value2, "amount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIsNull() {
+            addCriterion("type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIsNotNull() {
+            addCriterion("type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeEqualTo(Integer value) {
+            addCriterion("type =", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotEqualTo(Integer value) {
+            addCriterion("type <>", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeGreaterThan(Integer value) {
+            addCriterion("type >", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("type >=", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLessThan(Integer value) {
+            addCriterion("type <", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("type <=", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIn(List<Integer> values) {
+            addCriterion("type in", values, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotIn(List<Integer> values) {
+            addCriterion("type not in", values, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeBetween(Integer value1, Integer value2) {
+            addCriterion("type between", value1, value2, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("type not between", value1, value2, "type");
             return (Criteria) this;
         }
 
@@ -472,6 +712,76 @@ public class VRecordBillExample {
 
         public Criteria andQrIdNotBetween(Long value1, Long value2) {
             addCriterion("qr_id not between", value1, value2, "qrId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelIsNull() {
+            addCriterion("level is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelIsNotNull() {
+            addCriterion("level is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelEqualTo(String value) {
+            addCriterion("level =", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelNotEqualTo(String value) {
+            addCriterion("level <>", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelGreaterThan(String value) {
+            addCriterion("level >", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelGreaterThanOrEqualTo(String value) {
+            addCriterion("level >=", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelLessThan(String value) {
+            addCriterion("level <", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelLessThanOrEqualTo(String value) {
+            addCriterion("level <=", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelLike(String value) {
+            addCriterion("level like", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelNotLike(String value) {
+            addCriterion("level not like", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelIn(List<String> values) {
+            addCriterion("level in", values, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelNotIn(List<String> values) {
+            addCriterion("level not in", values, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelBetween(String value1, String value2) {
+            addCriterion("level between", value1, value2, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelNotBetween(String value1, String value2) {
+            addCriterion("level not between", value1, value2, "level");
             return (Criteria) this;
         }
 

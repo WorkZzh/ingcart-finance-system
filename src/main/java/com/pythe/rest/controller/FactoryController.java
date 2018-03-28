@@ -35,12 +35,7 @@ public class FactoryController {
 		}
 	}
 	
-	
-	
-	
 
-
-	
 	//生产账单
 	@RequestMapping(value = "/car/pay", method = RequestMethod.GET)
 	@ResponseBody
@@ -66,6 +61,9 @@ public class FactoryController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+
 	
 	
   

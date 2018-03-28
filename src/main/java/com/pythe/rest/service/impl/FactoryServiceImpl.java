@@ -192,9 +192,27 @@ public class FactoryServiceImpl implements FactoryService {
 				}
 			}
 
+			if (tblPay.getSum().equals(30d) ||tblPay.getSum().equals(50d) || tblPay.getSum().equals(20d) || tblPay.getSum().equals(0d)) {
+				if (tblPay.getSum().equals(50d) || tblPay.getSum().equals(20d)) {
+					tblPay.setType(BILL_PAY_TYPE);
+					tblPay.setAmount(tblPay.getSum());
+					tblPay.setGivingAmount(0d);
+				}else if(tblPay.getSum().equals(30d)){
+					tblPay.setType(PART_REFUND_TYPE);
+					tblPay.setAmount(50d);
+					tblPay.setGivingAmount(20d);
+				}else if (tblPay.getSum().equals(0d)){
+					tblPay.setType(TOTAL_REFUND_TYPE);
+					if (tblPay.getDescription().equals("A1")) {
+						tblPay.setAmount(50d);
+						tblPay.setGivingAmount(50d);
+					}else{
+						tblPay.setAmount(20d);
+						tblPay.setGivingAmount(20d);
+					}
 
-			if (tblPay.getSum().equals(30d) ||tblPay.getSum().equals(50d) || tblPay.getSum().equals(20d)) {
-				tblPay.setType(BILL_PAY_TYPE);
+				}
+				
 				num = RandomUtils.nextInt(0,customerSize);
 				TblCustomer customer = customerList.get(num);
 				tblPay.setCustomerId(customer.getId());
@@ -232,6 +250,17 @@ public class FactoryServiceImpl implements FactoryService {
 				tblPay.setQrid(car.getQrId());
 				tblPay.setCarId(car.getId());
 				
+				//充值和退款情况
+				if (tblPay.getSum().equals(5d)) {
+					tblPay.setAmount(10d);
+					tblPay.setGivingAmount(5d);
+				}else{
+					tblPay.setAmount(tblPay.getSum());
+					tblPay.setGivingAmount(0d);
+				}
+
+				
+				
 				//使用小时
 				num = RandomUtils.nextInt(1,19);
 				date = new DateTime(tblPay.getDate()).plusMinutes(num).plusSeconds(num).toDate();
@@ -264,8 +293,8 @@ public class FactoryServiceImpl implements FactoryService {
 		for (TblPay tblPay : payList) {
 			TblBill bill =new TblBill();
 			bill.setId(tblPay.getBillId());
-			bill.setAmount(tblPay.getSum());
-			bill.setGivingAmount(0d);
+			bill.setAmount(tblPay.getAmount());
+			bill.setGivingAmount(tblPay.getGivingAmount());
 			bill.setCustomerId(tblPay.getCustomerId());
 			bill.setOutTradeNo(String.valueOf(tblPay.getOrdernum()));
 			bill.setStatus(PAY_STATUS);
@@ -292,5 +321,7 @@ public class FactoryServiceImpl implements FactoryService {
 		
 		return PytheResult.ok("更新成功");
 	}
+
+
 
 }

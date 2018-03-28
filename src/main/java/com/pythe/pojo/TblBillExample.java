@@ -365,63 +365,63 @@ public class TblBillExample {
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountIsNull() {
-            addCriterion("giving_amount is null");
+        public Criteria andRefundAmountIsNull() {
+            addCriterion("refund_amount is null");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountIsNotNull() {
-            addCriterion("giving_amount is not null");
+        public Criteria andRefundAmountIsNotNull() {
+            addCriterion("refund_amount is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountEqualTo(Double value) {
-            addCriterion("giving_amount =", value, "givingAmount");
+        public Criteria andRefundAmountEqualTo(Double value) {
+            addCriterion("refund_amount =", value, "refundAmount");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountNotEqualTo(Double value) {
-            addCriterion("giving_amount <>", value, "givingAmount");
+        public Criteria andRefundAmountNotEqualTo(Double value) {
+            addCriterion("refund_amount <>", value, "refundAmount");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountGreaterThan(Double value) {
-            addCriterion("giving_amount >", value, "givingAmount");
+        public Criteria andRefundAmountGreaterThan(Double value) {
+            addCriterion("refund_amount >", value, "refundAmount");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountGreaterThanOrEqualTo(Double value) {
-            addCriterion("giving_amount >=", value, "givingAmount");
+        public Criteria andRefundAmountGreaterThanOrEqualTo(Double value) {
+            addCriterion("refund_amount >=", value, "refundAmount");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountLessThan(Double value) {
-            addCriterion("giving_amount <", value, "givingAmount");
+        public Criteria andRefundAmountLessThan(Double value) {
+            addCriterion("refund_amount <", value, "refundAmount");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountLessThanOrEqualTo(Double value) {
-            addCriterion("giving_amount <=", value, "givingAmount");
+        public Criteria andRefundAmountLessThanOrEqualTo(Double value) {
+            addCriterion("refund_amount <=", value, "refundAmount");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountIn(List<Double> values) {
-            addCriterion("giving_amount in", values, "givingAmount");
+        public Criteria andRefundAmountIn(List<Double> values) {
+            addCriterion("refund_amount in", values, "refundAmount");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountNotIn(List<Double> values) {
-            addCriterion("giving_amount not in", values, "givingAmount");
+        public Criteria andRefundAmountNotIn(List<Double> values) {
+            addCriterion("refund_amount not in", values, "refundAmount");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountBetween(Double value1, Double value2) {
-            addCriterion("giving_amount between", value1, value2, "givingAmount");
+        public Criteria andRefundAmountBetween(Double value1, Double value2) {
+            addCriterion("refund_amount between", value1, value2, "refundAmount");
             return (Criteria) this;
         }
 
-        public Criteria andGivingAmountNotBetween(Double value1, Double value2) {
-            addCriterion("giving_amount not between", value1, value2, "givingAmount");
+        public Criteria andRefundAmountNotBetween(Double value1, Double value2) {
+            addCriterion("refund_amount not between", value1, value2, "refundAmount");
             return (Criteria) this;
         }
 
@@ -742,6 +742,126 @@ public class TblBillExample {
 
         public Criteria andTimeNotBetween(Date value1, Date value2) {
             addCriterion("time not between", value1, value2, "time");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountIsNull() {
+            addCriterion("giving_amount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountIsNotNull() {
+            addCriterion("giving_amount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountEqualTo(Double value) {
+            addCriterion("giving_amount =", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountNotEqualTo(Double value) {
+            addCriterion("giving_amount <>", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountGreaterThan(Double value) {
+            addCriterion("giving_amount >", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountGreaterThanOrEqualTo(Double value) {
+            addCriterion("giving_amount >=", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountLessThan(Double value) {
+            addCriterion("giving_amount <", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountLessThanOrEqualTo(Double value) {
+            addCriterion("giving_amount <=", value, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountIn(List<Double> values) {
+            addCriterion("giving_amount in", values, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountNotIn(List<Double> values) {
+            addCriterion("giving_amount not in", values, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountBetween(Double value1, Double value2) {
+            addCriterion("giving_amount between", value1, value2, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andGivingAmountNotBetween(Double value1, Double value2) {
+            addCriterion("giving_amount not between", value1, value2, "givingAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdIsNull() {
+            addCriterion("manager_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdIsNotNull() {
+            addCriterion("manager_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdEqualTo(Long value) {
+            addCriterion("manager_id =", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdNotEqualTo(Long value) {
+            addCriterion("manager_id <>", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdGreaterThan(Long value) {
+            addCriterion("manager_id >", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("manager_id >=", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdLessThan(Long value) {
+            addCriterion("manager_id <", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdLessThanOrEqualTo(Long value) {
+            addCriterion("manager_id <=", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdIn(List<Long> values) {
+            addCriterion("manager_id in", values, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdNotIn(List<Long> values) {
+            addCriterion("manager_id not in", values, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdBetween(Long value1, Long value2) {
+            addCriterion("manager_id between", value1, value2, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdNotBetween(Long value1, Long value2) {
+            addCriterion("manager_id not between", value1, value2, "managerId");
             return (Criteria) this;
         }
     }

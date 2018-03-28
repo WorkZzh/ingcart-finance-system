@@ -19,4 +19,7 @@ public interface VRecordBillMapper {
     int updateByExampleSelective(@Param("record") VRecordBill record, @Param("example") VRecordBillExample example);
 
     int updateByExample(@Param("record") VRecordBill record, @Param("example") VRecordBillExample example);
+    
+    VRecordBill selectSumByTime(@Param("levels") List<String> levels, @Param("time") String time);
+    
 }

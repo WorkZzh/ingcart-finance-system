@@ -47,7 +47,7 @@ public class CartController {
     
     
     /**
-	 * 管理员紧急关锁并返回用户20元
+	 * 管理员紧急关锁并返回用户20元：退款功能
 	 * @return
 	 * localhost:8084/manage/urgent/refund
 	 * phoneNum=13828494261&date=2018-01-30 20:49:22
@@ -66,25 +66,42 @@ public class CartController {
 	}
     
     
+//    /**
+//	 * 全额退款
+//	 * @return 
+//	 */
+//    @RequestMapping(value = "/customer/auto/refund/", method = RequestMethod.POST)
+//	@ResponseBody
+//	public PytheResult autoRefundByCustomer(
+//			@RequestBody String parameters
+//			) throws Exception {
+//		try {
+//			return service.autoRefundByCustomer(parameters);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+//		}
+//	}
+    
+    
+    
+    
     /**
-	 * 用户可以自己退款
+	 * 管理员无条件退钱，可以随意退。
 	 * @return
-	 * localhost:8084/customer/auto/refund/
-	 * phoneNum=13828494261&date=2018-01-30 20:49:22
 	 */
-    @RequestMapping(value = "/customer/auto/refund/", method = RequestMethod.POST)
+    @RequestMapping(value = "/manage/auto/refund/", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult autoRefundByCustomer(
+	public PytheResult refundByTopManager(
 			@RequestBody String parameters
 			) throws Exception {
 		try {
-			return service.autoRefundByCustomer(parameters);
+			return service.refundByTopManager(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-    
     
     
     
@@ -122,21 +139,21 @@ public class CartController {
 	}
     
     
-    /**
-	 * 用户紧急关锁
-	 * @return
-	 * localhost:8084/client/urgent/lock/
-	 */
-    @RequestMapping(value = "/client/urgent/lock/", method = RequestMethod.POST)
-	@ResponseBody
-	public PytheResult urgentUnlockByClient(@RequestBody String parameters) throws Exception {
-		try {
-			return service.urgentUnlockByClient(parameters);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
+//    /**
+//	 * 用户紧急关锁
+//	 * @return
+//	 * localhost:8084/client/urgent/lock/
+//	 */
+//    @RequestMapping(value = "/client/urgent/lock/", method = RequestMethod.POST)
+//	@ResponseBody
+//	public PytheResult urgentUnlockByClient(@RequestBody String parameters) throws Exception {
+//		try {
+//			return service.urgentUnlockByClient(parameters);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+//		}
+//	}
     
     
     /**
@@ -193,19 +210,19 @@ public class CartController {
 	
 	
 	
-    /**
-	 *关锁
-	 */
-	@RequestMapping(value = "/use/lock", method = RequestMethod.POST)
-	@ResponseBody
-	public PytheResult lock(@RequestBody String parameters) throws Exception {
-		try {
-			return service.lock(parameters);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
+//    /**
+//	 *关锁
+//	 */
+//	@RequestMapping(value = "/use/lock", method = RequestMethod.POST)
+//	@ResponseBody
+//	public PytheResult lock(@RequestBody String parameters) throws Exception {
+//		try {
+//			return service.lock(parameters);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+//		}
+//	}
 	
 	
     /**
@@ -515,16 +532,16 @@ public class CartController {
 	
 	
 	
-	@RequestMapping(value = "/customer/account", method = RequestMethod.GET)
-	@ResponseBody
-	public PytheResult updateCustomerAccount() {
-		try {
-			return service.updateCustomerAccount();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
+//	@RequestMapping(value = "/customer/account", method = RequestMethod.GET)
+//	@ResponseBody
+//	public PytheResult updateCustomerAccount() {
+//		try {
+//			return service.updateCustomerAccount();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+//		}
+//	}
 	
 	
 	

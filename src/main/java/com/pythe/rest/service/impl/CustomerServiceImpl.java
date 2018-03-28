@@ -333,17 +333,17 @@ public class CustomerServiceImpl implements CustomerService {
 			TblAccount account = accountMapper.selectByPrimaryKey(customer.getCustomerId());
 			//分为两种验证情况
 			if (account!=null) {
-				account.setAmount(200d);
-				account.setInAmount(200d);
-				account.setLevel(1);
+				account.setAmount(0d);
+				account.setInAmount(0d);
+				account.setLevel(customer.getLevel());
 				accountMapper.updateByPrimaryKey(account);
 				return PytheResult.ok("管理员验证成功");
 			}
 			TblAccount newAccount = new TblAccount();
 			newAccount.setCustomerId(customerList2.get(0).getCustomerId());
-			newAccount.setAmount(200d);
-			newAccount.setLevel(1);
-			newAccount.setInAmount(200d);
+			newAccount.setAmount(0d);
+			newAccount.setLevel(customer.getLevel());
+			newAccount.setInAmount(0d);
 			newAccount.setOutAmount(0d);
 			newAccount.setGivingAmount(0d);
 			accountMapper.insert(newAccount);

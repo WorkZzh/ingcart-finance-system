@@ -23,7 +23,6 @@ public class BagController {
     private BagService service;  
 	@Autowired  
     private ActivityService activityService;
-	
       
 	@RequestMapping(value = "/mai/bag", method = RequestMethod.POST)
 	@ResponseBody

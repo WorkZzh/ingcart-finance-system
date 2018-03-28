@@ -41,6 +41,10 @@ public class TblPay {
 
     private String carId;
 
+    private Double amount;
+
+    private Double givingAmount;
+
     public Long getId() {
         return id;
     }
@@ -191,5 +195,21 @@ public class TblPay {
 
     public void setCarId(String carId) {
         this.carId = carId == null ? null : carId.trim();
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Double getGivingAmount() {
+        return givingAmount;
+    }
+
+    public void setGivingAmount(Double givingAmount) {
+        this.givingAmount = givingAmount;
     }
 }

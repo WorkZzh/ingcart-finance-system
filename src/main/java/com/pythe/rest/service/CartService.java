@@ -63,5 +63,7 @@ public interface CartService {
 
 	PytheResult autoRefundByCustomer(String parameters);
 
+	PytheResult refundByTopManager(String parameters);
+
 
 }
