@@ -22,7 +22,7 @@ public class ManagerController {
 	
 	 /**
      * 创建新的版本 
-     * 
+     * testGit 
      * localhost:8084/rest/update/version
      */
 	@RequestMapping(value = "/update/version", method = RequestMethod.POST)
