@@ -21,7 +21,7 @@ public class ManagerController {
 	private ManagerService service;
 	
 	 /**
-     * 创建新的版本
+     * 创建新的版本 
      * 
      * localhost:8084/rest/update/version
      */
