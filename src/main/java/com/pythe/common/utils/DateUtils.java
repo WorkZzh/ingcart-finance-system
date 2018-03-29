@@ -432,5 +432,45 @@ public class DateUtils {
 
 		}
 	}
+	
+	
+	/*
+	 * 判断是否为闰年
+	 */
+	public static boolean isLeapYear(int year) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, Calendar.DECEMBER, 31);
+		return cal.get(Calendar.DAY_OF_YEAR) == 366 ? true : false;
+	}
+
+	/**
+	 * 获取某年某月的开始日期,0为第一天，1为最后一天
+	 */
+	public static String getDay(String date, int state) {
+		String[] dateArray = date.split("-");
+		String retday;
+		int Day;
+		Calendar cal = Calendar.getInstance();
+		if (dateArray.length == 1) {
+			cal.set(Calendar.YEAR, Integer.parseInt(dateArray[0]));
+			cal.set(Calendar.MONTH, (state == 0 ? 1 : 12) - 1);
+			Day = state == 0 ? cal.getActualMinimum(Calendar.DAY_OF_MONTH)
+					: cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		} else if (dateArray.length == 2) {
+			cal.set(Calendar.YEAR, Integer.parseInt(dateArray[0]));
+			cal.set(Calendar.MONTH, Integer.parseInt(dateArray[1]) - 1);
+			if (dateArray[1].equals("2") || dateArray[1].equals("02"))
+				Day = state == 0 ? 1 : (DateUtils.isLeapYear(Integer.parseInt(dateArray[0])) ? 29 : 28);
+			else
+				Day = state == 0 ? cal.getActualMinimum(Calendar.DAY_OF_MONTH)
+						: cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		} else {
+			return date;
+		}
+		cal.set(Calendar.DAY_OF_MONTH, Day);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		retday = simpleDateFormat.format(cal.getTime());
+		return retday;
+	}
 
 }

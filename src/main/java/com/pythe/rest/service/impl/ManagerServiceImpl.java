@@ -528,11 +528,15 @@ public class ManagerServiceImpl implements ManagerService{
 		String level = params.getString("level");
 		String time = params.getString("time");
 		
-		
+		/*
+		 * 视图v_record_bill
+		 */
 		VRecordBillExample recordBillExample = new VRecordBillExample();
 		com.pythe.pojo.VRecordBillExample.Criteria cretria2 = recordBillExample.createCriteria();
 		
-		
+		/*
+		 * high_level_id不为0的id集合
+		 */
 		ArrayList<String> list = new ArrayList<String>();
 		if (!"0".equals(level)) {
 			TblCatalogExample example2 =new TblCatalogExample();
@@ -548,11 +552,16 @@ public class ManagerServiceImpl implements ManagerService{
 			cretria2.andLevelIn(list);
 		}
 		
-		
+		/*
+		 * 查第一天和最后一天的记录
+		 */
 		if (!"0".equals(time)) {
-			cretria2.andTimeBetween(DateUtils.parseTime(time+" 01:00:00"), DateUtils.parseTime(time+" 23:50:00"));
+			cretria2.andTimeBetween(DateUtils.parseTime(DateUtils.getDay(time,0)+" 01:00:00"), DateUtils.parseTime(DateUtils.getDay(time,1)+" 23:50:00"));
 		}
 		
+		/*
+		 * 分页
+		 */
 		Integer pageNum = params.getInteger("pageNum");
 		Integer pageSize = params.getInteger("pageSize");
 		if (pageNum == null || pageSize == null) {
@@ -560,15 +569,21 @@ public class ManagerServiceImpl implements ManagerService{
 			pageSize = 10;
 		}
 		PageHelper.startPage(pageNum, pageSize);
-
+		
+		/*
+		 * 查询出视图中的集合
+		 */
 		List<VRecordBill> recordBills = recordBillMapper.selectByExample(recordBillExample);
 		
+		/*
+		 * 设置返回集合
+		 */
 		List<JSONObject> results = new LinkedList<JSONObject>();
 		Integer type  =null;
 		for (VRecordBill vRecordBill : recordBills) {
 			JSONObject result = new JSONObject();
 			result.put("car_number", vRecordBill.getQrId());
-			result.put("phone_number", vRecordBill.getPhoneNum().substring(0, 3) + "••••" + vRecordBill.getPhoneNum().substring(7));
+			result.put("phone_number", vRecordBill.getPhoneNum().substring(0, 3) + "????" + vRecordBill.getPhoneNum().substring(7));
 			result.put("distribution_name", vRecordBill.getDistributionName());
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			result.put("date", dateFormat.format(vRecordBill.getTime()));
