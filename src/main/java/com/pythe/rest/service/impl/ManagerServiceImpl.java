@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -23,8 +24,10 @@ import com.pythe.mapper.TblCatalogMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblDistributionMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
+import com.pythe.mapper.TblPostMapper;
 import com.pythe.mapper.TblPriceMapper;
 import com.pythe.mapper.TblVersionMapper;
+import com.pythe.mapper.VCatalogMapper;
 import com.pythe.mapper.VCustomerMapper;
 import com.pythe.mapper.VRecordBillMapper;
 import com.pythe.pojo.TblAccount;
@@ -38,11 +41,13 @@ import com.pythe.pojo.TblDistribution;
 import com.pythe.pojo.TblDistributionExample;
 import com.pythe.pojo.TblMaintenance;
 import com.pythe.pojo.TblMaintenanceExample;
+import com.pythe.pojo.TblPost;
+import com.pythe.pojo.TblPostExample;
 import com.pythe.pojo.TblPrice;
 import com.pythe.pojo.TblPriceExample;
-import com.pythe.pojo.TblStore;
-import com.pythe.pojo.TblStoreExample;
 import com.pythe.pojo.TblVersion;
+import com.pythe.pojo.VCatalog;
+import com.pythe.pojo.VCatalogExample;
 import com.pythe.pojo.VCustomer;
 import com.pythe.pojo.VCustomerExample;
 import com.pythe.pojo.VCustomerExample.Criteria;
@@ -59,8 +64,30 @@ public class ManagerServiceImpl implements ManagerService{
 	@Value("${CAR_FREE_STATUS}")
 	private Integer CAR_FREE_STATUS;
 	
+	@Value("${TOP_COMPANY_ID}")
+	private String TOP_COMPANY_ID;
+	
+	
+	@Value("${SECOND_CODE}")
+	private Integer SECOND_CODE;
+	
+	
+	@Value("${TOP_CODE}")
+	private Integer TOP_CODE;
+	
+	
+	@Value("${TOP_LEVEL}")
+	private Integer TOP_LEVEL;
+	
+	
+	
 	@Autowired
 	private TblVersionMapper versionMapper;
+	
+	
+	@Autowired
+	private TblPostMapper postMapper;
+
 	
 	@Autowired
 	private VCustomerMapper vCustomerMapper;
@@ -90,6 +117,11 @@ public class ManagerServiceImpl implements ManagerService{
 	
 	@Autowired
 	private TblCatalogMapper catalogMapper;
+	
+	
+	
+	@Autowired
+	private VCatalogMapper vCatalogMapper;
 	
 	
 	// BILL
@@ -271,14 +303,38 @@ public class ManagerServiceImpl implements ManagerService{
 		return PytheResult.ok("删除成功");
 	}
 
-	
 	@Override
 	public PytheResult insertAttraction(String parameters) {
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		String city = information.getString("city");
 		String name = information.getString("name");
-		String level = information.getString("level");
+		Double price = information.getDouble("price");
+		Double giving = information.getDouble("giving");
+		String higherLevelId = information.getString("higherLevelId");
+		
+		TblDistributionExample example =new TblDistributionExample();
+		example.createCriteria().andNameEqualTo(name);
+		List<TblDistribution> diList = distributionMapper.selectByExample(example);
+		if (!diList.isEmpty()) {
+			return PytheResult.build(400, "已经创建成功，不需重复创建");
+		}
+		
+		//插入具体景区和其收费标准
+		//level对应的是具体园区的钱
+		String level= FactoryUtils.getUUID();
+		TblPrice record = new TblPrice();
+		record.setLevel(level);
+		record.setPrice(price);
+		record.setGiving(giving);
+		LinkedList<String> list =new LinkedList<String>();
+		list.add("1、该景区当日用车封顶"+price.intValue()+"元");
+		list.add("2、开锁需要余额不少于"+price.intValue()+"元");
+		list.add("3、指定点还车享"+giving.intValue()+"元返款优惠");
+		record.setAnnotation(JsonUtils.objectToJson(list));
+		priceMapper.insert(record);
+		
+		//插入景区
 		TblDistribution distribution =new TblDistribution();
 		distribution.setCity(city);
 		distribution.setId(FactoryUtils.getUUID());
@@ -286,7 +342,16 @@ public class ManagerServiceImpl implements ManagerService{
 		distribution.setCreated(new Date());
 		distribution.setName(name);
 		distributionMapper.insert(distribution);
-		return PytheResult.ok("景区信息创建成功");
+		
+		//关联目录树
+		TblCatalog catalog =new TblCatalog();
+		catalog.setId(level);
+		catalog.setHigherLevelId(higherLevelId);
+		catalog.setCode(SECOND_CODE);
+		catalog.setName(name);
+		catalogMapper.insert(catalog);
+		
+		return PytheResult.ok("创建成功");
 	}
 
 	@Override
@@ -395,46 +460,33 @@ public class ManagerServiceImpl implements ManagerService{
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
+		Integer level = information.getInteger("level");
 		VCustomerExample example5 = new VCustomerExample();
 		example5.createCriteria().andPhoneNumEqualTo(phoneNum);
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example5);
 		
 		if (customerList.isEmpty()) {
 			TblCustomer newCustomer = new TblCustomer();
-			newCustomer.setLevel(1);
+			newCustomer.setLevel(level);
 			newCustomer.setPhoneNum(phoneNum);
 			newCustomer.setCreated(new Date());
 			newCustomer.setType(0);
 			customerMapper.insert(newCustomer);
-			return PytheResult.ok("添加成功");
+			return PytheResult.build(200, "添加成功", newCustomer.getId());
 		}
 		
 		VCustomer customer = customerList.get(0);
 		if (1!=customer.getLevel() && 2!=customer.getLevel()) {
 			TblCustomer newCustomer = new TblCustomer();
 			newCustomer.setId(customer.getCustomerId());
-			newCustomer.setLevel(1);
+			newCustomer.setLevel(level);
 			newCustomer.setType(0);
 			newCustomer.setCreated(new Date());
 			customerMapper.updateByPrimaryKeySelective(newCustomer);
-			
-			
-			
-			return PytheResult.ok("添加成功");
+			return PytheResult.build(200, "添加成功", customer.getCustomerId());
 		}else{
 			return PytheResult.build(400, "已添加，无需重复添加");
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-
-		
-		
 	}
 
 	@Override
@@ -610,13 +662,37 @@ public class ManagerServiceImpl implements ManagerService{
 	}
 
 	@Override
-	public PytheResult selectOneLevel(String level) {
+	public PytheResult selectOneLevel(Long managerId) {
 		// TODO Auto-generated method stub
-		TblCatalogExample example2 =new TblCatalogExample();
-		example2.createCriteria().andHigherLevelIdEqualTo(level);
-		List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
-		if (catalogList.isEmpty()) {
-			return PytheResult.build(400,"没有景区");
+		TblPostExample example =new TblPostExample();
+		example.createCriteria().andAdminIdEqualTo(managerId);
+		TblPost manager = postMapper.selectByExample(example).get(0);
+		List<VCatalog> catalogList =null;
+		VCatalogExample example2 =new VCatalogExample();
+		if (manager.getCatalogId().equals("0")) {
+            example2.createCriteria().andC2IdEqualTo(manager.getCatalogId());
+			catalogList = vCatalogMapper.selectByExample(example2);
+			for (VCatalog vCatalog : catalogList) {
+				vCatalog.setC2Name(null);
+				vCatalog.setC2Id(null);
+			}
+		}else{
+			example2.createCriteria().andC1IdEqualTo(manager.getCatalogId());
+			catalogList = vCatalogMapper.selectByExample(example2);
+			if (manager.getLevel()<TOP_LEVEL) {
+				//System.out.println("==================>"+manager.getLevel());
+				for (VCatalog vCatalog : catalogList) {
+					vCatalog.setC1Id(vCatalog.getC2Id());
+					vCatalog.setC1Name(vCatalog.getC2Name());
+					vCatalog.setC2Name(null);
+					vCatalog.setC2Id(null);
+				}
+			}else{
+				for (VCatalog vCatalog : catalogList) {
+					vCatalog.setC2Name(null);
+					vCatalog.setC2Id(null);
+				}
+			}
 		}
 		return PytheResult.ok(catalogList);
 	}
@@ -685,6 +761,77 @@ public class ManagerServiceImpl implements ManagerService{
 //		
 //		return null;
 	}
+
+	@Override
+	@Transactional
+	public PytheResult insertCompany(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject params = JSONObject.parseObject(parameters);
+
+		
+		
+		
+		String name = params.getString("name");
+		String phoneNum = params.getString("phoneNum");
+		phoneNum = phoneNum.trim();
+		//验证该电话是否已经加入是这家公司的最高管理员，如果是不允许添加
+		TblPostExample example =new TblPostExample();
+		example.createCriteria().andPhoneNumEqualTo(phoneNum);
+		List<TblPost> postList = postMapper.selectByExample(example);
+		
+		if (!postList.isEmpty()) {
+			return PytheResult.build(400, "不允许重复添加，如需更改，请联系开发人员");
+		}
+		
+		
+		TblCatalog record =new TblCatalog();
+		String catalogId = FactoryUtils.getUUID();
+		record.setId(catalogId);
+		record.setName(name);
+		
+		record.setHigherLevelId(TOP_COMPANY_ID);
+		record.setCode(TOP_CODE);
+		catalogMapper.insert(record);
+		
+		//level为3就具有添加园区功能
+		JSONObject json =new JSONObject();
+		json.put("phoneNum", phoneNum);
+		json.put("level",TOP_LEVEL);
+		PytheResult manage = insertManager(JsonUtils.objectToJson(json));
+		if (manage.getStatus()==200) {
+			Long adminId = Long.valueOf(manage.getData().toString());
+			TblPost post =new TblPost();
+			post.setId(FactoryUtils.getUUID());
+			post.setCatalogId(catalogId);
+			post.setPhoneNum(phoneNum);
+			post.setStatus(1);
+			post.setLevel(TOP_LEVEL);
+			post.setAdminId(adminId);
+			postMapper.insert(post);
+		}else{
+			try {
+				throw new Exception("创建失败");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		}
+		
+		//为了测试，而返回的参数，其实目录树上就有
+		JSONObject j =new JSONObject();
+		j.put("higherLevelId",catalogId);
+		return PytheResult.build(200, "创建成功",j);
+	}
+
+	@Override
+	public PytheResult selectTwoLevel(String c1_id) {
+		// TODO Auto-generated method stub
+		TblCatalogExample example=new TblCatalogExample();
+		example.createCriteria().andHigherLevelIdEqualTo(c1_id);
+		List<TblCatalog> cataList = catalogMapper.selectByExample(example);
+		return PytheResult.ok(cataList);
+	}
+
 
 
 	

@@ -5,7 +5,7 @@ public class TblCatalog {
 
     private String name;
 
-    private String code;
+    private Integer code;
 
     private String higherLevelId;
 
@@ -25,12 +25,12 @@ public class TblCatalog {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getCode() {
+    public Integer getCode() {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code == null ? null : code.trim();
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public String getHigherLevelId() {

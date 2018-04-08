@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.pythe.mapper.TblCatalogMapper" >
-  <resultMap id="BaseResultMap" type="com.pythe.pojo.TblCatalog" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="code" property="code" jdbcType="INTEGER" />
-    <result column="higher_level_id" property="higherLevelId" jdbcType="VARCHAR" />
+<mapper namespace="com.pythe.mapper.VCatalogMapper" >
+  <resultMap id="BaseResultMap" type="com.pythe.pojo.VCatalog" >
+    <result column="c1_id" property="c1Id" jdbcType="VARCHAR" />
+    <result column="c1_name" property="c1Name" jdbcType="VARCHAR" />
+    <result column="c2_id" property="c2Id" jdbcType="VARCHAR" />
+    <result column="c2_name" property="c2Name" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -66,15 +66,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, name, code, higher_level_id
+    c1_id, c1_name, c2_id, c2_name
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblCatalogExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.VCatalogExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from tbl_catalog
+    from v_catalog
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -82,79 +82,69 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    from tbl_catalog
-    where id = #{id,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from tbl_catalog
-    where id = #{id,jdbcType=VARCHAR}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.pythe.pojo.TblCatalogExample" >
-    delete from tbl_catalog
+  <delete id="deleteByExample" parameterType="com.pythe.pojo.VCatalogExample" >
+    delete from v_catalog
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.pythe.pojo.TblCatalog" >
-    insert into tbl_catalog (id, name, code, 
-      higher_level_id)
-    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=INTEGER}, 
-      #{higherLevelId,jdbcType=VARCHAR})
+  <insert id="insert" parameterType="com.pythe.pojo.VCatalog" >
+    insert into v_catalog (c1_id, c1_name, c2_id, 
+      c2_name)
+    values (#{c1Id,jdbcType=VARCHAR}, #{c1Name,jdbcType=VARCHAR}, #{c2Id,jdbcType=VARCHAR}, 
+      #{c2Name,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.pythe.pojo.TblCatalog" >
-    insert into tbl_catalog
+  <insert id="insertSelective" parameterType="com.pythe.pojo.VCatalog" >
+    insert into v_catalog
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
+      <if test="c1Id != null" >
+        c1_id,
       </if>
-      <if test="name != null" >
-        name,
+      <if test="c1Name != null" >
+        c1_name,
       </if>
-      <if test="code != null" >
-        code,
+      <if test="c2Id != null" >
+        c2_id,
       </if>
-      <if test="higherLevelId != null" >
-        higher_level_id,
+      <if test="c2Name != null" >
+        c2_name,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=VARCHAR},
+      <if test="c1Id != null" >
+        #{c1Id,jdbcType=VARCHAR},
       </if>
-      <if test="name != null" >
-        #{name,jdbcType=VARCHAR},
+      <if test="c1Name != null" >
+        #{c1Name,jdbcType=VARCHAR},
       </if>
-      <if test="code != null" >
-        #{code,jdbcType=INTEGER},
+      <if test="c2Id != null" >
+        #{c2Id,jdbcType=VARCHAR},
       </if>
-      <if test="higherLevelId != null" >
-        #{higherLevelId,jdbcType=VARCHAR},
+      <if test="c2Name != null" >
+        #{c2Name,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.pythe.pojo.TblCatalogExample" resultType="java.lang.Integer" >
-    select count(*) from tbl_catalog
+  <select id="countByExample" parameterType="com.pythe.pojo.VCatalogExample" resultType="java.lang.Integer" >
+    select count(*) from v_catalog
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update tbl_catalog
+    update v_catalog
     <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
+      <if test="record.c1Id != null" >
+        c1_id = #{record.c1Id,jdbcType=VARCHAR},
       </if>
-      <if test="record.name != null" >
-        name = #{record.name,jdbcType=VARCHAR},
+      <if test="record.c1Name != null" >
+        c1_name = #{record.c1Name,jdbcType=VARCHAR},
       </if>
-      <if test="record.code != null" >
-        code = #{record.code,jdbcType=INTEGER},
+      <if test="record.c2Id != null" >
+        c2_id = #{record.c2Id,jdbcType=VARCHAR},
       </if>
-      <if test="record.higherLevelId != null" >
-        higher_level_id = #{record.higherLevelId,jdbcType=VARCHAR},
+      <if test="record.c2Name != null" >
+        c2_name = #{record.c2Name,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -162,35 +152,13 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update tbl_catalog
-    set id = #{record.id,jdbcType=VARCHAR},
-      name = #{record.name,jdbcType=VARCHAR},
-      code = #{record.code,jdbcType=INTEGER},
-      higher_level_id = #{record.higherLevelId,jdbcType=VARCHAR}
+    update v_catalog
+    set c1_id = #{record.c1Id,jdbcType=VARCHAR},
+      c1_name = #{record.c1Name,jdbcType=VARCHAR},
+      c2_id = #{record.c2Id,jdbcType=VARCHAR},
+      c2_name = #{record.c2Name,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.pythe.pojo.TblCatalog" >
-    update tbl_catalog
-    <set >
-      <if test="name != null" >
-        name = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="code != null" >
-        code = #{code,jdbcType=INTEGER},
-      </if>
-      <if test="higherLevelId != null" >
-        higher_level_id = #{higherLevelId,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.pythe.pojo.TblCatalog" >
-    update tbl_catalog
-    set name = #{name,jdbcType=VARCHAR},
-      code = #{code,jdbcType=INTEGER},
-      higher_level_id = #{higherLevelId,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

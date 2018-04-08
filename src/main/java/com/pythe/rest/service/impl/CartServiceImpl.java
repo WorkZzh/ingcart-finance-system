@@ -1136,10 +1136,11 @@ public class CartServiceImpl implements CartService {
 	public PytheResult manageUrgentRefund(String parameters) {
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum").trim();
-		String date = information.getString("date");
+		//String date = information.getString("date");
 		Long managerId = information.getLong("managerId");
 
-		final Date date_ = DateUtils.parseTime(date);
+		//final Date date_ = DateUtils.parseTime(date);
+		Date date_ = new Date();
 		// 让车处于空闲状态，让后续的人可以使用
 		VCustomerExample example = new VCustomerExample();
 
@@ -1221,7 +1222,6 @@ public class CartServiceImpl implements CartService {
 		
 		if (DEVELOPER_LEVEL.equals(customer.getLevel())) {
 			bill.setType(TEST_PAY_TYPE);
-			
 		}else{
 			bill.setType(PART_REFUND_TYPE);
 		}
@@ -1230,14 +1230,24 @@ public class CartServiceImpl implements CartService {
 		bill.setTime(new Date());
 		bill.setRecordId(recordId);
 		bill.setManagerId(managerId);
-
-		// if (account.getAmount() < amount) {
-		// bill.setStatus(NOT_PAY_STATUS);
-		// } else {
-		// bill.setStatus(PAY_TYPE);
-		// }
+		
+		
 		// 生成账单
-		final TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+		
+		//不扣钱情况下，直接在此更新bill并结束
+		if (amount.equals(0d)) {
+			// 如果是没有退，就不更新腾讯的退款订单号
+			bill.setStatus(PAY_TYPE);
+			billMapper.insert(bill);
+			JSONObject json = new JSONObject();
+			json.put("price", amount.intValue());
+			json.put("time", time);
+			json.put("amount", account.getAmount());
+			return PytheResult.build(200, "结算成功", json);
+		}
+	
+
 		account.setAmount(account.getAmount() - amount);
 		account.setOutAmount(account.getOutAmount() - amount);
 
@@ -1769,7 +1779,7 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public PytheResult refundByTopManager(String parameters) {
-		// TODO Auto-generated method stub
+		//该功能用于解决充值不用车情况
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum").trim();
 		Long managerId = information.getLong("managerId");
@@ -1781,10 +1791,6 @@ public class CartServiceImpl implements CartService {
 		if (manager.getLevel() <= 1) {
 			return PytheResult.build(400, "权限不够");
 		}
-		
-
-		
-	
 
 		// 判断用户使用情况
 		VCustomerExample example = new VCustomerExample();
@@ -1797,25 +1803,26 @@ public class CartServiceImpl implements CartService {
 
 		VCustomer customer = customerList.get(0);
 		Long customerId = customer.getCustomerId();
-
 		
 		//车必须已经释放，才能退
 		if (customer.getCarId()!=null) {
 			return PytheResult.build(400, "用户未结束用车，为保证数据正常，请使用停止计费功能");
 		}
 		
-		// 改为无论用户是否停车，都可以退钱
-		// 如果还在车上就不给退款
-		// if (null != customer.getCarId()) {
-		// return PytheResult.build(400, "抱歉，请结束用车后，才可退款");
-		// }
+//		 改为无论用户是否停车，都可以退钱
+//		 如果还在车上就不给退款
+		 if (null != customer.getCarId()) {
+		 return PytheResult.build(400, "抱歉，请结束用车后，才可退款");
+		 }
 
 		// 用于返回给用户使用
 		// 生成账单
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+		
 		if (account.getAmount() < refund) {
-			return PytheResult.build(400, "累计退款金额大于支付金额");
+			return PytheResult.build(400, "不合法退款：累计退款金额大于支付金额");
 		}
+		
 		//用户在车上，更新并退款。用户不在车上，只退款，不更新数据
 		TblBillExample example2 = new TblBillExample();
 		example2.createCriteria().andStatusEqualTo(1).andTypeEqualTo(BILL_CHARGE_TYPE).andCustomerIdEqualTo(customerId);
@@ -1827,7 +1834,8 @@ public class CartServiceImpl implements CartService {
 			String refundMoney = String.valueOf((refund.intValue() * 100));
 			String total =String.valueOf((bi.getAmount().intValue()* 100));
 			String str = refundByOrderInWX(bi.getOutTradeNo(), total, refundMoney);
-			//System.out.println("===================>"+str);
+//			System.out.println("=====================>bi"+bi.getPrepayId() +" "+bi.getOutTradeNo() + " "+bi.getType());
+			System.out.println("===================>"+str);
 			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") && !str.contains("累计退款金额大于支付金额")) {
 				
 				account.setAmount(account.getAmount() - refund);

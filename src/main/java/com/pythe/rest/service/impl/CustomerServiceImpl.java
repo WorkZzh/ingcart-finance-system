@@ -78,24 +78,27 @@ public class CustomerServiceImpl implements CustomerService {
 
 		// 用户
 		JSONObject customerInformation = JSONObject.parseObject(parameters);
-		String verificationCode = customerInformation.getString("verificationCode");
-		Integer type = customerInformation.getInteger("type");
 		String phoneNum = customerInformation.getString("phoneNum").trim();
+		Integer type = customerInformation.getInteger("type");
+		if (null!=customerInformation.getString("verificationCode")) {
+			String verificationCode = customerInformation.getString("verificationCode");
 
-		TblVerificationExample example = new TblVerificationExample();
-		example.createCriteria().andPhoneNumEqualTo(phoneNum)
-				.andTimeGreaterThanOrEqualTo(new DateTime().minusMinutes(1).toDate());
-		List<TblVerification> verificationList = verificationMapper.selectByExample(example);
-		// 验证码对象不存在：是因为之前没有插入或者超时导致的
-		if (verificationList.size() == 0) {
-			return PytheResult.build(400, "验证码错误或过期");
-		}
+			TblVerificationExample example = new TblVerificationExample();
+			example.createCriteria().andPhoneNumEqualTo(phoneNum)
+					.andTimeGreaterThanOrEqualTo(new DateTime().minusMinutes(1).toDate());
+			List<TblVerification> verificationList = verificationMapper.selectByExample(example);
+			// 验证码对象不存在：是因为之前没有插入或者超时导致的
+			if (verificationList.size() == 0) {
+				return PytheResult.build(400, "验证码错误或过期");
+			}
 
-		TblVerification verification_info = verificationList.get(0);
-		// 验证码不正确
-		if (!verification_info.getVerificationCode().equals(verificationCode)) {
-			return PytheResult.build(400, "验证码错误或过期");
+			TblVerification verification_info = verificationList.get(0);
+			// 验证码不正确
+			if (!verification_info.getVerificationCode().equals(verificationCode)) {
+				return PytheResult.build(400, "验证码错误或过期");
+			}
 		}
+		
 		
 		String openId = customerInformation.getString("openId");
 		String unionId = customerInformation.getString("unionId");
@@ -284,27 +287,28 @@ public class CustomerServiceImpl implements CustomerService {
 	public PytheResult registerByManager(String parameters) {
 		// 用户
 		JSONObject customerInformation = JSONObject.parseObject(parameters);
-		String verificationCode = customerInformation.getString("verificationCode");
 		String phoneNum = customerInformation.getString("phoneNum").trim();
 		Integer type = customerInformation.getInteger("type");
+		
+		if (null!=customerInformation.getString("verificationCode")) {
+			String verificationCode = customerInformation.getString("verificationCode");
+			TblVerificationExample example = new TblVerificationExample();
+			example.createCriteria().andPhoneNumEqualTo(phoneNum)
+					.andTimeGreaterThanOrEqualTo(new DateTime().minusMinutes(1).toDate());
+			List<TblVerification> verificationList = verificationMapper.selectByExample(example);
+			// 验证码对象不存在：是因为之前没有插入或者超时导致的
+			if (verificationList.size() == 0) {
+				return PytheResult.build(400, "验证码错误或过期");
+			}
 
-		TblVerificationExample example = new TblVerificationExample();
-		example.createCriteria().andPhoneNumEqualTo(phoneNum)
-				.andTimeGreaterThanOrEqualTo(new DateTime().minusMinutes(1).toDate());
-		List<TblVerification> verificationList = verificationMapper.selectByExample(example);
-		// 验证码对象不存在：是因为之前没有插入或者超时导致的
-		if (verificationList.size() == 0) {
-			return PytheResult.build(400, "验证码错误或过期");
-		}
-
-		TblVerification verification_info = verificationList.get(0);
-		// 验证码不正确
-		if (!verification_info.getVerificationCode().equals(verificationCode)) {
-			return PytheResult.build(400, "验证码错误或过期");
+			TblVerification verification_info = verificationList.get(0);
+			// 验证码不正确
+			if (!verification_info.getVerificationCode().equals(verificationCode)) {
+				return PytheResult.build(400, "验证码错误或过期");
+			}
 		}
 
 		String openId = null;
-		//String unionId = null;
 
 		// 判断用户是否存在
 		openId = customerInformation.getString("openId");
@@ -316,7 +320,6 @@ public class CustomerServiceImpl implements CustomerService {
 		// 用户不存在或者权限不够
 		if (customerList2.isEmpty()) {
 			return PytheResult.build(400, "仅供管理员，如需使用请换用婴咖出行小程序");
-			// PytheResult.build(400, "权限不够，请联系管理员获得授权");
 		}
 
 		VCustomer customer = customerList2.get(0);
@@ -384,5 +387,7 @@ public class CustomerServiceImpl implements CustomerService {
 		customerMapper.updateByPrimaryKey(customer);
 		return PytheResult.ok("退出成功");
 	}
+
+	
 
 }

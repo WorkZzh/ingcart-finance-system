@@ -59,7 +59,7 @@ public class CustomerController {
 	
 	
 	/**
-	 * 客户注册
+	 * 使用验证码注册登录
 	 * @return
 	 */
 	@RequestMapping(value = "/customer/register", method = RequestMethod.POST)
@@ -73,6 +73,7 @@ public class CustomerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
 	
 	
 	
@@ -92,8 +93,6 @@ public class CustomerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
 	
 	
 	

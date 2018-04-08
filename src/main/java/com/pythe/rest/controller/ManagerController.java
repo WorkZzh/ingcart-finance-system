@@ -63,15 +63,33 @@ public class ManagerController {
      */
     @RequestMapping(value = "/select/one/level", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectOneLevel(
-			@RequestParam(defaultValue="0") String level){
+	public PytheResult selectOneLevel(@RequestParam(required = true, value = "managerId") Long managerId ){
     	try {
-			return service.selectOneLevel(level);
+			return service.selectOneLevel(managerId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+    
+    
+    
+    
+	 /**
+     * 二级
+     */
+    @RequestMapping(value = "/select/two/level", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectOneLevel(@RequestParam(required = true, value = "c1_id") String c1_id ){
+    	try {
+			return service.selectTwoLevel(c1_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
     
     
 	
@@ -126,7 +144,7 @@ public class ManagerController {
 
 	
 	/**
-	 * 插入景区信息
+	 * 给一家公司添加旗下的景区
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -141,6 +159,31 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	
+	
+	/**
+	 * 创建一家公司
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/insert/company/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult insertCompany(@RequestBody String parameters) throws Exception {
+		try {
+			return service.insertCompany(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
+	
 	
 	
 	

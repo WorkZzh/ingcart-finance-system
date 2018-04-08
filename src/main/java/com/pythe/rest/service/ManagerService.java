@@ -40,9 +40,14 @@ public interface ManagerService {
 
 	PytheResult queryRecordBill(String parameters);
 
-	PytheResult selectOneLevel(String level);
+	PytheResult selectOneLevel( Long managerId);
 
 	PytheResult selectSumByTime(String parameters);
+
+	PytheResult insertCompany(String parameters);
+
+	PytheResult selectTwoLevel(String c1_id);
+
 
 
 
