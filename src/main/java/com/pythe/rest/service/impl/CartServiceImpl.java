@@ -1783,7 +1783,8 @@ public class CartServiceImpl implements CartService {
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum").trim();
 		Long managerId = information.getLong("managerId");
-		Double refund = information.getDouble("refund");
+		//没得选择，就是全额退款
+		//Double refund = information.getDouble("refund");
 
 		// 判断管理员权限
 		TblCustomer manager = customerMapper.selectByPrimaryKey(managerId);
@@ -1819,9 +1820,9 @@ public class CartServiceImpl implements CartService {
 		// 生成账单
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
 		
-		if (account.getAmount() < refund) {
-			return PytheResult.build(400, "不合法退款：累计退款金额大于支付金额");
-		}
+//		if (account.getAmount() < refund) {
+//			return PytheResult.build(400, "不合法退款：累计退款金额大于支付金额");
+//		}
 		
 		//用户在车上，更新并退款。用户不在车上，只退款，不更新数据
 		TblBillExample example2 = new TblBillExample();
@@ -1831,19 +1832,19 @@ public class CartServiceImpl implements CartService {
 		if (!billList.isEmpty()) {
 			// 更新bill退款订单号
 			TblBill bi = billList.get(0);
-			String refundMoney = String.valueOf((refund.intValue() * 100));
+			String refundMoney = String.valueOf((bi.getAmount().intValue() * 100));
 			String total =String.valueOf((bi.getAmount().intValue()* 100));
 			String str = refundByOrderInWX(bi.getOutTradeNo(), total, refundMoney);
 //			System.out.println("=====================>bi"+bi.getPrepayId() +" "+bi.getOutTradeNo() + " "+bi.getType());
 			System.out.println("===================>"+str);
 			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") && !str.contains("累计退款金额大于支付金额")) {
 				
-				account.setAmount(account.getAmount() - refund);
-				account.setOutAmount(account.getOutAmount() - refund);
+				account.setAmount(account.getAmount() - bi.getAmount());
+				account.setOutAmount(account.getOutAmount() - bi.getAmount());
 				accountMapper.updateByPrimaryKey(account);
 				// 看看更新后的账单是否为正数，如果是，证明扣费成功
 				JSONObject json = new JSONObject();
-				json.put("price", refund);
+				json.put("price", bi.getAmount());
 				json.put("amount", account.getAmount());
 				return PytheResult.build(200, "退款成功", json);
 				//如果用户在车上才更新数据

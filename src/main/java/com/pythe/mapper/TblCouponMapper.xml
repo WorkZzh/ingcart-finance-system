@@ -10,8 +10,8 @@
     <result column="customer_id" property="customerId" jdbcType="BIGINT" />
     <result column="amount" property="amount" jdbcType="DOUBLE" />
     <result column="discount" property="discount" jdbcType="DOUBLE" />
+    <result column="manager_id" property="managerId" jdbcType="VARCHAR" />
     <result column="use_time" property="useTime" jdbcType="TIMESTAMP" />
-    <result column="dealer_id" property="dealerId" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="type" property="type" jdbcType="INTEGER" />
   </resultMap>
@@ -74,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, code, name, start_time, stop_time, customer_id, amount, discount, use_time, dealer_id, 
-    status, type
+    id, code, name, start_time, stop_time, customer_id, amount, discount, manager_id, 
+    use_time, status, type
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblCouponExample" >
     select
@@ -108,18 +108,15 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblCoupon" >
-  	<selectKey keyProperty="answerid" order="AFTER" resultType="java.lang.Long">
-	     select LAST_INSERT_ID()
-	</selectKey>
     insert into tbl_coupon (id, code, name, 
       start_time, stop_time, customer_id, 
-      amount, discount, use_time, 
-      dealer_id, status, type
+      amount, discount, manager_id, 
+      use_time, status, type
       )
     values (#{id,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, #{customerId,jdbcType=BIGINT}, 
-      #{amount,jdbcType=DOUBLE}, #{discount,jdbcType=DOUBLE}, #{useTime,jdbcType=TIMESTAMP}, 
-      #{dealerId,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}
+      #{amount,jdbcType=DOUBLE}, #{discount,jdbcType=DOUBLE}, #{managerId,jdbcType=VARCHAR}, 
+      #{useTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblCoupon" >
@@ -149,11 +146,11 @@
       <if test="discount != null" >
         discount,
       </if>
+      <if test="managerId != null" >
+        manager_id,
+      </if>
       <if test="useTime != null" >
         use_time,
-      </if>
-      <if test="dealerId != null" >
-        dealer_id,
       </if>
       <if test="status != null" >
         status,
@@ -187,11 +184,11 @@
       <if test="discount != null" >
         #{discount,jdbcType=DOUBLE},
       </if>
+      <if test="managerId != null" >
+        #{managerId,jdbcType=VARCHAR},
+      </if>
       <if test="useTime != null" >
         #{useTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="dealerId != null" >
-        #{dealerId,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
@@ -234,11 +231,11 @@
       <if test="record.discount != null" >
         discount = #{record.discount,jdbcType=DOUBLE},
       </if>
+      <if test="record.managerId != null" >
+        manager_id = #{record.managerId,jdbcType=VARCHAR},
+      </if>
       <if test="record.useTime != null" >
         use_time = #{record.useTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.dealerId != null" >
-        dealer_id = #{record.dealerId,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null" >
         status = #{record.status,jdbcType=INTEGER},
@@ -261,8 +258,8 @@
       customer_id = #{record.customerId,jdbcType=BIGINT},
       amount = #{record.amount,jdbcType=DOUBLE},
       discount = #{record.discount,jdbcType=DOUBLE},
+      manager_id = #{record.managerId,jdbcType=VARCHAR},
       use_time = #{record.useTime,jdbcType=TIMESTAMP},
-      dealer_id = #{record.dealerId,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
       type = #{record.type,jdbcType=INTEGER}
     <if test="_parameter != null" >
@@ -293,11 +290,11 @@
       <if test="discount != null" >
         discount = #{discount,jdbcType=DOUBLE},
       </if>
+      <if test="managerId != null" >
+        manager_id = #{managerId,jdbcType=VARCHAR},
+      </if>
       <if test="useTime != null" >
         use_time = #{useTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="dealerId != null" >
-        dealer_id = #{dealerId,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},
@@ -317,8 +314,8 @@
       customer_id = #{customerId,jdbcType=BIGINT},
       amount = #{amount,jdbcType=DOUBLE},
       discount = #{discount,jdbcType=DOUBLE},
+      manager_id = #{managerId,jdbcType=VARCHAR},
       use_time = #{useTime,jdbcType=TIMESTAMP},
-      dealer_id = #{dealerId,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}

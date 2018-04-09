@@ -230,27 +230,6 @@ public class CustomerServiceImpl implements CustomerService {
 		return PytheResult.ok(packet);
 	}
 
-	@Override
-	public PytheResult receiveGift(String parameters) {
-
-		JSONObject params = JSONObject.parseObject(parameters);
-		Long customerId = params.getLong("customerId");
-		Long couponId = params.getLong("couponId");
-		String couponCode = params.getString("couponCode").trim();
-		String dealerId = params.getString("dealerId");
-
-		TblCoupon coupon = couponMapper.selectByPrimaryKey(couponId);
-		if (coupon.getCode().equals(couponCode) && coupon.getCustomerId().equals(customerId)) {
-			// 使用赠品券
-			coupon.setDealerId(dealerId);
-			coupon.setStatus(1);
-			coupon.setUseTime(new Date());
-			couponMapper.updateByPrimaryKey(coupon);
-			return PytheResult.ok("赠品券已使用");
-		} else {
-			return PytheResult.build(400, "券码错误");
-		}
-	}
 
 	@Override
 	public PytheResult selectCustomerByPhoneNum(String parameters) {

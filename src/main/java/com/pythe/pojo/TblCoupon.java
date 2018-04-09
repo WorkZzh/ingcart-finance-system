@@ -19,9 +19,9 @@ public class TblCoupon {
 
     private Double discount;
 
-    private Date useTime;
+    private String managerId;
 
-    private String dealerId;
+    private Date useTime;
 
     private Integer status;
 
@@ -91,20 +91,20 @@ public class TblCoupon {
         this.discount = discount;
     }
 
+    public String getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(String managerId) {
+        this.managerId = managerId == null ? null : managerId.trim();
+    }
+
     public Date getUseTime() {
         return useTime;
     }
 
     public void setUseTime(Date useTime) {
         this.useTime = useTime;
-    }
-
-    public String getDealerId() {
-        return dealerId;
-    }
-
-    public void setDealerId(String dealerId) {
-        this.dealerId = dealerId == null ? null : dealerId.trim();
     }
 
     public Integer getStatus() {

@@ -605,6 +605,76 @@ public class TblCouponExample {
             return (Criteria) this;
         }
 
+        public Criteria andManagerIdIsNull() {
+            addCriterion("manager_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdIsNotNull() {
+            addCriterion("manager_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdEqualTo(String value) {
+            addCriterion("manager_id =", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdNotEqualTo(String value) {
+            addCriterion("manager_id <>", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdGreaterThan(String value) {
+            addCriterion("manager_id >", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdGreaterThanOrEqualTo(String value) {
+            addCriterion("manager_id >=", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdLessThan(String value) {
+            addCriterion("manager_id <", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdLessThanOrEqualTo(String value) {
+            addCriterion("manager_id <=", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdLike(String value) {
+            addCriterion("manager_id like", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdNotLike(String value) {
+            addCriterion("manager_id not like", value, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdIn(List<String> values) {
+            addCriterion("manager_id in", values, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdNotIn(List<String> values) {
+            addCriterion("manager_id not in", values, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdBetween(String value1, String value2) {
+            addCriterion("manager_id between", value1, value2, "managerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andManagerIdNotBetween(String value1, String value2) {
+            addCriterion("manager_id not between", value1, value2, "managerId");
+            return (Criteria) this;
+        }
+
         public Criteria andUseTimeIsNull() {
             addCriterion("use_time is null");
             return (Criteria) this;
@@ -662,76 +732,6 @@ public class TblCouponExample {
 
         public Criteria andUseTimeNotBetween(Date value1, Date value2) {
             addCriterion("use_time not between", value1, value2, "useTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdIsNull() {
-            addCriterion("dealer_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdIsNotNull() {
-            addCriterion("dealer_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdEqualTo(String value) {
-            addCriterion("dealer_id =", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdNotEqualTo(String value) {
-            addCriterion("dealer_id <>", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdGreaterThan(String value) {
-            addCriterion("dealer_id >", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdGreaterThanOrEqualTo(String value) {
-            addCriterion("dealer_id >=", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdLessThan(String value) {
-            addCriterion("dealer_id <", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdLessThanOrEqualTo(String value) {
-            addCriterion("dealer_id <=", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdLike(String value) {
-            addCriterion("dealer_id like", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdNotLike(String value) {
-            addCriterion("dealer_id not like", value, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdIn(List<String> values) {
-            addCriterion("dealer_id in", values, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdNotIn(List<String> values) {
-            addCriterion("dealer_id not in", values, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdBetween(String value1, String value2) {
-            addCriterion("dealer_id between", value1, value2, "dealerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDealerIdNotBetween(String value1, String value2) {
-            addCriterion("dealer_id not between", value1, value2, "dealerId");
             return (Criteria) this;
         }
 

@@ -87,7 +87,7 @@ public class CartController {
     
     
     /**
-	 * 管理员无条件退钱，可以随意退。
+	 * 无行程，全额退款
 	 * @return
 	 */
     @RequestMapping(value = "/manage/auto/refund/", method = RequestMethod.POST)

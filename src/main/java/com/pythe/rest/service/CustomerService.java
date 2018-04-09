@@ -14,7 +14,6 @@ public interface CustomerService  {
 
 //	PytheResult selectPersonalImformationByCustomerId(Long customerId);
 
-	PytheResult receiveGift(String parameters);
 
 	PytheResult selectPersonalImformationByCustomerId(Long customerId);
 
