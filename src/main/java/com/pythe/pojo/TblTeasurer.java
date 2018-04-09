@@ -17,6 +17,8 @@ public class TblTeasurer {
 
     private String name;
 
+    private String catalogId;
+
     public Long getId() {
         return id;
     }
@@ -71,5 +73,13 @@ public class TblTeasurer {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public String getCatalogId() {
+        return catalogId;
+    }
+
+    public void setCatalogId(String catalogId) {
+        this.catalogId = catalogId == null ? null : catalogId.trim();
     }
 }

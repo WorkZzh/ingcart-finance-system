@@ -26,6 +26,7 @@ import com.pythe.mapper.TblDistributionMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
 import com.pythe.mapper.TblPostMapper;
 import com.pythe.mapper.TblPriceMapper;
+import com.pythe.mapper.TblTeasurerMapper;
 import com.pythe.mapper.TblVersionMapper;
 import com.pythe.mapper.VCatalogMapper;
 import com.pythe.mapper.VCustomerMapper;
@@ -45,6 +46,8 @@ import com.pythe.pojo.TblPost;
 import com.pythe.pojo.TblPostExample;
 import com.pythe.pojo.TblPrice;
 import com.pythe.pojo.TblPriceExample;
+import com.pythe.pojo.TblTeasurer;
+import com.pythe.pojo.TblTeasurerExample;
 import com.pythe.pojo.TblVersion;
 import com.pythe.pojo.VCatalog;
 import com.pythe.pojo.VCatalogExample;
@@ -80,6 +83,11 @@ public class ManagerServiceImpl implements ManagerService{
 	private Integer TOP_LEVEL;
 	
 	
+	@Value("${TEASURER_SECOND_LEVEL}")
+	private Integer TEASURER_SECOND_LEVEL;
+	
+	
+	
 	
 	@Autowired
 	private TblVersionMapper versionMapper;
@@ -97,6 +105,10 @@ public class ManagerServiceImpl implements ManagerService{
 	
 	@Autowired
 	private TblPriceMapper priceMapper;
+	
+	
+	@Autowired
+	private TblTeasurerMapper teasurerMapper;
 	
 	@Autowired
 	private TblDistributionMapper distributionMapper;
@@ -664,6 +676,9 @@ public class ManagerServiceImpl implements ManagerService{
 	@Override
 	public PytheResult selectOneLevel(Long managerId) {
 		// TODO Auto-generated method stub
+		//id得换一下，t_表示财务 ， y_表示运营
+		
+		
 		TblPostExample example =new TblPostExample();
 		example.createCriteria().andAdminIdEqualTo(managerId);
 		TblPost manager = postMapper.selectByExample(example).get(0);
@@ -830,6 +845,38 @@ public class ManagerServiceImpl implements ManagerService{
 		example.createCriteria().andHigherLevelIdEqualTo(c1_id);
 		List<TblCatalog> cataList = catalogMapper.selectByExample(example);
 		return PytheResult.ok(cataList);
+	}
+
+	@Override
+	public PytheResult selectTeasurerOneLevel(Long managerId) {
+		TblTeasurer manager = teasurerMapper.selectByPrimaryKey(managerId);
+		List<VCatalog> catalogList =null;
+		VCatalogExample example2 =new VCatalogExample();
+		if (manager.getCatalogId().equals("0")) {
+            example2.createCriteria().andC2IdEqualTo(manager.getCatalogId());
+			catalogList = vCatalogMapper.selectByExample(example2);
+			for (VCatalog vCatalog : catalogList) {
+				vCatalog.setC2Name(null);
+				vCatalog.setC2Id(null);
+			}
+		}else{
+			example2.createCriteria().andC1IdEqualTo(manager.getCatalogId());
+			catalogList = vCatalogMapper.selectByExample(example2);
+			if (manager.getLevel()<TEASURER_SECOND_LEVEL) {
+				for (VCatalog vCatalog : catalogList) {
+					vCatalog.setC1Id(vCatalog.getC2Id());
+					vCatalog.setC1Name(vCatalog.getC2Name());
+					vCatalog.setC2Name(null);
+					vCatalog.setC2Id(null);
+				}
+			}else{
+				for (VCatalog vCatalog : catalogList) {
+					vCatalog.setC2Name(null);
+					vCatalog.setC2Id(null);
+				}
+			}
+		}
+		return PytheResult.ok(catalogList);
 	}
 
 

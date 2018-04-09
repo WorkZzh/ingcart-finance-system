@@ -48,6 +48,8 @@ public interface ManagerService {
 
 	PytheResult selectTwoLevel(String c1_id);
 
+	PytheResult selectTeasurerOneLevel(Long managerId);
+
 
 
 

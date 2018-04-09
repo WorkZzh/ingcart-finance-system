@@ -554,6 +554,76 @@ public class TblTeasurerExample {
             addCriterion("name not between", value1, value2, "name");
             return (Criteria) this;
         }
+
+        public Criteria andCatalogIdIsNull() {
+            addCriterion("catalog_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdIsNotNull() {
+            addCriterion("catalog_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdEqualTo(String value) {
+            addCriterion("catalog_id =", value, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdNotEqualTo(String value) {
+            addCriterion("catalog_id <>", value, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdGreaterThan(String value) {
+            addCriterion("catalog_id >", value, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdGreaterThanOrEqualTo(String value) {
+            addCriterion("catalog_id >=", value, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdLessThan(String value) {
+            addCriterion("catalog_id <", value, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdLessThanOrEqualTo(String value) {
+            addCriterion("catalog_id <=", value, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdLike(String value) {
+            addCriterion("catalog_id like", value, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdNotLike(String value) {
+            addCriterion("catalog_id not like", value, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdIn(List<String> values) {
+            addCriterion("catalog_id in", values, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdNotIn(List<String> values) {
+            addCriterion("catalog_id not in", values, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdBetween(String value1, String value2) {
+            addCriterion("catalog_id between", value1, value2, "catalogId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCatalogIdNotBetween(String value1, String value2) {
+            addCriterion("catalog_id not between", value1, value2, "catalogId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

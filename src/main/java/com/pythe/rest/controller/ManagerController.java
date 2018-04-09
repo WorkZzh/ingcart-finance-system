@@ -59,10 +59,11 @@ public class ManagerController {
 	 /**
      * 统计车的使用情况
 	 * 查看一级目录
+	 * BUSINESS 为运营 ，TEASURER 为财务
      */
     @RequestMapping(value = "/select/one/level", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectOneLevel(@RequestParam(required = true, value = "managerId") Long managerId ){
+	public PytheResult selectOneLevel(@RequestParam(required = true, value = "managerId") Long managerId){
     	try {
 			return service.selectOneLevel(managerId);
 		} catch (Exception e) {
@@ -71,6 +72,23 @@ public class ManagerController {
 		}
 	}
     
+    
+    
+	 /**
+     * 统计车的使用情况
+	 * 查看一级目录
+	 * BUSINESS 为运营 ，TEASURER 为财务
+     */
+    @RequestMapping(value = "/teasurer/one/level", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectTeasurerOneLevel(@RequestParam(required = true, value = "managerId") Long managerId){
+    	try {
+			return service.selectTeasurerOneLevel(managerId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
     
     
     
