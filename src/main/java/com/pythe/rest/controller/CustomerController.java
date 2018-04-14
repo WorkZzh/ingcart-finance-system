@@ -145,20 +145,6 @@ public class CustomerController {
 		}
 	}
 	
-	/**
-	 * 使用赠品券，领取赠品
-	 * @return
-	 */
-	@RequestMapping(value = "/coupon/receiveGift", method = RequestMethod.POST)
-	@ResponseBody
-	public PytheResult receiveGift(@RequestBody String parameters) {
-		try {
-			return (customerService.receiveGift(parameters));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
 	
 	
 	
