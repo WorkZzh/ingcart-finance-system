@@ -15,6 +15,8 @@ public class VAcountRecord {
 
     private Long customerId;
 
+    private Double refundAmount;
+
     public String getRecordId() {
         return recordId;
     }
@@ -61,5 +63,13 @@ public class VAcountRecord {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+    public Double getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setRefundAmount(Double refundAmount) {
+        this.refundAmount = refundAmount;
     }
 }

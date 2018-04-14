@@ -1454,6 +1454,66 @@ public class VCustomerExample {
             addCriterion("price not between", value1, value2, "price");
             return (Criteria) this;
         }
+
+        public Criteria andPStatusIsNull() {
+            addCriterion("p_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusIsNotNull() {
+            addCriterion("p_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusEqualTo(Integer value) {
+            addCriterion("p_status =", value, "pStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusNotEqualTo(Integer value) {
+            addCriterion("p_status <>", value, "pStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusGreaterThan(Integer value) {
+            addCriterion("p_status >", value, "pStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("p_status >=", value, "pStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusLessThan(Integer value) {
+            addCriterion("p_status <", value, "pStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("p_status <=", value, "pStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusIn(List<Integer> values) {
+            addCriterion("p_status in", values, "pStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusNotIn(List<Integer> values) {
+            addCriterion("p_status not in", values, "pStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusBetween(Integer value1, Integer value2) {
+            addCriterion("p_status between", value1, value2, "pStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andPStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("p_status not between", value1, value2, "pStatus");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

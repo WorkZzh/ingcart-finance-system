@@ -151,6 +151,25 @@ public class BagController {
 	
 	
 	
+    /**
+     * 查询所有优惠券
+     */
+    @RequestMapping(value = "/select/coupon", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectCoupon(
+			@RequestParam(defaultValue="1") Integer pageNum,
+			@RequestParam(defaultValue="10") Integer pageSize
+			){
+    	try {
+    		return service.selectCoupon(pageNum,pageSize);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
 	
   
 }

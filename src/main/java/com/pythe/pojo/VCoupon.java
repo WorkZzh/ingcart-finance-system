@@ -2,7 +2,7 @@ package com.pythe.pojo;
 
 import java.util.Date;
 
-public class TblCoupon {
+public class VCoupon {
     private Long id;
 
     private String code;

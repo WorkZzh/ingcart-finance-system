@@ -23,6 +23,7 @@
     <result column="xcx_open_id" property="xcxOpenId" jdbcType="VARCHAR" />
     <result column="giving" property="giving" jdbcType="DOUBLE" />
     <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="p_status" property="pStatus" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -85,7 +86,7 @@
   <sql id="Base_Column_List" >
     customer_id, phone_num, type, name, description, level, amount, in_amount, out_amount, 
     car_status, car_id, start_time, stop_time, open_id, union_id, record_id, device_id, 
-    qr_id, xcx_open_id, giving, price
+    qr_id, xcx_open_id, giving, price, p_status
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.VCustomerExample" >
     select
@@ -114,16 +115,16 @@
       car_status, car_id, start_time, 
       stop_time, open_id, union_id, 
       record_id, device_id, qr_id, 
-      xcx_open_id, giving, price
-      )
+      xcx_open_id, giving, price, 
+      p_status)
     values (#{customerId,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
       #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
       #{amount,jdbcType=DOUBLE}, #{inAmount,jdbcType=DOUBLE}, #{outAmount,jdbcType=DOUBLE}, 
       #{carStatus,jdbcType=INTEGER}, #{carId,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
       #{stopTime,jdbcType=TIMESTAMP}, #{openId,jdbcType=VARCHAR}, #{unionId,jdbcType=VARCHAR}, 
       #{recordId,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, #{qrId,jdbcType=BIGINT}, 
-      #{xcxOpenId,jdbcType=VARCHAR}, #{giving,jdbcType=DOUBLE}, #{price,jdbcType=DOUBLE}
-      )
+      #{xcxOpenId,jdbcType=VARCHAR}, #{giving,jdbcType=DOUBLE}, #{price,jdbcType=DOUBLE}, 
+      #{pStatus,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.VCustomer" >
     insert into v_customer
@@ -191,6 +192,9 @@
       <if test="price != null" >
         price,
       </if>
+      <if test="pStatus != null" >
+        p_status,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="customerId != null" >
@@ -255,6 +259,9 @@
       </if>
       <if test="price != null" >
         #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="pStatus != null" >
+        #{pStatus,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -330,6 +337,9 @@
       <if test="record.price != null" >
         price = #{record.price,jdbcType=DOUBLE},
       </if>
+      <if test="record.pStatus != null" >
+        p_status = #{record.pStatus,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -357,7 +367,8 @@
       qr_id = #{record.qrId,jdbcType=BIGINT},
       xcx_open_id = #{record.xcxOpenId,jdbcType=VARCHAR},
       giving = #{record.giving,jdbcType=DOUBLE},
-      price = #{record.price,jdbcType=DOUBLE}
+      price = #{record.price,jdbcType=DOUBLE},
+      p_status = #{record.pStatus,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>

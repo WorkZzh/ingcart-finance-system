@@ -65,5 +65,13 @@ public interface CartService {
 
 	PytheResult refundByTopManager(String parameters);
 
+	PytheResult testRestRefund(String parameters);
+
+	PytheResult refundToTripByManager(String parameters);
+
+	PytheResult refundUnconditionally(String parameters);
+
+	PytheResult transferCar(String parameters);
+
 
 }

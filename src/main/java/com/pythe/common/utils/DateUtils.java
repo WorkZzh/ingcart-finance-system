@@ -220,7 +220,7 @@ public class DateUtils {
 	 * @return 当天日期
 	 */
 	public static String getMonthDay(Date date) {
-		return DATE_FORMAT_Month_Day.format(new Date());
+		return DATE_FORMAT_Month_Day.format(date);
 	}
 	
 	

@@ -9,6 +9,8 @@ public class TblPrice {
 
     private String annotation;
 
+    private Integer status;
+
     public String getLevel() {
         return level;
     }
@@ -39,5 +41,13 @@ public class TblPrice {
 
     public void setAnnotation(String annotation) {
         this.annotation = annotation == null ? null : annotation.trim();
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

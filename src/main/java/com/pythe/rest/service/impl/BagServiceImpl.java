@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.FactoryUtils;
 import com.pythe.mapper.TblAccountMapper;
@@ -13,6 +14,7 @@ import com.pythe.mapper.TblBagRecordMapper;
 import com.pythe.mapper.TblBillMapper;
 import com.pythe.mapper.TblComboMapper;
 import com.pythe.mapper.TblStoreMapper;
+import com.pythe.mapper.VCouponMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblBagRecord;
 import com.pythe.pojo.TblBill;
@@ -20,6 +22,8 @@ import com.pythe.pojo.TblCombo;
 import com.pythe.pojo.TblComboExample;
 import com.pythe.pojo.TblStore;
 import com.pythe.pojo.TblStoreExample;
+import com.pythe.pojo.VCoupon;
+import com.pythe.pojo.VCouponExample;
 import com.pythe.rest.service.BagService;
 
 @Service
@@ -38,14 +42,10 @@ public class BagServiceImpl implements BagService {
 	private TblStoreMapper storeMapper;
 
 	@Autowired
+	private VCouponMapper  couponMapper;
+
+	@Autowired
 	private TblBagRecordMapper bagRecordMapper;
-
-	@Autowired
-	private TblAccountMapper accountMapper;
-
-
-	@Autowired
-	private TblBillMapper billMapper;
 
 
 	@Autowired
@@ -305,6 +305,18 @@ public class BagServiceImpl implements BagService {
 		TblStoreExample example =new TblStoreExample();
 		List<TblStore> storeList = storeMapper.selectByExample(example);
 		return PytheResult.ok(storeList);
+	}
+
+	@Override
+	public PytheResult selectCoupon(Integer pageNum, Integer pageSize) {
+		// TODO Auto-generated method stub
+		PageHelper.startPage(pageNum, pageSize);
+		VCouponExample example =new VCouponExample();
+		List<VCoupon> coupon = couponMapper.selectByExample(example);
+		if (coupon.isEmpty()) {
+			return PytheResult.build(400, "暂无优惠券");
+		}
+		return PytheResult.ok(coupon);
 	}
 	
 	

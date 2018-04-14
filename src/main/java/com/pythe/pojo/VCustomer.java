@@ -45,6 +45,8 @@ public class VCustomer {
 
     private Double price;
 
+    private Integer pStatus;
+
     public Long getCustomerId() {
         return customerId;
     }
@@ -211,5 +213,13 @@ public class VCustomer {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Integer getpStatus() {
+        return pStatus;
+    }
+
+    public void setpStatus(Integer pStatus) {
+        this.pStatus = pStatus;
     }
 }

@@ -28,21 +28,26 @@ import com.pythe.common.utils.FactoryUtils;
 import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.common.utils.JsonUtils;
 import com.pythe.common.utils.NumberUtils;
+import com.pythe.common.utils.StringUtils;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblBillMapper;
 import com.pythe.mapper.TblCarMapper;
+import com.pythe.mapper.TblCouponMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblHoldRecordMapper;
 import com.pythe.mapper.TblPriceMapper;
 import com.pythe.mapper.TblRecordMapper;
 import com.pythe.mapper.TblStoreMapper;
+import com.pythe.mapper.VAcountRecordMapper;
 import com.pythe.mapper.VCustomerMapper;
+import com.pythe.mapper.VRecordBillMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblAccountExample;
 import com.pythe.pojo.TblBill;
 import com.pythe.pojo.TblBillExample;
 import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
+import com.pythe.pojo.TblCoupon;
 import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblHoldRecord;
 import com.pythe.pojo.TblHoldRecordExample;
@@ -51,25 +56,24 @@ import com.pythe.pojo.TblRecord;
 import com.pythe.pojo.TblRecordExample;
 import com.pythe.pojo.TblStore;
 import com.pythe.pojo.TblStoreExample;
+import com.pythe.pojo.VAcountRecord;
+import com.pythe.pojo.VAcountRecordExample;
 import com.pythe.pojo.VCustomer;
 import com.pythe.pojo.VCustomerExample;
+import com.pythe.pojo.VRecordBillExample;
 import com.pythe.rest.service.CartService;
+import com.sun.tools.classfile.Attribute.Factory;
 
 @Service
 public class CartServiceImpl implements CartService {
 
-	//权限有2种
+	// 权限有2种
 	@Value("${DEVELOPER_LEVEL}")
 	private Integer DEVELOPER_LEVEL;
-	
-	
-	
-	
+
 	@Value("${TEST_PAY_TYPE}")
 	private Integer TEST_PAY_TYPE;
-	
-	
-	
+
 	@Value("${EACH_HOUR_PRICE}")
 	private Integer EACH_HOUR_PRICE;
 
@@ -152,6 +156,10 @@ public class CartServiceImpl implements CartService {
 
 	@Autowired
 	private TblCustomerMapper customerMapper;
+	
+	
+	@Autowired
+	private TblCouponMapper couponMapper;
 
 	@Autowired
 	private TblRecordMapper recordMapper;
@@ -173,6 +181,9 @@ public class CartServiceImpl implements CartService {
 
 	@Autowired
 	private TblHoldRecordMapper holdRecordMapper;
+
+	@Autowired
+	private VAcountRecordMapper acountRecordMapper;
 
 	@Override
 	public PytheResult unlock(String parameters) {
@@ -966,15 +977,14 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.build(600, "此车有故障，请换车扫码");
 		}
 		}
-
 		// 先判断车是否有问题，在判断是否钱够？
 		if (account.getAmount() < price.getPrice()) {
 			JSONObject json = new JSONObject();
-			json.put("amount", account.getAmount());
+			// json.put("amount", account.getAmount());
+			json.put("price", price.getPrice());
 			json.put("annotation", JsonUtils.jsonToList(price.getAnnotation(), String.class));
 			return PytheResult.build(300, "余额不满足此次旅程费用，请前往充值", json);
 		}
-
 		return PytheResult.build(200, "车安全检测通过，请放心使用", car.getId());
 	}
 
@@ -1136,10 +1146,10 @@ public class CartServiceImpl implements CartService {
 	public PytheResult manageUrgentRefund(String parameters) {
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum").trim();
-		//String date = information.getString("date");
+		// String date = information.getString("date");
 		Long managerId = information.getLong("managerId");
 
-		//final Date date_ = DateUtils.parseTime(date);
+		// final Date date_ = DateUtils.parseTime(date);
 		Date date_ = new Date();
 		// 让车处于空闲状态，让后续的人可以使用
 		VCustomerExample example = new VCustomerExample();
@@ -1200,7 +1210,7 @@ public class CartServiceImpl implements CartService {
 			car.setRecordid(null);
 			carMapper.updateByPrimaryKey(car);
 		} else {
-			return PytheResult.build(400, "暂无占用任何车，无需释放");
+			return PytheResult.build(400, "无法停止计费，暂无占用任何车");
 		}
 
 		// 查看某用户的最近行车记录
@@ -1219,37 +1229,25 @@ public class CartServiceImpl implements CartService {
 		bill.setAmount(amount);
 		bill.setRefundAmount(givingAmount);
 		bill.setGivingAmount(0d);
-		
+
 		if (DEVELOPER_LEVEL.equals(customer.getLevel())) {
 			bill.setType(TEST_PAY_TYPE);
-		}else{
+		} else {
 			bill.setType(PART_REFUND_TYPE);
 		}
-		
+
 		bill.setCustomerId(customerId);
 		bill.setTime(new Date());
 		bill.setRecordId(recordId);
 		bill.setManagerId(managerId);
-		
-		
+
 		// 生成账单
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
-		
-		//不扣钱情况下，直接在此更新bill并结束
-		if (amount.equals(0d)) {
-			// 如果是没有退，就不更新腾讯的退款订单号
-			bill.setStatus(PAY_TYPE);
-			billMapper.insert(bill);
-			JSONObject json = new JSONObject();
-			json.put("price", amount.intValue());
-			json.put("time", time);
-			json.put("amount", account.getAmount());
-			return PytheResult.build(200, "结算成功", json);
-		}
-	
-
 		account.setAmount(account.getAmount() - amount);
 		account.setOutAmount(account.getOutAmount() - amount);
+		
+
+
 
 		// 如果giving 为0 就直接返回回去就行，不用再微信退款请求
 		if ("0".equals(giving)) {
@@ -1277,6 +1275,10 @@ public class CartServiceImpl implements CartService {
 					giving);
 			// System.out.println("============>"+str);
 			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") && !str.contains("累计退款金额大于支付金额")) {
+
+				// 注意： 退回20后，这单要记录这张单已经退回20，目的是为了未来能退回剩的余额
+				bi.setRefundAmount(bi.getRefundAmount() + givingAmount);
+				billMapper.updateByPrimaryKey(bi);
 
 				// 支付成功后再扣
 				accountMapper.updateByPrimaryKey(account);
@@ -1415,11 +1417,10 @@ public class CartServiceImpl implements CartService {
 			bill.setRefundAmount(0d);
 			if (DEVELOPER_LEVEL.equals(customer.getLevel())) {
 				bill.setType(TEST_PAY_TYPE);
-			}else{
+			} else {
 				bill.setType(AUTO_PAY_TYPE);
 			}
-			
-			
+
 			bill.setCustomerId(customerId);
 			bill.setTime(new Date());
 			bill.setRecordId(recordId);
@@ -1551,9 +1552,9 @@ public class CartServiceImpl implements CartService {
 		bill.setAmount(amount);
 		bill.setGivingAmount(0d);
 		bill.setRefundAmount(0d);
-	   if (DEVELOPER_LEVEL.equals(customer.getLevel())) {
+		if (DEVELOPER_LEVEL.equals(customer.getLevel())) {
 			bill.setType(TEST_PAY_TYPE);
-		}else{
+		} else {
 			bill.setType(BILL_PAY_TYPE);
 		}
 		bill.setCustomerId(customerId);
@@ -1779,17 +1780,17 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public PytheResult refundByTopManager(String parameters) {
-		//该功能用于解决充值不用车情况
+		// 该功能用于解决充值不用车情况
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum").trim();
 		Long managerId = information.getLong("managerId");
-		//没得选择，就是全额退款
-		//Double refund = information.getDouble("refund");
+		// 没得选择，就是全额退款
+		// Double refund = information.getDouble("refund");
 
 		// 判断管理员权限
 		TblCustomer manager = customerMapper.selectByPrimaryKey(managerId);
 
-		if (manager.getLevel() <= 1) {
+		if (manager.getLevel() <= 0) {
 			return PytheResult.build(400, "权限不够");
 		}
 
@@ -1804,41 +1805,48 @@ public class CartServiceImpl implements CartService {
 
 		VCustomer customer = customerList.get(0);
 		Long customerId = customer.getCustomerId();
-		
-		//车必须已经释放，才能退
-		if (customer.getCarId()!=null) {
+
+		// 车必须已经释放，才能退（无行程退款）
+		if (customer.getCarId() != null) {
 			return PytheResult.build(400, "用户未结束用车，为保证数据正常，请使用停止计费功能");
 		}
-		
-//		 改为无论用户是否停车，都可以退钱
-//		 如果还在车上就不给退款
-		 if (null != customer.getCarId()) {
-		 return PytheResult.build(400, "抱歉，请结束用车后，才可退款");
-		 }
+
+		// 改为无论用户是否停车，都可以退钱
+		// 如果还在车上就不给退款
+		if (null != customer.getCarId()) {
+			return PytheResult.build(400, "抱歉，请结束用车后，才可退款");
+		}
 
 		// 用于返回给用户使用
 		// 生成账单
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
-		
-//		if (account.getAmount() < refund) {
-//			return PytheResult.build(400, "不合法退款：累计退款金额大于支付金额");
-//		}
-		
-		//用户在车上，更新并退款。用户不在车上，只退款，不更新数据
+
+		// if (account.getAmount() < refund) {
+		// return PytheResult.build(400, "不合法退款：累计退款金额大于支付金额");
+		// }
+
+		// 用户在车上，更新并退款。用户不在车上，只退款，不更新数据
 		TblBillExample example2 = new TblBillExample();
-		example2.createCriteria().andStatusEqualTo(1).andTypeEqualTo(BILL_CHARGE_TYPE).andCustomerIdEqualTo(customerId);
+		example2.createCriteria().andTypeEqualTo(BILL_CHARGE_TYPE).andStatusEqualTo(1).andCustomerIdEqualTo(customerId);
 		example2.setOrderByClause("time DESC");
 		List<TblBill> billList = billMapper.selectByExample(example2);
 		if (!billList.isEmpty()) {
 			// 更新bill退款订单号
 			TblBill bi = billList.get(0);
-			String refundMoney = String.valueOf((bi.getAmount().intValue() * 100));
-			String total =String.valueOf((bi.getAmount().intValue()* 100));
+			Double bi_amount = bi.getAmount() * 100;
+			String refundMoney = String.valueOf(bi_amount.intValue());
+			// 说明用户现有金额小于退款
+			if (account.getAmount() < bi.getAmount()) {
+				return PytheResult.build(400, "不合法退款：用户现有金额小于退款金额");
+			}
+			String total = String.valueOf(bi_amount.intValue());
+			// System.out.println("============>"+bi_amount.intValue());
 			String str = refundByOrderInWX(bi.getOutTradeNo(), total, refundMoney);
-//			System.out.println("=====================>bi"+bi.getPrepayId() +" "+bi.getOutTradeNo() + " "+bi.getType());
-			System.out.println("===================>"+str);
+			// System.out.println("=====================>bi"+bi.getPrepayId() +"
+			// "+bi.getOutTradeNo() + " "+bi.getType());
+			// System.out.println("===================>" + str);
 			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") && !str.contains("累计退款金额大于支付金额")) {
-				
+
 				account.setAmount(account.getAmount() - bi.getAmount());
 				account.setOutAmount(account.getOutAmount() - bi.getAmount());
 				accountMapper.updateByPrimaryKey(account);
@@ -1847,44 +1855,498 @@ public class CartServiceImpl implements CartService {
 				json.put("price", bi.getAmount());
 				json.put("amount", account.getAmount());
 				return PytheResult.build(200, "退款成功", json);
-				//如果用户在车上才更新数据
-//				if (null!=customer.getCarId()) {
-//					TblBill bill = new TblBill();
-//					String billId = FactoryUtils.getUUID();
-//					String recordId = customer.getRecordId();
-//					//更新记录
-//					TblRecord line = recordMapper.selectByPrimaryKey(recordId);
-//					line.setStopTime(new Date());
-//					line.setBillId(billId);
-//					recordMapper.updateByPrimaryKey(line);
-//					// 更新退款流水
-//					bill.setId(billId);
-//					bill.setAmount(customer.getPrice());
-//					bill.setRefundAmount(customer.getGiving());
-//					bill.setGivingAmount(0d);
-//					if (customer.getPrice()>customer.getGiving()) {
-//						bill.setType(PART_REFUND_TYPE);
-//					}else{
-//						bill.setType(TOTAL_REFUND_TYPE);
-//					}
-//					bill.setCustomerId(customerId);
-//					bill.setTime(new Date());
-//					bill.setStatus(PAY_TYPE);
-//					bill.setPrepayId(bi.getPrepayId());
-//					bill.setOutTradeNo(bi.getOutTradeNo());
-//					billMapper.insert(bill);
-//					
-//					account.setAmount(account.getAmount() - refund);
-//					account.setOutAmount(account.getOutAmount() - refund);
-//					accountMapper.updateByPrimaryKey(account);
-//				}
-			}else{
+				// 如果用户在车上才更新数据
+				// if (null!=customer.getCarId()) {
+				// TblBill bill = new TblBill();
+				// String billId = FactoryUtils.getUUID();
+				// String recordId = customer.getRecordId();
+				// //更新记录
+				// TblRecord line = recordMapper.selectByPrimaryKey(recordId);
+				// line.setStopTime(new Date());
+				// line.setBillId(billId);
+				// recordMapper.updateByPrimaryKey(line);
+				// // 更新退款流水
+				// bill.setId(billId);
+				// bill.setAmount(customer.getPrice());
+				// bill.setRefundAmount(customer.getGiving());
+				// bill.setGivingAmount(0d);
+				// if (customer.getPrice()>customer.getGiving()) {
+				// bill.setType(PART_REFUND_TYPE);
+				// }else{
+				// bill.setType(TOTAL_REFUND_TYPE);
+				// }
+				// bill.setCustomerId(customerId);
+				// bill.setTime(new Date());
+				// bill.setStatus(PAY_TYPE);
+				// bill.setPrepayId(bi.getPrepayId());
+				// bill.setOutTradeNo(bi.getOutTradeNo());
+				// billMapper.insert(bill);
+				//
+				// account.setAmount(account.getAmount() - refund);
+				// account.setOutAmount(account.getOutAmount() - refund);
+				// accountMapper.updateByPrimaryKey(account);
+				// }
+			} else {
 				return PytheResult.build(400, "退款失败,请联系客服人员");
 			}
 		}
-		
-	    //退款失败要有条数据
+
+		// 退款失败要有条数据
 		return PytheResult.build(400, "退款失败,请联系客服人员");
 	}
 
-}
+	@Override
+	public PytheResult testRestRefund(String parameters) {
+		// 该功能用于解决充值不用车情况
+		JSONObject information = JSONObject.parseObject(parameters);
+		String phoneNum = information.getString("phoneNum").trim();
+		Long managerId = information.getLong("managerId");
+
+		// 没得选择，就是全额退款
+		// Double refund = information.getDouble("refund");
+
+		// 判断管理员权限
+		TblCustomer manager = customerMapper.selectByPrimaryKey(managerId);
+
+		if (manager.getLevel() <= 0) {
+			return PytheResult.build(400, "权限不够");
+		}
+
+		// 判断用户使用情况
+		VCustomerExample example = new VCustomerExample();
+		example.createCriteria().andPhoneNumEqualTo(phoneNum);
+
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+		if (customerList.isEmpty()) {
+			return PytheResult.build(400, "该用户不存在");
+		}
+
+		VCustomer customer = customerList.get(0);
+		Long customerId = customer.getCustomerId();
+
+		// 车必须已经释放，才能退（无行程退款）
+		if (customer.getCarId() != null) {
+			return PytheResult.build(400, "用户未结束用车，为保证数据正常，请使用停止计费功能");
+		}
+
+		// 改为无论用户是否停车，都可以退钱
+		// 如果还在车上就不给退款
+		if (null != customer.getCarId()) {
+			return PytheResult.build(400, "抱歉，请结束用车后，才可退款");
+		}
+
+		// 用于返回给用户使用
+		// 生成账单
+		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+
+		// if (account.getAmount() < refund) {
+		// return PytheResult.build(400, "不合法退款：累计退款金额大于支付金额");
+		// }
+
+		// 用户在车上，更新并退款。用户不在车上，只退款，不更新数据
+		TblBillExample example2 = new TblBillExample();
+		example2.createCriteria().andTypeEqualTo(BILL_CHARGE_TYPE).andStatusEqualTo(1).andCustomerIdEqualTo(customerId);
+		example2.setOrderByClause("time DESC");
+		List<TblBill> billList = billMapper.selectByExample(example2);
+		if (!billList.isEmpty()) {
+			// 更新bill退款订单号
+			TblBill bi = billList.get(0);
+			Double bi_amount = bi.getAmount() * 100;
+			Double refund_amount = bi.getRefundAmount() * 100;
+			Double rest_amount = bi_amount - refund_amount;
+			String total = String.valueOf(bi_amount.intValue());
+			// System.out.println("============>"+bi_amount.intValue());
+			// System.out.println("=====================>bi"+bi.getOutTradeNo());
+			String str = refundByOrderInWX(bi.getOutTradeNo(), total, String.valueOf(rest_amount.intValue()));
+
+			// System.out.println("===================>" + str);
+			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") && !str.contains("累计退款金额大于支付金额")) {
+
+				// 注意： 退回20后，这单要记录这张单已经退回20，目的是为了未来能退回剩的余额
+				bi.setRefundAmount(bi.getRefundAmount() + (rest_amount / 100));
+				billMapper.updateByPrimaryKey(bi);
+
+				// 看看更新后的账单是否为正数，如果是，证明扣费成功
+				JSONObject json = new JSONObject();
+				json.put("price", bi.getAmount());
+				json.put("amount", account.getAmount());
+				return PytheResult.build(200, "退款成功", json);
+			} else {
+				return PytheResult.build(400, "退款失败,请联系客服人员");
+			}
+		}
+
+		// 退款失败要有条数据
+		return PytheResult.build(400, "退款失败,请联系客服人员");
+	}
+
+	@Override
+	@Transactional
+	public PytheResult refundToTripByManager(String parameters) {
+		// TODO Auto-generated method stub
+
+		JSONObject information = JSONObject.parseObject(parameters);
+		String phoneNum = information.getString("phoneNum").trim();
+		// String date = information.getString("date");
+		Long managerId = information.getLong("managerId");
+
+		// final Date date_ = DateUtils.parseTime(date);
+		String today = DateUtils.getTodayDate();
+		// 让车处于空闲状态，让后续的人可以使用
+		VCustomerExample example = new VCustomerExample();
+
+		if (phoneNum.length() == 11) {
+			example.createCriteria().andPhoneNumEqualTo(phoneNum);
+		} else {
+			example.createCriteria().andQrIdEqualTo(Long.valueOf(phoneNum));
+		}
+
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+		if (customerList.isEmpty()) {
+			return PytheResult.build(400, "该用户不存在");
+		}
+
+		VCustomer customer = customerList.get(0);
+		Long customerId = customer.getCustomerId();
+		String carId = null;
+		if (customer.getCarId() == null) {
+			return PytheResult.build(400, "该车不在用车中，无法全额退款");
+		} else {
+			carId = customer.getCarId();
+		}
+
+		TblCar car = carMapper.selectByPrimaryKey(carId);
+		String recordId = customer.getRecordId();
+		TblRecord record = recordMapper.selectByPrimaryKey(recordId);
+		String startTime = DateUtils.formatDate(record.getStartTime());
+		if (!startTime.equals(DateUtils.getTodayDate())) {
+			return PytheResult.build(400, "当天无行程，无法全额退款");
+		}
+
+		// 释放车
+		car.setId(customer.getCarId());
+		car.setStatus(CAR_FREE_STATUS);
+		car.setEndtime(null);
+		car.setUser(null);
+		car.setStarttime(null);
+		car.setRecordid(null);
+		carMapper.updateByPrimaryKey(car);
+
+		// 查看某用户的最近行车记录
+		String billId = FactoryUtils.getUUID();
+		record.setStopTime(new Date());
+		record.setBillId(billId);
+		recordMapper.updateByPrimaryKey(record);
+
+		// 用户要退的钱
+		Double price = customer.getPrice();
+
+		// 更新流水
+		// 即使是人工，这20元也一定给，但是人工给用户退款。
+		final TblBill bill = new TblBill();
+		bill.setId(billId);
+		bill.setRecordId(recordId);
+		bill.setAmount(price);
+		bill.setRefundAmount(price);
+		bill.setGivingAmount(0d);
+
+		if (DEVELOPER_LEVEL.equals(customer.getLevel())) {
+			bill.setType(TEST_PAY_TYPE);
+		} else {
+			bill.setType(TOTAL_REFUND_TYPE);
+		}
+
+		bill.setCustomerId(customerId);
+		bill.setTime(new Date());
+		bill.setRecordId(recordId);
+		bill.setManagerId(managerId);
+
+		// 生成账单
+		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+
+		// 退回用户20元现金
+		TblBillExample example2 = new TblBillExample();
+		example2.createCriteria().andCustomerIdEqualTo(customerId).andTypeEqualTo(BILL_CHARGE_TYPE).andStatusEqualTo(1);
+		example2.setOrderByClause("time DESC");
+		List<TblBill> billList = billMapper.selectByExample(example2);
+		if (!billList.isEmpty()) {
+			TblBill bi = billList.get(0);
+
+			Double p = price * 100;
+			String price_str = String.valueOf(p.intValue());
+			String str = refundByOrderInWX(bi.getOutTradeNo(), price_str, price_str);
+			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") && !str.contains("累计退款金额大于支付金额")) {
+				// 注意： 退回20后，这单要记录这张单已经退回20，目的是为了未来能退回剩的余额
+				bi.setRefundAmount(price);
+				billMapper.updateByPrimaryKey(bi);
+
+				// 支付成功后再扣
+				accountMapper.updateByPrimaryKey(account);
+
+				// 退款成功
+				bill.setOutTradeNo(bi.getOutTradeNo());
+				bill.setPrepayId(bi.getPrepayId());
+				bill.setStatus(PAY_TYPE);
+				billMapper.insert(bill);
+
+				// 看看更新后的账单是否为正数，如果是，证明扣费成功
+				JSONObject json = new JSONObject();
+				json.put("price", price);
+				return PytheResult.build(200, "结算成功", json);
+			}
+		}
+		// 这种情况是，因为退款不成功,所以退款金额为0
+		bill.setStatus(NOT_PAY_STATUS);
+		billMapper.insert(bill);
+		return PytheResult.build(400, "退款失败，具体原因，请咨询Ingcart出行");
+
+	}
+
+	@Override
+	public PytheResult refundUnconditionally(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		String phoneNum = information.getString("phoneNum").trim();
+		// String date = information.getString("date");
+		Long managerId = information.getLong("managerId");
+
+		// final Date date_ = DateUtils.parseTime(date);
+		String today = DateUtils.getTodayDate();
+		// 让车处于空闲状态，让后续的人可以使用
+		VCustomerExample example = new VCustomerExample();
+
+		if (phoneNum.length() == 11) {
+			example.createCriteria().andPhoneNumEqualTo(phoneNum);
+		} else {
+			example.createCriteria().andQrIdEqualTo(Long.valueOf(phoneNum));
+		}
+
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+		if (customerList.isEmpty()) {
+			return PytheResult.build(400, "该用户不存在");
+		}
+
+		VCustomer customer = customerList.get(0);
+		Long customerId = customer.getCustomerId();
+		String carId = null;
+		if (customer.getCarId() != null) {
+			return PytheResult.build(400, "退款失败，该车行程未结束，请结束后重试");
+		}
+
+		VAcountRecordExample acountRecordExample = new VAcountRecordExample();
+		acountRecordExample.createCriteria().andCustomerIdEqualTo(customerId);
+		List<VAcountRecord> accountRecordList = acountRecordMapper.selectByExample(acountRecordExample);
+		if (accountRecordList.isEmpty()) {
+			return PytheResult.build(400, "无行程退款，请选用全额退款（无行程）退款");
+		}
+
+		// 退回用户20元现金
+		TblBillExample example2 = new TblBillExample();
+		example2.createCriteria().andCustomerIdEqualTo(customerId).andTypeEqualTo(BILL_CHARGE_TYPE).andStatusEqualTo(1);
+		example2.setOrderByClause("time DESC");
+		List<TblBill> billList = billMapper.selectByExample(example2);
+		if (!billList.isEmpty()) {
+			TblBill bi = billList.get(0);
+			Double price = bi.getAmount() * 100;
+			Double refund = bi.getRefundAmount() * 100;
+			Double rest = price - refund;
+			if (rest.equals(0d)) {
+				return PytheResult.build(400, "已全额退款");
+			}
+
+			String rest_str = String.valueOf(rest.intValue());
+			String price_str = String.valueOf(price.intValue());
+			String str = refundByOrderInWX(bi.getOutTradeNo(), price_str, rest_str);
+			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") && !str.contains("累计退款金额大于支付金额")) {
+
+				// 退款成功后清0
+				TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+				account.setOutAmount(account.getOutAmount() + account.getAmount());
+				account.setAmount(0d);
+				accountMapper.updateByPrimaryKey(account);
+
+				VAcountRecord accountRecord = accountRecordList.get(0);
+				// 修正之前的使用记录
+				String billId = accountRecord.getBillId();
+				TblBill bill = new TblBill();
+				bill.setId(billId);
+				bill.setRefundAmount(bill.getRefundAmount() + rest / 100d);
+				billMapper.updateByPrimaryKeySelective(bill);
+				billMapper.updateByPrimaryKey(bi);
+
+				// 退款成功
+				bill.setOutTradeNo(bi.getOutTradeNo());
+				bill.setPrepayId(bi.getPrepayId());
+				bill.setStatus(PAY_TYPE);
+				if (DEVELOPER_LEVEL.equals(customer.getLevel())) {
+					bill.setType(TEST_PAY_TYPE);
+				} else {
+					bill.setType(TOTAL_REFUND_TYPE);
+				}
+				billMapper.insert(bill);
+
+				// 看看更新后的账单是否为正数，如果是，证明扣费成功
+				JSONObject json = new JSONObject();
+				json.put("price", price);
+				return PytheResult.build(200, "结算成功", json);
+			}
+		}
+		return PytheResult.build(400, "退款失败，具体原因，请咨询Ingcart出行");
+	}
+
+	private int giveCoupon(Long managerId,Double price){
+		//送用户一张券
+		TblCoupon coupon =new TblCoupon();
+		//券为8位随机数
+		coupon.setCode(StringUtils.getStringRandom(8));
+		coupon.setStopTime(DateUtils.parseTime(DateUtils.getTodayDate() + " 23:00:00"));
+		coupon.setStatus(0);
+		coupon.setManagerId(managerId);
+		coupon.setType(0);
+		coupon.setAmount(price);
+		coupon.setStartTime(new Date());
+		return couponMapper.insert(coupon);
+	}
+	
+	
+	@Override
+	public PytheResult transferCar(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		String phoneNum = information.getString("phoneNum").trim();
+		// String date = information.getString("date");
+		Long managerId = information.getLong("managerId");
+
+		// final Date date_ = DateUtils.parseTime(date);
+		Date date_ = new Date();
+		// 让车处于空闲状态，让后续的人可以使用
+		VCustomerExample example = new VCustomerExample();
+
+		if (phoneNum.length() == 11) {
+			example.createCriteria().andPhoneNumEqualTo(phoneNum);
+		} else {
+			example.createCriteria().andQrIdEqualTo(Long.valueOf(phoneNum));
+		}
+
+		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
+		if (customerList.isEmpty()) {
+			return PytheResult.build(400, "该用户不存在");
+		}
+
+		VCustomer customer = customerList.get(0);
+		Long customerId = customer.getCustomerId();
+		
+		if (null ==customer.getCarStatus()) {
+			return PytheResult.build(400, "无占用任何车辆,故无法换车");
+		}
+		
+		//维修换车，不扣钱。
+		String recordId = customer.getRecordId();
+		if (3==customer.getCarStatus()) {
+			// 删除之前的用车记录
+			recordMapper.deleteByPrimaryKey(recordId);
+            giveCoupon(managerId, customer.getPrice() -customer.getGiving());
+			return PytheResult.ok("优惠券赠送成功");
+		}
+		
+		
+		TblCar car = carMapper.selectByPrimaryKey(customer.getCarId());
+		//如下是用户结束用车，退还押金，并赠送券
+		String giving = String.valueOf((customer.getGiving().intValue() * 100));
+		Double amount = customer.getPrice();
+		Double givingAmount = customer.getGiving();
+
+		car.setId(customer.getCarId());
+		car.setStatus(CAR_FREE_STATUS);
+		car.setEndtime(null);
+		car.setUser(null);
+		car.setStarttime(null);
+		car.setRecordid(null);
+		carMapper.updateByPrimaryKey(car);
+
+		// 查看某用户的最近行车记录
+		TblRecord record = recordMapper.selectByPrimaryKey(recordId);
+		String billId = FactoryUtils.getUUID();
+		record.setStopTime(date_);
+		record.setBillId(billId);
+		recordMapper.updateByPrimaryKey(record);
+
+		// 更新流水
+		// 即使是人工，这20元也一定给，但是人工给用户退款。
+		final TblBill bill = new TblBill();
+		bill.setId(billId);
+		bill.setRecordId(recordId);
+		bill.setAmount(amount);
+		bill.setRefundAmount(givingAmount);
+		bill.setGivingAmount(0d);
+
+		if (DEVELOPER_LEVEL.equals(customer.getLevel())) {
+			bill.setType(TEST_PAY_TYPE);
+		} else {
+			bill.setType(PART_REFUND_TYPE);
+		}
+
+		bill.setCustomerId(customerId);
+		bill.setTime(new Date());
+		bill.setRecordId(recordId);
+		bill.setManagerId(managerId);
+
+		// 生成账单
+		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+
+		account.setAmount(account.getAmount() - amount);
+		account.setOutAmount(account.getOutAmount() - amount);
+
+
+		// 如果giving 为0 就直接返回回去就行，不用再微信退款请求
+		if ("0".equals(giving)) {
+			// 直接扣
+			accountMapper.updateByPrimaryKey(account);
+			// 如果是没有退，就不更新腾讯的退款订单号
+			bill.setStatus(PAY_TYPE);
+			billMapper.insert(bill);
+            
+			//送一张优惠券
+			giveCoupon(managerId, customer.getPrice() -customer.getGiving());
+			return PytheResult.ok("优惠券赠送成功");
+		}
+
+		// 退回用户20元现金
+		TblBillExample example2 = new TblBillExample();
+		example2.createCriteria().andStatusEqualTo(1).andTypeEqualTo(BILL_CHARGE_TYPE).andCustomerIdEqualTo(customerId);
+		example2.setOrderByClause("time DESC");
+		List<TblBill> billList = billMapper.selectByExample(example2);
+		if (!billList.isEmpty()) {
+			TblBill bi = billList.get(0);
+
+			String str = refundByOrderInWX(bi.getOutTradeNo(), String.valueOf((bi.getAmount().intValue() * 100)),
+					giving);
+			// System.out.println("============>"+str);
+			if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") && !str.contains("累计退款金额大于支付金额")) {
+
+				// 注意： 退回20后，这单要记录这张单已经退回20，目的是为了未来能退回剩的余额
+				bi.setRefundAmount(bi.getRefundAmount() + givingAmount);
+				billMapper.updateByPrimaryKey(bi);
+
+				// 支付成功后再扣
+				accountMapper.updateByPrimaryKey(account);
+
+				// 退款成功
+				bill.setOutTradeNo(bi.getOutTradeNo());
+				bill.setPrepayId(bi.getPrepayId());
+				bill.setStatus(PAY_TYPE);
+				billMapper.insert(bill);
+
+				//送一张优惠券
+				giveCoupon(managerId, customer.getPrice() -customer.getGiving());
+				return PytheResult.ok("优惠券赠送成功");
+			}
+		}
+
+		// 这种情况是，因为退款不成功,优惠券没有，并没有扣除任何金额
+		bill.setStatus(NOT_PAY_STATUS);
+		billMapper.insert(bill);
+
+		return PytheResult.build(400, "优惠券已赠送，但退款失败，具体原因，请咨询开发人员");
+		
+	}}

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.pythe.mapper.TblCouponMapper" >
-  <resultMap id="BaseResultMap" type="com.pythe.pojo.TblCoupon" >
-    <id column="id" property="id" jdbcType="BIGINT" />
+<mapper namespace="com.pythe.mapper.VCouponMapper" >
+  <resultMap id="BaseResultMap" type="com.pythe.pojo.VCoupon" >
+    <result column="id" property="id" jdbcType="BIGINT" />
     <result column="code" property="code" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
@@ -77,13 +77,13 @@
     id, code, name, start_time, stop_time, customer_id, amount, discount, manager_id, 
     use_time, status, type
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblCouponExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.VCouponExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from tbl_coupon
+    from v_coupon
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -91,24 +91,14 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    from tbl_coupon
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from tbl_coupon
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.pythe.pojo.TblCouponExample" >
-    delete from tbl_coupon
+  <delete id="deleteByExample" parameterType="com.pythe.pojo.VCouponExample" >
+    delete from v_coupon
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.pythe.pojo.TblCoupon" >
-    insert into tbl_coupon (id, code, name, 
+  <insert id="insert" parameterType="com.pythe.pojo.VCoupon" >
+    insert into v_coupon (id, code, name, 
       start_time, stop_time, customer_id, 
       amount, discount, manager_id, 
       use_time, status, type
@@ -119,8 +109,8 @@
       #{useTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.pythe.pojo.TblCoupon" >
-    insert into tbl_coupon
+  <insert id="insertSelective" parameterType="com.pythe.pojo.VCoupon" >
+    insert into v_coupon
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -198,14 +188,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.pythe.pojo.TblCouponExample" resultType="java.lang.Integer" >
-    select count(*) from tbl_coupon
+  <select id="countByExample" parameterType="com.pythe.pojo.VCouponExample" resultType="java.lang.Integer" >
+    select count(*) from v_coupon
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update tbl_coupon
+    update v_coupon
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
@@ -249,7 +239,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update tbl_coupon
+    update v_coupon
     set id = #{record.id,jdbcType=BIGINT},
       code = #{record.code,jdbcType=VARCHAR},
       name = #{record.name,jdbcType=VARCHAR},
@@ -265,59 +255,5 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.pythe.pojo.TblCoupon" >
-    update tbl_coupon
-    <set >
-      <if test="code != null" >
-        code = #{code,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null" >
-        name = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="startTime != null" >
-        start_time = #{startTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="stopTime != null" >
-        stop_time = #{stopTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="customerId != null" >
-        customer_id = #{customerId,jdbcType=BIGINT},
-      </if>
-      <if test="amount != null" >
-        amount = #{amount,jdbcType=DOUBLE},
-      </if>
-      <if test="discount != null" >
-        discount = #{discount,jdbcType=DOUBLE},
-      </if>
-      <if test="managerId != null" >
-        manager_id = #{managerId,jdbcType=BIGINT},
-      </if>
-      <if test="useTime != null" >
-        use_time = #{useTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="status != null" >
-        status = #{status,jdbcType=INTEGER},
-      </if>
-      <if test="type != null" >
-        type = #{type,jdbcType=INTEGER},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.pythe.pojo.TblCoupon" >
-    update tbl_coupon
-    set code = #{code,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
-      start_time = #{startTime,jdbcType=TIMESTAMP},
-      stop_time = #{stopTime,jdbcType=TIMESTAMP},
-      customer_id = #{customerId,jdbcType=BIGINT},
-      amount = #{amount,jdbcType=DOUBLE},
-      discount = #{discount,jdbcType=DOUBLE},
-      manager_id = #{managerId,jdbcType=BIGINT},
-      use_time = #{useTime,jdbcType=TIMESTAMP},
-      status = #{status,jdbcType=INTEGER},
-      type = #{type,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

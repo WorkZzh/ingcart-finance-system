@@ -21,6 +21,8 @@ public interface BagService {
 
 	PytheResult selectAllStore();
 
+	PytheResult selectCoupon(Integer pageNum, Integer pageSize);
+
 
 
 	

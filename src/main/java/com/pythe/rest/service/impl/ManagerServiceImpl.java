@@ -249,7 +249,6 @@ public class ManagerServiceImpl implements ManagerService{
 			json.put("size", 0);
 			json.put("user", null);
 		}
-		
 		return PytheResult.ok(json);
 	}
 
@@ -472,10 +471,13 @@ public class ManagerServiceImpl implements ManagerService{
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
-		Integer level = information.getInteger("level");
+		//Integer level = information.getInteger("level");
 		VCustomerExample example5 = new VCustomerExample();
 		example5.createCriteria().andPhoneNumEqualTo(phoneNum);
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example5);
+		
+		Integer level= 1;
+		
 		
 		if (customerList.isEmpty()) {
 			TblCustomer newCustomer = new TblCustomer();
@@ -488,7 +490,7 @@ public class ManagerServiceImpl implements ManagerService{
 		}
 		
 		VCustomer customer = customerList.get(0);
-		if (1!=customer.getLevel() && 2!=customer.getLevel()) {
+		if (customer.getLevel()<=0) {
 			TblCustomer newCustomer = new TblCustomer();
 			newCustomer.setId(customer.getCustomerId());
 			newCustomer.setLevel(level);

@@ -83,6 +83,22 @@ public class CartController {
 //		}
 //	}
     
+    //测试退回该有的金额
+    @RequestMapping(value = "/test/refund/rest/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult testRestRefund(
+			@RequestBody String parameters
+			) throws Exception {
+		try {
+			return service.testRestRefund(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
+    
     
     
     
@@ -104,6 +120,42 @@ public class CartController {
 	}
     
     
+    /**
+     * 如果用户当天还在车上，对其进行退款
+     */
+    @RequestMapping(value = "/manage/trip/refund/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult refundToTripByManager(
+			@RequestBody String parameters
+			) throws Exception {
+		try {
+			return service.refundToTripByManager(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
+    
+    /**
+     * 无条件退返出租车费
+     */
+    @RequestMapping(value = "/manage/unconditional/refund/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult refundUnconditionally(
+			@RequestBody String parameters
+			) throws Exception {
+		try {
+			return service.refundUnconditionally(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
+    
+    
     
     /**
 	 * 用户临时关锁功能
@@ -123,6 +175,27 @@ public class CartController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+    
+    
+    
+    /**
+	 * 换车送券
+	 * @return
+	 * localhost:8084/manage/urgent/refund
+	 */
+    @RequestMapping(value = "/transfer/car/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult transferCarAnd(
+			@RequestBody String parameters
+			) throws Exception {
+		try {
+			return service.transferCar(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+    
     
     
     
@@ -201,13 +274,7 @@ public class CartController {
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 //    /**

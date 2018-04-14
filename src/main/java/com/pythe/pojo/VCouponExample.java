@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class TblCouponExample {
+public class VCouponExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public TblCouponExample() {
+    public VCouponExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
