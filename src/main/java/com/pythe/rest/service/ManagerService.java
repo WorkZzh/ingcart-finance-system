@@ -8,8 +8,7 @@ public interface ManagerService {
 
 	PytheResult selectVersion(String parameters);
 
-
-	PytheResult countCarCondition(String level,Integer pageNum, Integer pageSize);
+	PytheResult countCarCondition(String level, Integer pageNum, Integer pageSize);
 
 	PytheResult updateFixedPointForCar(String parameters);
 
@@ -20,7 +19,6 @@ public interface ManagerService {
 	PytheResult selectCarAttraction(String parameters);
 
 	PytheResult selectAllCity();
-
 
 	PytheResult selectAllAreaByCity(String city, Integer pageNum, Integer pageSize);
 
@@ -40,7 +38,7 @@ public interface ManagerService {
 
 	PytheResult queryRecordBill(String parameters);
 
-	PytheResult selectOneLevel( Long managerId);
+	PytheResult selectOneLevel(Long managerId);
 
 	PytheResult selectSumByTime(String parameters);
 
@@ -50,9 +48,10 @@ public interface ManagerService {
 
 	PytheResult selectTeasurerOneLevel(Long managerId);
 
+	PytheResult queryRecordBillByTimes(String parameters);
 
+	PytheResult selectSumByTimes(String parameters);
 
-
-
+	PytheResult downloadByTime(String parameters);
 
 }

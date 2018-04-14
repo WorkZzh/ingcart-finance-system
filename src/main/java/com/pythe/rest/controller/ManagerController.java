@@ -1,6 +1,5 @@
 package com.pythe.rest.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,122 +12,97 @@ import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.ExceptionUtil;
 import com.pythe.rest.service.ManagerService;
 
-
 @Controller
 public class ManagerController {
 
 	@Autowired
 	private ManagerService service;
-	
-	 /**
-     * 创建新的版本 
-     * localhost:8084/rest/update/version
-     */
+
+	/**
+	 * 创建新的版本 localhost:8084/rest/update/version
+	 */
 	@RequestMapping(value = "/update/version", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult updateVersion(	
-			@RequestBody String parameters
-			){
-    	try {
+	public PytheResult updateVersion(@RequestBody String parameters) {
+		try {
 			return service.updateVersion(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	 /**
-     * 统计车的使用情况
-	 * localhost:8084/count/car/condition
-     */
-    @RequestMapping(value = "/count/car/condition", method = RequestMethod.GET)
+
+	/**
+	 * 统计车的使用情况 localhost:8084/count/car/condition
+	 */
+	@RequestMapping(value = "/count/car/condition", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult countCarCondition(
-			@RequestParam(defaultValue="0") String level,
-			@RequestParam(defaultValue="1") Integer pageNum,
-			@RequestParam(defaultValue="10") Integer pageSize	){
-    	try {
-			return service.countCarCondition(level,pageNum,pageSize);
+	public PytheResult countCarCondition(@RequestParam(defaultValue = "0") String level,
+			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize) {
+		try {
+			return service.countCarCondition(level, pageNum, pageSize);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-    
-    
-	 /**
-     * 统计车的使用情况
-	 * 查看一级目录
-	 * BUSINESS 为运营 ，TEASURER 为财务
-     */
-    @RequestMapping(value = "/select/one/level", method = RequestMethod.GET)
+
+	/**
+	 * 统计车的使用情况 查看一级目录 BUSINESS 为运营 ，TEASURER 为财务
+	 */
+	@RequestMapping(value = "/select/one/level", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectOneLevel(@RequestParam(required = true, value = "managerId") Long managerId){
-    	try {
+	public PytheResult selectOneLevel(@RequestParam(required = true, value = "managerId") Long managerId) {
+		try {
 			return service.selectOneLevel(managerId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-    
-    
-    
-	 /**
-     * 统计车的使用情况
-	 * 查看一级目录
-	 * BUSINESS 为运营 ，TEASURER 为财务
-     */
-    @RequestMapping(value = "/teasurer/one/level", method = RequestMethod.GET)
+
+	/**
+	 * 统计车的使用情况 查看一级目录 BUSINESS 为运营 ，TEASURER 为财务
+	 */
+	@RequestMapping(value = "/teasurer/one/level", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectTeasurerOneLevel(@RequestParam(required = true, value = "managerId") Long managerId){
-    	try {
+	public PytheResult selectTeasurerOneLevel(@RequestParam(required = true, value = "managerId") Long managerId) {
+		try {
 			return service.selectTeasurerOneLevel(managerId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-    
-    
-    
-	 /**
-     * 二级
-     */
-    @RequestMapping(value = "/select/two/level", method = RequestMethod.GET)
+
+	/**
+	 * 二级
+	 */
+	@RequestMapping(value = "/select/two/level", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectOneLevel(@RequestParam(required = true, value = "c1_id") String c1_id ){
-    	try {
+	public PytheResult selectOneLevel(@RequestParam(required = true, value = "c1_id") String c1_id) {
+		try {
 			return service.selectTwoLevel(c1_id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-    
-    
-    
-    
-	
-	
-	 /**
-     * 创建新的版本
-     * localhost:8084/rest/select/version
-     */
+
+	/**
+	 * 创建新的版本 localhost:8084/rest/select/version
+	 */
 	@RequestMapping(value = "/select/version", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult selectVersion(	
-			@RequestBody String parameters
-			){
-    	try {
+	public PytheResult selectVersion(@RequestBody String parameters) {
+		try {
 			return service.selectVersion(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
 	/***
 	 * 添加是否应该定点还车
 	 */
@@ -142,8 +116,7 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
 	/***
 	 * 删除定点还车，还原会不定点还车
 	 */
@@ -157,11 +130,10 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
 
-	
 	/**
 	 * 给一家公司添加旗下的景区
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -176,13 +148,10 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
-	
-	
+
 	/**
 	 * 创建一家公司
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -197,16 +166,10 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * 更新车的位置
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -221,16 +184,10 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
 
-	
-	
-	
-	
-	
-	
 	/**
 	 * 插入一个管理员
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -245,8 +202,7 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/select/attraction/car/", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult selectCarAttraction(@RequestBody String parameters) throws Exception {
@@ -257,50 +213,45 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
-	
-//	/**
-//	 * 让车关联景区
-//	 * @param parameters
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@RequestMapping(value = "/associate/attraction/", method = RequestMethod.POST)
-//	@ResponseBody
-//	public PytheResult associateAttractionByQrId(@RequestBody String parameters) throws Exception {
-//		try {
-//			return service.associateAttractionByQrId(parameters);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-//		}
-//	}
-	
+
+	// /**
+	// * 让车关联景区
+	// * @param parameters
+	// * @return
+	// * @throws Exception
+	// */
+	// @RequestMapping(value = "/associate/attraction/", method =
+	// RequestMethod.POST)
+	// @ResponseBody
+	// public PytheResult associateAttractionByQrId(@RequestBody String
+	// parameters) throws Exception {
+	// try {
+	// return service.associateAttractionByQrId(parameters);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+	// }
+	// }
+
 	/**
 	 * 查看某个城市，所有景区
 	 * https://ingcart.com/select/all/area?city=广州市&pageNum=1&pageSize=10
 	 */
 	@RequestMapping(value = "/select/all/area", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectAllAreaByCity(
-			@RequestParam(required = true,value = "city") String city,
-			@RequestParam(defaultValue="1") Integer pageNum,
-			@RequestParam(defaultValue="10") Integer pageSize) throws Exception {
+	public PytheResult selectAllAreaByCity(@RequestParam(required = true, value = "city") String city,
+			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize)
+			throws Exception {
 		try {
-			return service.selectAllAreaByCity(city,pageNum,pageSize);
+			return service.selectAllAreaByCity(city, pageNum, pageSize);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
+
 	/**
-	 * 查看所有城市
-	 * https://ingcart.com/select/all/city
+	 * 查看所有城市 https://ingcart.com/select/all/city
 	 */
 	@RequestMapping(value = "/select/all/city", method = RequestMethod.GET)
 	@ResponseBody
@@ -312,34 +263,29 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
-	
+
 	/**
 	 * 查看维修列表
 	 * https://ingcart.com/select/maintenance/condition?pageNum=1&pageSize=10
 	 */
 	@RequestMapping(value = "/select/maintenance/condition", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectMaintennanceCondition(			@RequestParam(defaultValue="1") Integer pageNum,
-			@RequestParam(defaultValue="10") Integer pageSize) throws Exception {
+	public PytheResult selectMaintennanceCondition(@RequestParam(defaultValue = "1") Integer pageNum,
+			@RequestParam(defaultValue = "10") Integer pageSize) throws Exception {
 		try {
-			return service.selectMaintennanceCondition(pageNum,pageSize);
+			return service.selectMaintennanceCondition(pageNum, pageSize);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
 	/**
-	 * 修改维修车辆的寻找状态
-	 * https://ingcart.com/update/maintenance/status?id=1
+	 * 修改维修车辆的寻找状态 https://ingcart.com/update/maintenance/status?id=1
 	 */
 	@RequestMapping(value = "/update/maintenance/status", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult updateMaintenanceStatus(@RequestParam(required = true,value = "id") Long id) throws Exception {
+	public PytheResult updateMaintenanceStatus(@RequestParam(required = true, value = "id") Long id) throws Exception {
 		try {
 			return service.updateMaintenanceStatus(id);
 		} catch (Exception e) {
@@ -347,17 +293,14 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
-	
+
 	/**
-	 * 解修
-	 * https://ingcart.com/delete/maintenance/status?qrId=1
+	 * 解修 https://ingcart.com/delete/maintenance/status?qrId=1
 	 */
 	@RequestMapping(value = "/delete/maintenance/status", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult deleteMaintenanceStatus(@RequestParam(required = true,value = "qrId") Long qrId) throws Exception {
+	public PytheResult deleteMaintenanceStatus(@RequestParam(required = true, value = "qrId") Long qrId)
+			throws Exception {
 		try {
 			return service.deleteMaintenanceStatus(qrId);
 		} catch (Exception e) {
@@ -365,10 +308,7 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
-	
+
 	/**
 	 * 查看园区收费等级
 	 */
@@ -382,12 +322,10 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
-	
+
 	/**
 	 * 管理员对特定用户账户清零
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -402,8 +340,7 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/record/bill/query", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult queryRecordBill(@RequestBody String parameters) throws Exception {
@@ -414,15 +351,11 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
-	//按各种维度查看消费总额
+
+	// 按各种维度查看消费总额
 	@RequestMapping(value = "/select/bill/sum", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult selectSumByTime(
-			@RequestBody String parameters
-			) {
+	public PytheResult selectSumByTime(@RequestBody String parameters) {
 		try {
 			return service.selectSumByTime(parameters);
 		} catch (Exception e) {
@@ -430,9 +363,38 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
 
-	
+	@RequestMapping(value = "/record/bill/query/times", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult queryRecordBillByTimes(@RequestBody String parameters) throws Exception {
+		try {
+			return service.queryRecordBillByTimes(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+
+	@RequestMapping(value = "/select/bill/sum/times", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult selectSumByTimes(@RequestBody String parameters) {
+		try {
+			return service.selectSumByTimes(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+
+	@RequestMapping(value = "/record/bill/download/time", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult downloadByTime(@RequestBody String parameters) throws Exception {
+		try {
+			return service.downloadByTime(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+
 }
