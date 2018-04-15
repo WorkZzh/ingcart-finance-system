@@ -23,7 +23,14 @@ public class MaintenanceController {
 	
 	@Autowired  
     private MaintenanceService service;  
-      
+     
+	
+	/**
+	 * 提交维修
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/use/callRepair", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult callRepair(@RequestBody String parameters) throws Exception {
