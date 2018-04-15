@@ -54,4 +54,5 @@ public interface ManagerService {
 
 	PytheResult downloadByTime(String parameters);
 
+	PytheResult selectSumByYear(String parameters);
 }

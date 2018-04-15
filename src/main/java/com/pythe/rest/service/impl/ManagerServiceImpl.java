@@ -445,13 +445,13 @@ public class ManagerServiceImpl implements ManagerService {
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
-		//Integer level = information.getInteger("level");
+		// Integer level = information.getInteger("level");
 		VCustomerExample example5 = new VCustomerExample();
 		example5.createCriteria().andPhoneNumEqualTo(phoneNum);
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example5);
-		
-		Integer level= 1;
-		
+
+		Integer level = 1;
+
 		if (customerList.isEmpty()) {
 			TblCustomer newCustomer = new TblCustomer();
 			newCustomer.setLevel(level);
@@ -461,7 +461,7 @@ public class ManagerServiceImpl implements ManagerService {
 			customerMapper.insert(newCustomer);
 			return PytheResult.build(200, "添加成功", newCustomer.getId());
 		}
-		return PytheResult.build(400,"该用户已经是管理员");
+		return PytheResult.build(400, "该用户已经是管理员");
 
 	}
 
@@ -1038,5 +1038,37 @@ public class ManagerServiceImpl implements ManagerService {
 		JSONObject json = new JSONObject();
 		json.put("retUrl", retUrl);
 		return PytheResult.build(200, "请求成功", json);
+	}
+
+	@Override
+	public PytheResult selectSumByYear(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject params = JSONObject.parseObject(parameters);
+
+		String level = params.getString("level");
+		String year = params.getString("year");
+		ArrayList<String> list = new ArrayList<String>();
+		if (!"0".equals(level)) {
+			TblCatalogExample example2 = new TblCatalogExample();
+			example2.createCriteria().andHigherLevelIdEqualTo(level);
+			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+			if (!catalogList.isEmpty()) {
+				for (TblCatalog tblCatalog : catalogList) {
+					list.add(tblCatalog.getId());
+				}
+			} else {
+				list.add(level);
+			}
+		} else {
+			list = null;
+		}
+
+		if ("0".equals(year)) {
+			year = null;
+		}
+
+		List<VRecordBill> recordLists = recordBillMapper.selectSumByYear(list, year);
+
+		return PytheResult.ok(recordLists);
 	}
 }
