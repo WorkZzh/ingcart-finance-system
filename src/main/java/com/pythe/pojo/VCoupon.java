@@ -26,6 +26,9 @@ public class VCoupon {
     private Integer status;
 
     private Integer type;
+    
+    
+    
 
     public Long getId() {
         return id;

@@ -308,13 +308,17 @@ public class BagServiceImpl implements BagService {
 	}
 
 	@Override
-	public PytheResult selectCoupon(Integer pageNum, Integer pageSize) {
+	public PytheResult selectCoupon(Long customerId,Integer pageNum, Integer pageSize) {
 		// TODO Auto-generated method stub
 		PageHelper.startPage(pageNum, pageSize);
 		VCouponExample example =new VCouponExample();
+		example.createCriteria().andCustomerIdEqualTo(customerId);
 		List<VCoupon> coupon = couponMapper.selectByExample(example);
 		if (coupon.isEmpty()) {
 			return PytheResult.build(400, "暂无优惠券");
+		}
+		for (VCoupon vCoupon : coupon) {
+			
 		}
 		return PytheResult.ok(coupon);
 	}
