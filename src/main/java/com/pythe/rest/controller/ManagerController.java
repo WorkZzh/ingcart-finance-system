@@ -74,12 +74,9 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
+
 	/**
-	 * 二级
-	 * level为1时候，会显示2个，所以需要加多一个level字段
+	 * 二级 level为1时候，会显示2个，所以需要加多一个level字段
 	 */
 	@RequestMapping(value = "/teasurer/two/level", method = RequestMethod.GET)
 	@ResponseBody
@@ -87,15 +84,12 @@ public class ManagerController {
 			@RequestParam(required = true, value = "level") Integer level,
 			@RequestParam(required = true, value = "catalog_id") String catalog_id) {
 		try {
-			return service.selectTeasurerTwoLevel(c1_id,level,catalog_id);
+			return service.selectTeasurerTwoLevel(c1_id, level, catalog_id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
 
 	/**
 	 * 二级
@@ -106,7 +100,7 @@ public class ManagerController {
 			@RequestParam(required = true, value = "level") Integer level,
 			@RequestParam(required = true, value = "catalog_id") String catalog_id) {
 		try {
-			return service.selectTwoLevel(c1_id,level,catalog_id);
+			return service.selectTwoLevel(c1_id, level, catalog_id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
@@ -209,9 +203,9 @@ public class ManagerController {
 		}
 	}
 
-	
 	/**
 	 * 插入一个婴咖管理（需要变成4级管理的等级）
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -226,10 +220,10 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
 	/**
 	 * 插入一个运营专员（需要变成1级管理的等级）
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -244,9 +238,10 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
+
 	/**
 	 * 插入一个运营管理者（需要变成2级管理的等级）
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -261,8 +256,6 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
 
 	@RequestMapping(value = "/select/attraction/car/", method = RequestMethod.POST)
 	@ResponseBody
@@ -449,8 +442,7 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
 	/**
 	 * 查看运营人员的使用情况
 	 */
@@ -460,12 +452,25 @@ public class ManagerController {
 			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize)
 			throws Exception {
 		try {
-			return service.selectOperatorCondition(level,pageNum,pageSize);
+			return service.selectOperatorCondition(level, pageNum, pageSize);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
+	/**
+	 * 删除管理人员
+	 */
+	@RequestMapping(value = "/delete/manager", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult deleteOperator(@RequestBody String parameters) {
+		try {
+			return service.deleteOperator(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+
 }

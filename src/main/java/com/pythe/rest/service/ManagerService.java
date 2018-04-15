@@ -63,4 +63,6 @@ public interface ManagerService {
 	PytheResult insertOperatorManager(String parameters);
 
 	PytheResult insertIngcartManage(String parameters);
+	
+	PytheResult deleteOperator(String parameters);
 }
