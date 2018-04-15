@@ -3,13 +3,13 @@
 <mapper namespace="com.pythe.mapper.TblMaintenanceMapper" >
   <resultMap id="BaseResultMap" type="com.pythe.pojo.TblMaintenance" >
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="customer_id" property="customerId" jdbcType="BIGINT" />
     <result column="qr_id" property="qrId" jdbcType="BIGINT" />
     <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="call_time" property="callTime" jdbcType="TIMESTAMP" />
     <result column="longitude" property="longitude" jdbcType="DOUBLE" />
     <result column="latitude" property="latitude" jdbcType="DOUBLE" />
+    <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.pythe.pojo.TblMaintenance" extends="BaseResultMap" >
     <result column="annotation" property="annotation" jdbcType="LONGVARCHAR" />
@@ -73,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, customer_id, qr_id, type, status, call_time, longitude, latitude
+    id, qr_id, type, status, call_time, longitude, latitude, phone_num
   </sql>
   <sql id="Blob_Column_List" >
     annotation
@@ -127,13 +127,13 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblMaintenance" >
-    insert into tbl_maintenance (id, customer_id, qr_id, 
-      type, status, call_time, 
-      longitude, latitude, annotation
+    insert into tbl_maintenance (id, qr_id, type, 
+      status, call_time, longitude, 
+      latitude, phone_num, annotation
       )
-    values (#{id,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, #{qrId,jdbcType=BIGINT}, 
-      #{type,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{callTime,jdbcType=TIMESTAMP}, 
-      #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, #{annotation,jdbcType=LONGVARCHAR}
+    values (#{id,jdbcType=BIGINT}, #{qrId,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{callTime,jdbcType=TIMESTAMP}, #{longitude,jdbcType=DOUBLE}, 
+      #{latitude,jdbcType=DOUBLE}, #{phoneNum,jdbcType=VARCHAR}, #{annotation,jdbcType=LONGVARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblMaintenance" >
@@ -141,9 +141,6 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
-      </if>
-      <if test="customerId != null" >
-        customer_id,
       </if>
       <if test="qrId != null" >
         qr_id,
@@ -163,6 +160,9 @@
       <if test="latitude != null" >
         latitude,
       </if>
+      <if test="phoneNum != null" >
+        phone_num,
+      </if>
       <if test="annotation != null" >
         annotation,
       </if>
@@ -170,9 +170,6 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=BIGINT},
-      </if>
-      <if test="customerId != null" >
-        #{customerId,jdbcType=BIGINT},
       </if>
       <if test="qrId != null" >
         #{qrId,jdbcType=BIGINT},
@@ -192,6 +189,9 @@
       <if test="latitude != null" >
         #{latitude,jdbcType=DOUBLE},
       </if>
+      <if test="phoneNum != null" >
+        #{phoneNum,jdbcType=VARCHAR},
+      </if>
       <if test="annotation != null" >
         #{annotation,jdbcType=LONGVARCHAR},
       </if>
@@ -208,9 +208,6 @@
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.customerId != null" >
-        customer_id = #{record.customerId,jdbcType=BIGINT},
       </if>
       <if test="record.qrId != null" >
         qr_id = #{record.qrId,jdbcType=BIGINT},
@@ -230,6 +227,9 @@
       <if test="record.latitude != null" >
         latitude = #{record.latitude,jdbcType=DOUBLE},
       </if>
+      <if test="record.phoneNum != null" >
+        phone_num = #{record.phoneNum,jdbcType=VARCHAR},
+      </if>
       <if test="record.annotation != null" >
         annotation = #{record.annotation,jdbcType=LONGVARCHAR},
       </if>
@@ -241,13 +241,13 @@
   <update id="updateByExampleWithBLOBs" parameterType="map" >
     update tbl_maintenance
     set id = #{record.id,jdbcType=BIGINT},
-      customer_id = #{record.customerId,jdbcType=BIGINT},
       qr_id = #{record.qrId,jdbcType=BIGINT},
       type = #{record.type,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
       call_time = #{record.callTime,jdbcType=TIMESTAMP},
       longitude = #{record.longitude,jdbcType=DOUBLE},
       latitude = #{record.latitude,jdbcType=DOUBLE},
+      phone_num = #{record.phoneNum,jdbcType=VARCHAR},
       annotation = #{record.annotation,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -256,13 +256,13 @@
   <update id="updateByExample" parameterType="map" >
     update tbl_maintenance
     set id = #{record.id,jdbcType=BIGINT},
-      customer_id = #{record.customerId,jdbcType=BIGINT},
       qr_id = #{record.qrId,jdbcType=BIGINT},
       type = #{record.type,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
       call_time = #{record.callTime,jdbcType=TIMESTAMP},
       longitude = #{record.longitude,jdbcType=DOUBLE},
-      latitude = #{record.latitude,jdbcType=DOUBLE}
+      latitude = #{record.latitude,jdbcType=DOUBLE},
+      phone_num = #{record.phoneNum,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -270,9 +270,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.pythe.pojo.TblMaintenance" >
     update tbl_maintenance
     <set >
-      <if test="customerId != null" >
-        customer_id = #{customerId,jdbcType=BIGINT},
-      </if>
       <if test="qrId != null" >
         qr_id = #{qrId,jdbcType=BIGINT},
       </if>
@@ -291,6 +288,9 @@
       <if test="latitude != null" >
         latitude = #{latitude,jdbcType=DOUBLE},
       </if>
+      <if test="phoneNum != null" >
+        phone_num = #{phoneNum,jdbcType=VARCHAR},
+      </if>
       <if test="annotation != null" >
         annotation = #{annotation,jdbcType=LONGVARCHAR},
       </if>
@@ -299,25 +299,25 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.pythe.pojo.TblMaintenance" >
     update tbl_maintenance
-    set customer_id = #{customerId,jdbcType=BIGINT},
-      qr_id = #{qrId,jdbcType=BIGINT},
+    set qr_id = #{qrId,jdbcType=BIGINT},
       type = #{type,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       call_time = #{callTime,jdbcType=TIMESTAMP},
       longitude = #{longitude,jdbcType=DOUBLE},
       latitude = #{latitude,jdbcType=DOUBLE},
+      phone_num = #{phoneNum,jdbcType=VARCHAR},
       annotation = #{annotation,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.pythe.pojo.TblMaintenance" >
     update tbl_maintenance
-    set customer_id = #{customerId,jdbcType=BIGINT},
-      qr_id = #{qrId,jdbcType=BIGINT},
+    set qr_id = #{qrId,jdbcType=BIGINT},
       type = #{type,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       call_time = #{callTime,jdbcType=TIMESTAMP},
       longitude = #{longitude,jdbcType=DOUBLE},
-      latitude = #{latitude,jdbcType=DOUBLE}
+      latitude = #{latitude,jdbcType=DOUBLE},
+      phone_num = #{phoneNum,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

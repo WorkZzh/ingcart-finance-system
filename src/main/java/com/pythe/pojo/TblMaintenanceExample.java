@@ -165,66 +165,6 @@ public class TblMaintenanceExample {
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdIsNull() {
-            addCriterion("customer_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdIsNotNull() {
-            addCriterion("customer_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdEqualTo(Long value) {
-            addCriterion("customer_id =", value, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdNotEqualTo(Long value) {
-            addCriterion("customer_id <>", value, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdGreaterThan(Long value) {
-            addCriterion("customer_id >", value, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("customer_id >=", value, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdLessThan(Long value) {
-            addCriterion("customer_id <", value, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdLessThanOrEqualTo(Long value) {
-            addCriterion("customer_id <=", value, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdIn(List<Long> values) {
-            addCriterion("customer_id in", values, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdNotIn(List<Long> values) {
-            addCriterion("customer_id not in", values, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdBetween(Long value1, Long value2) {
-            addCriterion("customer_id between", value1, value2, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdNotBetween(Long value1, Long value2) {
-            addCriterion("customer_id not between", value1, value2, "customerId");
-            return (Criteria) this;
-        }
-
         public Criteria andQrIdIsNull() {
             addCriterion("qr_id is null");
             return (Criteria) this;
@@ -592,6 +532,76 @@ public class TblMaintenanceExample {
 
         public Criteria andLatitudeNotBetween(Double value1, Double value2) {
             addCriterion("latitude not between", value1, value2, "latitude");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumIsNull() {
+            addCriterion("phone_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumIsNotNull() {
+            addCriterion("phone_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumEqualTo(String value) {
+            addCriterion("phone_num =", value, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumNotEqualTo(String value) {
+            addCriterion("phone_num <>", value, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumGreaterThan(String value) {
+            addCriterion("phone_num >", value, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumGreaterThanOrEqualTo(String value) {
+            addCriterion("phone_num >=", value, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumLessThan(String value) {
+            addCriterion("phone_num <", value, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumLessThanOrEqualTo(String value) {
+            addCriterion("phone_num <=", value, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumLike(String value) {
+            addCriterion("phone_num like", value, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumNotLike(String value) {
+            addCriterion("phone_num not like", value, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumIn(List<String> values) {
+            addCriterion("phone_num in", values, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumNotIn(List<String> values) {
+            addCriterion("phone_num not in", values, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumBetween(String value1, String value2) {
+            addCriterion("phone_num between", value1, value2, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNumNotBetween(String value1, String value2) {
+            addCriterion("phone_num not between", value1, value2, "phoneNum");
             return (Criteria) this;
         }
     }

@@ -66,4 +66,6 @@ public interface ManagerService {
 	PytheResult selectAddOperatorRecord(String level, Integer pageNum, Integer pageSize);
 
 	PytheResult insertGroup(String parameters);
+	
+	PytheResult deleteOperator(String parameters);
 }

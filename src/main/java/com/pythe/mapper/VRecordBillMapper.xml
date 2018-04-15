@@ -334,15 +334,17 @@
 			and
 		</if>
 
-		<if test="startTime!=null and startTime!=''">  
-    <![CDATA[ 
-         r.time >=  #{startTime}
-    ]]>
+		<if test="startTime!=null and startTime!=''">
+
+			r.time <![CDATA[>=]]>
+			#{startTime}
+			and
+
 		</if>
-		<if test="endTime!=null and endTime!=''">  
-    <![CDATA[ 
-            and r.time <=  #{endTime} 
-    ]]>
+		<if test="endTime!=null and endTime!=''">
+
+			r.time <![CDATA[<=]]>
+			#{endTime}
 			and
 		</if>
 

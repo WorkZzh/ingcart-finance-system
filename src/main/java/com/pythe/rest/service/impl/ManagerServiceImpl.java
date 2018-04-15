@@ -452,7 +452,10 @@ public class ManagerServiceImpl implements ManagerService {
 				str = str + string + " ";
 			}
 			tblMaintenance.setType(str);
-			tblMaintenance.setTime(DateUtils.formatTime(tblMaintenance.getCallTime()));
+			/*
+			 * tblMaintenance.setTime(DateUtils.formatTime(tblMaintenance.
+			 * getCallTime()));
+			 */
 			tblMaintenance.setCallTime(null);
 		}
 		return PytheResult.ok(maintenanceList);
@@ -474,7 +477,6 @@ public class ManagerServiceImpl implements ManagerService {
 		maintenanceMapper.updateByPrimaryKeyWithBLOBs(maintenance);
 		return PytheResult.ok("修改成功");
 	}
-
 
 	@Override
 	public PytheResult updateLocation(String parameters) {
@@ -731,7 +733,7 @@ public class ManagerServiceImpl implements ManagerService {
 		if (isExistPhoneInManger(phoneNum)) {
 			return PytheResult.build(400, "不允许重复添加，如需更改，请联系开发人员");
 		}
-		
+
 		TblCatalog record = new TblCatalog();
 		String catalogId = FactoryUtils.getUUID();
 		record.setId(catalogId);
@@ -743,7 +745,7 @@ public class ManagerServiceImpl implements ManagerService {
 
 		// level为3就具有添加园区功能
 		insertOperator(phoneNum, type, catalogId, GROUP_MANAGER_LEVEL);
-		
+
 		// 为了测试，而返回的参数，其实目录树上就有
 		JSONObject j = new JSONObject();
 		j.put("higherLevelId", catalogId);
@@ -893,8 +895,8 @@ public class ManagerServiceImpl implements ManagerService {
 		JSONObject params = JSONObject.parseObject(parameters);
 
 		String level = params.getString("level");
-		String startTime = params.getString("startTime")+" 01:00:00";
-		String endTime = params.getString("endTime")+" 23:50:00";
+		String startTime = params.getString("startTime") + " 01:00:00";
+		String endTime = params.getString("endTime") + " 23:50:00";
 		ArrayList<String> list = new ArrayList<String>();
 		if (!"0".equals(level)) {
 			TblCatalogExample example2 = new TblCatalogExample();
@@ -1077,23 +1079,22 @@ public class ManagerServiceImpl implements ManagerService {
 		PageHelper.startPage(pageNum, pageSize);
 		List<VOperatorRecord> operatorList = vOperatorRecordMapper.selectByExample(example);
 		for (VOperatorRecord voperator : operatorList) {
-			//1为行程结束
+			// 1为行程结束
 			if (voperator.getStatus().equals(1)) {
 				DateUtils.minusForPartHour(voperator.getStopTime(), voperator.getStartTime());
-			}else{
+			} else {
 				DateUtils.minusForPartHour(new Date(), voperator.getStartTime());
 			}
 		}
-		
-		
+
 		if (!operatorList.isEmpty()) {
 			return PytheResult.ok(operatorList);
 		}
 		return PytheResult.build(400, "暂无记录");
 	}
 
-	//重构管理者的方法
-	private void insertOperator(String phoneNum,Integer type,String catalogId,Integer level){
+	// 重构管理者的方法
+	private void insertOperator(String phoneNum, Integer type, String catalogId, Integer level) {
 		TblOperator operator = new TblOperator();
 		operator.setCatalogId(catalogId);
 		operator.setPhoneNum(phoneNum);
@@ -1104,17 +1105,17 @@ public class ManagerServiceImpl implements ManagerService {
 		operator.setType(type);
 		operatorMapper.insert(operator);
 	}
-	
-	//重构
-	private Boolean isExistPhoneInManger(String phoneNum){
+
+	// 重构
+	private Boolean isExistPhoneInManger(String phoneNum) {
 		// 验证该电话是否已经加入是这家公司的管理员，如果是不允许添加
 		TblOperatorExample example = new TblOperatorExample();
 		example.createCriteria().andPhoneNumEqualTo(phoneNum);
 		List<TblOperator> operatorList = operatorMapper.selectByExample(example);
-		if (operatorList.isEmpty())return false;
+		if (operatorList.isEmpty())
+			return false;
 		return true;
 	}
-	
 
 	@Override
 	public PytheResult insertOperator(String parameters) {
@@ -1127,11 +1128,10 @@ public class ManagerServiceImpl implements ManagerService {
 		if (isExistPhoneInManger(phoneNum)) {
 			return PytheResult.build(400, "不允许重复添加，如需更改，请联系开发人员");
 		}
-		insertOperator(phoneNum,type, catalogId, PART_MANGER_LEVEL);
+		insertOperator(phoneNum, type, catalogId, PART_MANGER_LEVEL);
 		return PytheResult.build(400, "该用户已经是管理员");
 	}
 
-	
 	@Override
 	public PytheResult insertOperatorManager(String parameters) {
 		// TODO Auto-generated method stub
@@ -1190,7 +1190,24 @@ public class ManagerServiceImpl implements ManagerService {
 
 	
 
-	
-	
-	
+	public PytheResult deleteOperator(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		String phoneNum = information.getString("phoneNum");
+		Integer status_level = information.getInteger("status_level");
+		// 通过手机号查看管理员等级
+		TblOperatorExample tblOperatorExample = new TblOperatorExample();
+		tblOperatorExample.createCriteria().andPhoneNumEqualTo(phoneNum);
+		List<TblOperator> tblOperators = operatorMapper.selectByExample(tblOperatorExample);
+		if (tblOperators.isEmpty()) {
+			return PytheResult.build(400, "没有此管理员，请核实后删除");
+		}
+		int level = tblOperators.get(0).getLevel();
+		if (level >= status_level) {
+			return PytheResult.build(400, "权限不够，无法删除该等级管理员");
+		}
+		operatorMapper.deleteByPrimaryKey(tblOperators.get(0).getId());
+		return PytheResult.build(200, "删除成功");
+	}
+
 }

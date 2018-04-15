@@ -5,8 +5,6 @@ import java.util.Date;
 public class TblMaintenance {
     private Long id;
 
-    private Long customerId;
-
     private Long qrId;
 
     private String type;
@@ -19,32 +17,16 @@ public class TblMaintenance {
 
     private Double latitude;
 
+    private String phoneNum;
+
     private String annotation;
-    
-    private String time;
 
-    public String getTime() {
-		return time;
-	}
-
-	public void setTime(String time) {
-		this.time = time;
-	}
-
-	public Long getId() {
+    public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
     }
 
     public Long getQrId() {
@@ -93,6 +75,14 @@ public class TblMaintenance {
 
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
+    }
+
+    public String getPhoneNum() {
+        return phoneNum;
+    }
+
+    public void setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum == null ? null : phoneNum.trim();
     }
 
     public String getAnnotation() {
