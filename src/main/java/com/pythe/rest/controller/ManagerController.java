@@ -421,4 +421,14 @@ public class ManagerController {
 		}
 	}
 
+	@RequestMapping(value = "/select/bill/sum/year", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult selectSumByYear(@RequestBody String parameters) {
+		try {
+			return service.selectSumByYear(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 }

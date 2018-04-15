@@ -55,4 +55,5 @@ public interface ManagerService {
 	PytheResult selectTeasurerTwoLevel(String c1_id, Integer level, String catalog_id);
 
 	PytheResult selectTwoLevel(String c1_id, Integer level, String catalog_id);
+	PytheResult selectSumByYear(String parameters);
 }

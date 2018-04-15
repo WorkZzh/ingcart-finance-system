@@ -350,4 +350,31 @@
 
 	</select>
 
+	<select id="selectSumByYear" resultMap="BaseResultMap">
+		SELECT count(*) as qr_id,COALESCE(sum(sum),0) as
+		sum,COALESCE(sum(amount),0) as amount,COALESCE(sum(refund_amount),0)
+		as refund_amount
+		,COALESCE(sum(giving_amount),0) AS giving_amount
+		FROM
+		v_record_bill r
+		WHERE
+		<if test="levels != null">
+			r.level IN
+			<foreach collection="levels" item="eachId" index="index"
+				open="(" separator="," close=")">
+				#{eachId}
+			</foreach>
+			and
+		</if>
+
+		<if test="year!=null and year!=''">  
+    <![CDATA[ 
+         substring(r.time,1,4)=#{year} and
+    ]]>
+		</if>
+
+		1=1 group by substring(r.time,1,7) order by substring(r.time,1,7) ASC
+
+	</select>
+
 </mapper>

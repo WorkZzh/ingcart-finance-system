@@ -269,7 +269,6 @@ public class TeasurerServiceImpl implements TeasurerService {
 	@Override
 	public PytheResult selectTeasurerRocordList(String parameters) {
 		// TODO Auto-generated method stub
-		// TODO Auto-generated method stub
 		JSONObject params = JSONObject.parseObject(parameters);
 		Integer pageNum = params.getInteger("pageNum");
 		Integer pageSize = params.getInteger("pageSize");
@@ -285,6 +284,19 @@ public class TeasurerServiceImpl implements TeasurerService {
 		vTeasurerRecordExample.createCriteria().andLevelNotEqualTo(3);
 		List<VTeasurerRecord> vTeasurerRecordList = vTeasurerRecordMapper.selectByExample(vTeasurerRecordExample);
 		return PytheResult.ok(vTeasurerRecordList);
+	}
+
+	@Override
+	public PytheResult selectNameByLevel(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		String level = information.getString("level");
+		TblCatalogExample tblCatalogExample = new TblCatalogExample();
+		tblCatalogExample.createCriteria().andIdEqualTo(level);
+		List<TblCatalog> tblCatalogList = TblCatalogMapper.selectByExample(tblCatalogExample);
+		JSONObject json = new JSONObject();
+		json.put("name", tblCatalogList.get(0).getName());
+		return PytheResult.build(200, "查询成功", json);
 	}
 
 }
