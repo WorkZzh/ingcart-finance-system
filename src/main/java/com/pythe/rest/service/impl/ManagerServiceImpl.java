@@ -935,8 +935,8 @@ public class ManagerServiceImpl implements ManagerService {
 		JSONObject params = JSONObject.parseObject(parameters);
 
 		String level = params.getString("level");
-		String startTime = params.getString("startTime");
-		String endTime = params.getString("endTime");
+		String startTime = params.getString("startTime")+" 01:00:00";
+		String endTime = params.getString("endTime")+" 23:50:00";
 		ArrayList<String> list = new ArrayList<String>();
 		if (!"0".equals(level)) {
 			TblCatalogExample example2 = new TblCatalogExample();
