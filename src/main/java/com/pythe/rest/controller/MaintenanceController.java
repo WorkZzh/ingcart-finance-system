@@ -18,15 +18,9 @@ public class MaintenanceController {
 	@Autowired
 	private MaintenanceService service;
 
-
-public class MaintenanceController {  
-	
-	@Autowired  
-    private MaintenanceService service;  
-     
-	
 	/**
 	 * 提交维修
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
