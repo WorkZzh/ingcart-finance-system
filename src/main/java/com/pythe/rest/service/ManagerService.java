@@ -28,7 +28,6 @@ public interface ManagerService {
 
 	PytheResult updateMaintenanceStatus(Long id);
 
-	PytheResult insertManager(String parameters);
 
 	PytheResult updateLocation(String parameters);
 
@@ -56,4 +55,12 @@ public interface ManagerService {
 
 	PytheResult selectTwoLevel(String c1_id, Integer level, String catalog_id);
 	PytheResult selectSumByYear(String parameters);
+
+	PytheResult selectOperatorCondition(String level, Integer pageNum, Integer pageSize);
+
+	PytheResult insertOperator(String parameters);
+
+	PytheResult insertOperatorManager(String parameters);
+
+	PytheResult insertIngcartManage(String parameters);
 }

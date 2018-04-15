@@ -102,7 +102,7 @@ public class DateUtils {
 	}
 
 	/**
-	 * 计算时间差值（单位为秒）
+	 * 计算时间差值（单位为分钟）
 	 * 
 	 * @param time1
 	 *            时间1

@@ -50,8 +50,8 @@ public class PayServiceImpl implements PayService {
 	private Integer TEST_PAY_TYPE;
 	
 	
-	@Value("${MANAGER_LEVEL}")
-	private Integer MANAGER_LEVEL;
+	@Value("${PART_MANGER_LEVEL}")
+	private Integer PART_MANGER_LEVEL;
 
 	
 	@Value("${BILL_GIVE_TYPE}")
@@ -273,7 +273,7 @@ public class PayServiceImpl implements PayService {
 
 //					if (account.getLevel().equals(DEVELOPER_LEVEL)) {
 //						originalBill.setType(TEST_PAY_TYPE);
-//					}else if(account.getLevel().equals(MANAGER_LEVEL)){
+//					}else if(account.getLevel().equals(PART_MANGER_LEVEL)){
 //						originalBill.setType(MANAGER_PAY_TYPE);
 //					}
 					

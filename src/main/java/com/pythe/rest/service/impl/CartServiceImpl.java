@@ -36,6 +36,7 @@ import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblCouponMapper;
 import com.pythe.mapper.TblCustomerMapper;
 import com.pythe.mapper.TblHoldRecordMapper;
+import com.pythe.mapper.TblOperatorRecordMapper;
 import com.pythe.mapper.TblPriceMapper;
 import com.pythe.mapper.TblRecordMapper;
 import com.pythe.mapper.TblStoreMapper;
@@ -53,6 +54,7 @@ import com.pythe.pojo.TblCouponExample;
 import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblHoldRecord;
 import com.pythe.pojo.TblHoldRecordExample;
+import com.pythe.pojo.TblOperatorRecord;
 import com.pythe.pojo.TblPrice;
 import com.pythe.pojo.TblRecord;
 import com.pythe.pojo.TblRecordExample;
@@ -70,7 +72,6 @@ import com.pythe.rest.service.CartService;
 public class CartServiceImpl implements CartService {
 
 	// 权限有2种
-	@Value("${DEVELOPER_LEVEL}")
 	private Integer DEVELOPER_LEVEL;
 
 	@Value("${TEST_PAY_TYPE}")
@@ -152,6 +153,10 @@ public class CartServiceImpl implements CartService {
 
 	@Value("${REFUND_SUM}")
 	private Double REFUND_SUM;
+	
+	
+	@Autowired
+	private TblOperatorRecordMapper operatorRecordMapper;
 
 	@Autowired
 	private VCustomerMapper vCustomerMapper;
@@ -2409,4 +2414,37 @@ public class CartServiceImpl implements CartService {
 		return PytheResult.build(400, "优惠券已赠送，但退款失败，具体原因，请咨询开发人员");
 
 	}
+
+	@Override
+	public PytheResult manageUnlock(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		Long managerId = information.getLong("managerId");
+		Long qrId = information.getLong("qrId");
+		Double longitude = information.getDouble("longitude");
+		Double latitude = information.getDouble("latitude");
+		String recordId = FactoryUtils.getUUID();
+
+		TblOperatorRecord record =new TblOperatorRecord();
+		record.setId(recordId);
+		record.setLatitudeStart(latitude);
+		record.setLongitdeStart(longitude);
+		record.setOperatorId(managerId);
+		//车使用中
+		record.setStatus(1);
+		record.setQrId(qrId);
+		record.setStartTime(new Date());
+		operatorRecordMapper.insert(record);
+		
+		return PytheResult.ok("开锁成功");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
