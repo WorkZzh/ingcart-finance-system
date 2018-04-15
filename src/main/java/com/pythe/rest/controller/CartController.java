@@ -276,6 +276,22 @@ public class CartController {
 		}
 	}
 	
+	
+	
+    /**
+	 *管理员开锁
+	 * @return
+	 */
+	@RequestMapping(value = "/manage/unlock", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult manageUnlock(@RequestBody String parameters) throws Exception {
+		try {
+			return service.manageUnlock(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 
 	
 	
@@ -328,7 +344,7 @@ public class CartController {
 //    /**
 //	 *管理员关锁
 //	 */
-//	@RequestMapping(value = "/manager/lock", method = RequestMethod.POST)
+//	@RequestMapping(value = "/manage/lock", method = RequestMethod.POST)
 //	@ResponseBody
 //	public PytheResult managerLock(@RequestBody String parameters) throws Exception {
 //		try {

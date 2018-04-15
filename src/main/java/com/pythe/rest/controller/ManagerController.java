@@ -62,7 +62,7 @@ public class ManagerController {
 	}
 
 	/**
-	 * 统计车的使用情况 查看一级目录 BUSINESS 为运营 ，TEASURER 为财务
+	 * 财务一级列表
 	 */
 	@RequestMapping(value = "/teasurer/one/level", method = RequestMethod.GET)
 	@ResponseBody
@@ -209,23 +209,60 @@ public class ManagerController {
 		}
 	}
 
+	
 	/**
-	 * 插入一个管理员
-	 * 
+	 * 插入一个婴咖管理（需要变成4级管理的等级）
 	 * @param parameters
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/insert/manager/", method = RequestMethod.POST)
+	@RequestMapping(value = "/insert/ingcart/manage", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult insertManager(@RequestBody String parameters) throws Exception {
+	public PytheResult insertIngcartManage(@RequestBody String parameters) throws Exception {
 		try {
-			return service.insertManager(parameters);
+			return service.insertIngcartManage(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	/**
+	 * 插入一个运营专员（需要变成1级管理的等级）
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/insert/operator/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult insertOperator(@RequestBody String parameters) throws Exception {
+		try {
+			return service.insertOperator(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	/**
+	 * 插入一个运营管理者（需要变成2级管理的等级）
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/insert/operator/mange/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult insertOperatorManager(@RequestBody String parameters) throws Exception {
+		try {
+			return service.insertOperatorManager(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
 
 	@RequestMapping(value = "/select/attraction/car/", method = RequestMethod.POST)
 	@ResponseBody
@@ -237,25 +274,6 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-
-	// /**
-	// * 让车关联景区
-	// * @param parameters
-	// * @return
-	// * @throws Exception
-	// */
-	// @RequestMapping(value = "/associate/attraction/", method =
-	// RequestMethod.POST)
-	// @ResponseBody
-	// public PytheResult associateAttractionByQrId(@RequestBody String
-	// parameters) throws Exception {
-	// try {
-	// return service.associateAttractionByQrId(parameters);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-	// }
-	// }
 
 	/**
 	 * 查看某个城市，所有景区
@@ -431,4 +449,23 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	/**
+	 * 查看运营人员的使用情况
+	 */
+	@RequestMapping(value = "/select/operator/condition", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectOperatorCondition(@RequestParam(required = true, value = "level") String level,
+			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize)
+			throws Exception {
+		try {
+			return service.selectOperatorCondition(level,pageNum,pageSize);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
 }
