@@ -237,10 +237,12 @@ public class CartController {
 	@ResponseBody
 	public PytheResult prepareUnlockGyQrId(
 			@RequestParam(required = true,value = "customerId") Long customerId,
-			@RequestParam(required = true,value = "qrId") Long qrId
+			@RequestParam(required = true,value = "qrId") Long qrId,
+			@RequestParam(defaultValue="0") Integer type,
+			@RequestParam(defaultValue="no") String code
 			) throws Exception {
 		try {
-			return service.prepareUnlockGyQrId(customerId,qrId);
+			return service.prepareUnlockGyQrId(customerId,qrId,type,code);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));

@@ -319,7 +319,9 @@ public class ManagerServiceImpl implements ManagerService {
 		LinkedList<String> list = new LinkedList<String>();
 		list.add("1、该景区当日用车封顶" + price.intValue() + "元");
 		list.add("2、开锁需要余额不少于" + price.intValue() + "元");
-		list.add("3、指定点还车享" + giving.intValue() + "元返款优惠");
+		if (!giving.equals(0d)) {
+			list.add("3、指定点还车享" + giving.intValue() + "元返款优惠");
+		}
 		record.setAnnotation(JsonUtils.objectToJson(list));
 		priceMapper.insert(record);
 
@@ -791,11 +793,17 @@ public class ManagerServiceImpl implements ManagerService {
 	}
 
 	@Override
-	public PytheResult selectTwoLevel(String c1_id) {
+	public PytheResult selectTwoLevel(String c1_id,Integer level,String catalog_id) {
 		// TODO Auto-generated method stub
+		List<TblCatalog> cataList =null;
 		TblCatalogExample example = new TblCatalogExample();
-		example.createCriteria().andHigherLevelIdEqualTo(c1_id);
-		List<TblCatalog> cataList = catalogMapper.selectByExample(example);
+		//level为1，2时候就是属于一个园区
+		if (1==level || 2==level) {
+			example.createCriteria().andIdEqualTo(catalog_id);
+		}else{
+			example.createCriteria().andHigherLevelIdEqualTo(c1_id);
+		}
+		cataList = catalogMapper.selectByExample(example);
 		return PytheResult.ok(cataList);
 	}
 
@@ -1038,5 +1046,20 @@ public class ManagerServiceImpl implements ManagerService {
 		JSONObject json = new JSONObject();
 		json.put("retUrl", retUrl);
 		return PytheResult.build(200, "请求成功", json);
+	}
+
+	@Override
+	public PytheResult selectTeasurerTwoLevel(String c1_id, Integer level, String catalog_id) {
+		// TODO Auto-generated method stub
+		List<TblCatalog> cataList =null;
+		TblCatalogExample example = new TblCatalogExample();
+		//level为1，2时候就是属于一个园区
+		if (1==level) {
+			example.createCriteria().andIdEqualTo(catalog_id);
+		}else{
+			example.createCriteria().andHigherLevelIdEqualTo(c1_id);
+		}
+		cataList = catalogMapper.selectByExample(example);
+		return PytheResult.ok(cataList);
 	}
 }

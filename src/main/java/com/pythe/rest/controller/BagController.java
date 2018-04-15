@@ -157,12 +157,12 @@ public class BagController {
     @RequestMapping(value = "/select/coupon", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult selectCoupon(
-			
+			@RequestParam(required = true,value = "customerId") Long customerId,
 			@RequestParam(defaultValue="1") Integer pageNum,
 			@RequestParam(defaultValue="10") Integer pageSize
 			){
     	try {
-    		return service.selectCoupon(pageNum,pageSize);
+    		return service.selectCoupon(customerId,pageNum,pageSize);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));

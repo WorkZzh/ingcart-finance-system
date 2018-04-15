@@ -2,7 +2,7 @@ package com.pythe.rest.service.impl;
 
 import java.io.File;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +13,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.poi.hssf.dev.RecordLister;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,8 +40,8 @@ import com.pythe.mapper.TblPriceMapper;
 import com.pythe.mapper.TblRecordMapper;
 import com.pythe.mapper.TblStoreMapper;
 import com.pythe.mapper.VAcountRecordMapper;
+import com.pythe.mapper.VCouponMapper;
 import com.pythe.mapper.VCustomerMapper;
-import com.pythe.mapper.VRecordBillMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblAccountExample;
 import com.pythe.pojo.TblBill;
@@ -48,6 +49,7 @@ import com.pythe.pojo.TblBillExample;
 import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
 import com.pythe.pojo.TblCoupon;
+import com.pythe.pojo.TblCouponExample;
 import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblHoldRecord;
 import com.pythe.pojo.TblHoldRecordExample;
@@ -58,11 +60,11 @@ import com.pythe.pojo.TblStore;
 import com.pythe.pojo.TblStoreExample;
 import com.pythe.pojo.VAcountRecord;
 import com.pythe.pojo.VAcountRecordExample;
+import com.pythe.pojo.VCoupon;
+import com.pythe.pojo.VCouponExample;
 import com.pythe.pojo.VCustomer;
 import com.pythe.pojo.VCustomerExample;
-import com.pythe.pojo.VRecordBillExample;
 import com.pythe.rest.service.CartService;
-import com.sun.tools.classfile.Attribute.Factory;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -156,10 +158,12 @@ public class CartServiceImpl implements CartService {
 
 	@Autowired
 	private TblCustomerMapper customerMapper;
-	
-	
+
 	@Autowired
 	private TblCouponMapper couponMapper;
+
+	@Autowired
+	private VCouponMapper vCouponMapper;
 
 	@Autowired
 	private TblRecordMapper recordMapper;
@@ -194,6 +198,16 @@ public class CartServiceImpl implements CartService {
 		Double longitude = information.getDouble("longitude");
 		Double latitude = information.getDouble("latitude");
 		String recordId = FactoryUtils.getUUID();
+		String code = null;
+		// 开锁成功后才来更新这个的。
+		if (null != information.getDouble("code")) {
+			code = information.getString("code");
+			TblCouponExample couponExample = new TblCouponExample();
+			couponExample.createCriteria().andStatusNotEqualTo(0).andCodeEqualTo(code);
+			TblCoupon coupon = couponMapper.selectByExample(couponExample).get(0);
+			coupon.setStatus(1);
+			couponMapper.updateByPrimaryKey(coupon);
+		}
 
 		// 1、车有被保留，能成功的情况。
 		TblCar car = carMapper.selectByPrimaryKey(carId);
@@ -912,7 +926,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public PytheResult prepareUnlockGyQrId(Long customerId, Long qrId) {
+	public PytheResult prepareUnlockGyQrId(Long customerId, Long qrId, Integer type, String code) {
 		// 判断该用户是否占用了某台车
 		TblCar car = null;
 		TblCarExample example = new TblCarExample();
@@ -959,8 +973,6 @@ public class CartServiceImpl implements CartService {
 			// return PytheResult.build(400, "此车正在使用中");
 			// 说明是同一个用户在使用车，所以还是可以让他开
 			if (!car.getUser().equals(customerId)) {
-				// System.out.println("=============>car.getUser()"+car.getUser());
-				// System.out.println("============>customerId"+customerId);
 				return PytheResult.build(400, "该车已被其他用户预约使用中");
 			} else {
 				break;
@@ -977,13 +989,35 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.build(600, "此车有故障，请换车扫码");
 		}
 		}
+
+		// 判断是否是优惠券开锁
+		if (type.equals(1)) {
+			VCouponExample couponExample = new VCouponExample();
+			couponExample.createCriteria().andStatusNotEqualTo(0).andCodeEqualTo(code);
+			List<VCoupon> list = vCouponMapper.selectByExample(couponExample);
+			if (list.isEmpty()) {
+				return PytheResult.build(400, "该优惠券已使用");
+			}
+			VCoupon coupon = list.get(0);
+
+			if (price.getPrice() > coupon.getAmount()) {
+				JSONObject json = new JSONObject();
+				json.put("price", price.getPrice() - coupon.getAmount());
+				json.put("annotation", JsonUtils.jsonToList(price.getAnnotation(), String.class));
+				return PytheResult.build(300, "去付款", json);
+			} else {
+				return PytheResult.build(200, "车安全检测通过，请放心使用", car.getId());
+			}
+		}
+
 		// 先判断车是否有问题，在判断是否钱够？
 		if (account.getAmount() < price.getPrice()) {
 			JSONObject json = new JSONObject();
 			// json.put("amount", account.getAmount());
 			json.put("price", price.getPrice());
 			json.put("annotation", JsonUtils.jsonToList(price.getAnnotation(), String.class));
-			return PytheResult.build(300, "余额不满足此次旅程费用，请前往充值", json);
+			// return PytheResult.build(300, "余额不满足此次旅程费用，请前往充值", json);
+			return PytheResult.build(300, "去付款", json);
 		}
 		return PytheResult.build(200, "车安全检测通过，请放心使用", car.getId());
 	}
@@ -1245,9 +1279,6 @@ public class CartServiceImpl implements CartService {
 		TblAccount account = accountMapper.selectByPrimaryKey(customerId);
 		account.setAmount(account.getAmount() - amount);
 		account.setOutAmount(account.getOutAmount() - amount);
-		
-
-
 
 		// 如果giving 为0 就直接返回回去就行，不用再微信退款请求
 		if ("0".equals(giving)) {
@@ -1350,12 +1381,10 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	@Transactional
+	//@Transactional
 	public void autoLock() {
 		// TODO Auto-generated method stub
-
-		final Date date_ = DateUtils.parseTime(DateUtils.getTodayDate() + " 23:59:00");
-
+		Date date_ = DateUtils.parseTime(DateUtils.getTodayDate() + " 23:50:00");
 		VCustomerExample example = new VCustomerExample();
 		example.createCriteria().andCarStatusEqualTo(CAR_USER_STATUS);
 		List<VCustomer> customerList = vCustomerMapper.selectByExample(example);
@@ -1364,37 +1393,21 @@ public class CartServiceImpl implements CartService {
 			Long customerId = customer.getCustomerId();
 			TblCar car = null;
 			String carId = customer.getCarId();
-			int time = 0;
 			Double amount = null;
-			Double givingAmount = 0d;
 
 			// 因为用户在使用所以车一定是存在的
 			car = carMapper.selectByPrimaryKey(carId);
 			// 更新停止时间和停止位置和记录用的钱
-			time = DateUtils.minusForPartHour(date_, car.getStarttime());
-
-			// 前面10分钟不要钱
-			int tmp = time - 10;
-
-			if (tmp > 0) {
-				amount = customer.getPrice();
-			} else {
-				amount = 0d;
-			}
+			amount = customer.getPrice();
 
 			// 查看某用户的最近行车记录
 			TblRecord record = recordMapper.selectByPrimaryKey(customer.getRecordId());
-			final String recordId = record.getId();
-			final String billId = FactoryUtils.getUUID();
-			new Thread() {
-				@Override
-				public void run() {
-					TblRecord line = recordMapper.selectByPrimaryKey(recordId);
-					line.setStopTime(date_);
-					line.setBillId(billId);
-					recordMapper.updateByPrimaryKey(line);
-				}
-			}.start();
+			String recordId = record.getId();
+			String billId = FactoryUtils.getUUID();
+			TblRecord line = recordMapper.selectByPrimaryKey(recordId);
+			line.setStopTime(date_);
+			line.setBillId(billId);
+			recordMapper.updateByPrimaryKey(line);
 
 			// 更新车的信息
 			car.setId(customer.getCarId());
@@ -1406,10 +1419,14 @@ public class CartServiceImpl implements CartService {
 			carMapper.updateByPrimaryKey(car);
 
 			// 生成账单
-			final TblAccount account = accountMapper.selectByPrimaryKey(customerId);
-
+			TblAccount account = accountMapper.selectByPrimaryKey(customerId);
+			account.setAmount(account.getAmount() - amount);
+			account.setOutAmount(account.getOutAmount() - amount);
+			accountMapper.updateByPrimaryKey(account);
+			
+			
 			// 更新流水
-			final TblBill bill = new TblBill();
+			TblBill bill = new TblBill();
 			bill.setId(billId);
 			bill.setRecordId(recordId);
 			bill.setAmount(amount);
@@ -1425,17 +1442,62 @@ public class CartServiceImpl implements CartService {
 			bill.setTime(new Date());
 			bill.setRecordId(recordId);
 
-			// amount就是那个钱
-			if (account.getAmount() < amount) {
-				bill.setStatus(NOT_PAY_STATUS);
-			} else {
-				account.setAmount(account.getAmount() - amount);
-				account.setOutAmount(account.getOutAmount() - amount);
-				accountMapper.updateByPrimaryKey(account);
-				bill.setStatus(PAY_TYPE);
-			}
+			bill.setStatus(PAY_TYPE);
 			billMapper.insert(bill);
 		}
+
+		// 2、自动退款 （当天充值，并且当天无行程）
+//		Date start = DateUtils.parseTime(DateUtils.getTodayDate() + " 23:59:00");
+//		Date end = DateUtils.parseTime(DateUtils.getTodayDate() + " 01:00:00");
+//
+//		TblBillExample example2 = new TblBillExample();
+//		example2.createCriteria().andTimeBetween(start, end).andTypeEqualTo(BILL_CHARGE_TYPE).andStatusEqualTo(1);
+//		List<TblBill> billList = billMapper.selectByExample(example2);
+//		// 说明今天有充值
+//		Map<Long, TblBill> cMap = new LinkedHashMap<Long, TblBill>();
+//		// 有充值
+//		List<Long> cList = new LinkedList<Long>();
+//		// 有行程的用户
+//		List<Long> yList = new LinkedList<Long>();
+//		if (!billList.isEmpty()) {
+//			// 看充值的，无行程给他们退款。
+//			for (TblBill bill : billList) {
+//				cList.add(bill.getCustomerId());
+//				cMap.put(bill.getCustomerId(), bill);
+//			}
+//			TblRecordExample recordExample = new TblRecordExample();
+//			recordExample.createCriteria().andStartTimeBetween(start, end).andCustomerIdIn(cList);
+//			List<TblRecord> recordList = recordMapper.selectByExample(recordExample);
+//			for (TblRecord tblRecord : recordList) {
+//				yList.add(tblRecord.getCustomerId());
+//			}
+//
+//			cList.removeAll(yList);
+//
+//			// 退款
+//			for (Long target : cList) {
+//				TblBill bi = cMap.get(target);
+//				Double p = bi.getAmount() * 100;
+//				Double refund = bi.getRefundAmount() * 100;
+//				Double rest = p - refund;
+//
+//				String str = refundByOrderInWX(bi.getOutTradeNo(), String.valueOf(p.intValue()),
+//						String.valueOf(rest.intValue()));
+//
+//				if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") && !str.contains("累计退款金额大于支付金额")) {
+//
+//					TblAccount account = accountMapper.selectByPrimaryKey(bi.getCustomerId());
+//
+//					account.setAmount(account.getAmount() - bi.getAmount());
+//					account.setOutAmount(account.getOutAmount() - bi.getAmount());
+//					accountMapper.updateByPrimaryKey(account);
+//
+//					bi.setRefundAmount(bi.getRefundAmount() + bi.getAmount());
+//					billMapper.updateByPrimaryKey(bi);
+//				}
+//			}
+//		}
+
 	}
 
 	@Override
@@ -2194,10 +2256,10 @@ public class CartServiceImpl implements CartService {
 		return PytheResult.build(400, "退款失败，具体原因，请咨询Ingcart出行");
 	}
 
-	private int giveCoupon(Long managerId,Double price){
-		//送用户一张券
-		TblCoupon coupon =new TblCoupon();
-		//券为8位随机数
+	private int giveCoupon(Long managerId, Double price) {
+		// 送用户一张券
+		TblCoupon coupon = new TblCoupon();
+		// 券为8位随机数
 		coupon.setCode(StringUtils.getStringRandom(8));
 		coupon.setStopTime(DateUtils.parseTime(DateUtils.getTodayDate() + " 23:00:00"));
 		coupon.setStatus(0);
@@ -2207,8 +2269,7 @@ public class CartServiceImpl implements CartService {
 		coupon.setStartTime(new Date());
 		return couponMapper.insert(coupon);
 	}
-	
-	
+
 	@Override
 	public PytheResult transferCar(String parameters) {
 		// TODO Auto-generated method stub
@@ -2235,23 +2296,22 @@ public class CartServiceImpl implements CartService {
 
 		VCustomer customer = customerList.get(0);
 		Long customerId = customer.getCustomerId();
-		
-		if (null ==customer.getCarStatus()) {
+
+		if (null == customer.getCarStatus()) {
 			return PytheResult.build(400, "无占用任何车辆,故无法换车");
 		}
-		
-		//维修换车，不扣钱。
+
+		// 维修换车，不扣钱。
 		String recordId = customer.getRecordId();
-		if (3==customer.getCarStatus()) {
+		if (3 == customer.getCarStatus()) {
 			// 删除之前的用车记录
 			recordMapper.deleteByPrimaryKey(recordId);
-            giveCoupon(managerId, customer.getPrice() -customer.getGiving());
+			giveCoupon(managerId, customer.getPrice() - customer.getGiving());
 			return PytheResult.ok("优惠券赠送成功");
 		}
-		
-		
+
 		TblCar car = carMapper.selectByPrimaryKey(customer.getCarId());
-		//如下是用户结束用车，退还押金，并赠送券
+		// 如下是用户结束用车，退还押金，并赠送券
 		String giving = String.valueOf((customer.getGiving().intValue() * 100));
 		Double amount = customer.getPrice();
 		Double givingAmount = customer.getGiving();
@@ -2297,7 +2357,6 @@ public class CartServiceImpl implements CartService {
 		account.setAmount(account.getAmount() - amount);
 		account.setOutAmount(account.getOutAmount() - amount);
 
-
 		// 如果giving 为0 就直接返回回去就行，不用再微信退款请求
 		if ("0".equals(giving)) {
 			// 直接扣
@@ -2305,9 +2364,9 @@ public class CartServiceImpl implements CartService {
 			// 如果是没有退，就不更新腾讯的退款订单号
 			bill.setStatus(PAY_TYPE);
 			billMapper.insert(bill);
-            
-			//送一张优惠券
-			giveCoupon(managerId, customer.getPrice() -customer.getGiving());
+
+			// 送一张优惠券
+			giveCoupon(managerId, customer.getPrice() - customer.getGiving());
 			return PytheResult.ok("优惠券赠送成功");
 		}
 
@@ -2337,8 +2396,8 @@ public class CartServiceImpl implements CartService {
 				bill.setStatus(PAY_TYPE);
 				billMapper.insert(bill);
 
-				//送一张优惠券
-				giveCoupon(managerId, customer.getPrice() -customer.getGiving());
+				// 送一张优惠券
+				giveCoupon(managerId, customer.getPrice() - customer.getGiving());
 				return PytheResult.ok("优惠券赠送成功");
 			}
 		}
@@ -2348,5 +2407,6 @@ public class CartServiceImpl implements CartService {
 		billMapper.insert(bill);
 
 		return PytheResult.build(400, "优惠券已赠送，但退款失败，具体原因，请咨询开发人员");
-		
-	}}
+
+	}
+}

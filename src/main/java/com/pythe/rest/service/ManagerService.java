@@ -44,8 +44,6 @@ public interface ManagerService {
 
 	PytheResult insertCompany(String parameters);
 
-	PytheResult selectTwoLevel(String c1_id);
-
 	PytheResult selectTeasurerOneLevel(Long managerId);
 
 	PytheResult queryRecordBillByTimes(String parameters);
@@ -54,4 +52,7 @@ public interface ManagerService {
 
 	PytheResult downloadByTime(String parameters);
 
+	PytheResult selectTeasurerTwoLevel(String c1_id, Integer level, String catalog_id);
+
+	PytheResult selectTwoLevel(String c1_id, Integer level, String catalog_id);
 }

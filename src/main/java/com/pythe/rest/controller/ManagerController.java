@@ -74,15 +74,39 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	/**
+	 * 二级
+	 * level为1时候，会显示2个，所以需要加多一个level字段
+	 */
+	@RequestMapping(value = "/teasurer/two/level", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectTeasurerTwoLevel(@RequestParam(required = true, value = "c1_id") String c1_id,
+			@RequestParam(required = true, value = "level") Integer level,
+			@RequestParam(required = true, value = "catalog_id") String catalog_id) {
+		try {
+			return service.selectTeasurerTwoLevel(c1_id,level,catalog_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
 
 	/**
 	 * 二级
 	 */
 	@RequestMapping(value = "/select/two/level", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectOneLevel(@RequestParam(required = true, value = "c1_id") String c1_id) {
+	public PytheResult selectTwoLevel(@RequestParam(required = true, value = "c1_id") String c1_id,
+			@RequestParam(required = true, value = "level") Integer level,
+			@RequestParam(required = true, value = "catalog_id") String catalog_id) {
 		try {
-			return service.selectTwoLevel(c1_id);
+			return service.selectTwoLevel(c1_id,level,catalog_id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
