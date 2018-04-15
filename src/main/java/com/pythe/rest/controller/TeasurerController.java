@@ -93,28 +93,6 @@ public class TeasurerController {
 		}
 	}
 
-	@RequestMapping(value = "/teasurer/select/level", method = RequestMethod.POST)
-	@ResponseBody
-	public PytheResult selectLevelByName(@RequestBody String parameters) throws Exception {
-		try {
-			return teasurerService.selectLevelByName(parameters);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
-
-	@RequestMapping(value = "/teasurer/select/name", method = RequestMethod.POST)
-	@ResponseBody
-	public PytheResult selectNameByLevel(@RequestBody String parameters) throws Exception {
-		try {
-			return teasurerService.selectNameByLevel(parameters);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
-
 	@RequestMapping(value = "/teasurer/rocord/list", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult selectTeasurerRocordList(@RequestBody String parameters) throws Exception {

@@ -17,10 +17,6 @@ public interface TeasurerService {
 
 	PytheResult updatePassword(String parameters);
 
-	PytheResult selectLevelByName(String parameters);
-
-	PytheResult selectNameByLevel(String parameters);
-
 	PytheResult selectTeasurerRocordList(String parameters);
 
 }
