@@ -14,18 +14,24 @@ import com.pythe.common.utils.HttpClientUtil;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblCouponMapper;
 import com.pythe.mapper.TblCustomerMapper;
+import com.pythe.mapper.TblOperatorMapper;
 import com.pythe.mapper.TblSessionMapper;
 import com.pythe.mapper.TblVerificationMapper;
 import com.pythe.mapper.VCustomerMapper;
+import com.pythe.mapper.VOperatorMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblCoupon;
 import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblCustomerExample;
+import com.pythe.pojo.TblOperator;
+import com.pythe.pojo.TblOperatorExample;
 import com.pythe.pojo.TblSession;
 import com.pythe.pojo.TblVerification;
 import com.pythe.pojo.TblVerificationExample;
 import com.pythe.pojo.VCustomer;
 import com.pythe.pojo.VCustomerExample;
+import com.pythe.pojo.VOperator;
+import com.pythe.pojo.VOperatorExample;
 import com.pythe.rest.service.CustomerService;
 
 @Service
@@ -58,6 +64,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	private TblCustomerMapper customerMapper;
 
+	
 	@Autowired
 	private TblAccountMapper accountMapper;
 
@@ -67,8 +74,18 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	private VCustomerMapper vCustomerMapper;
 
+	
+	
 	@Autowired
-	private TblCouponMapper couponMapper;
+	private VOperatorMapper vOperatorMapper;
+	
+	
+	@Autowired
+	private TblOperatorMapper operatorMapper;
+	
+	
+	
+	
 
 	@Autowired
 	private TblVerificationMapper verificationMapper;
@@ -287,48 +304,58 @@ public class CustomerServiceImpl implements CustomerService {
 			}
 		}
 
-		String openId = null;
 
 		// 判断用户是否存在
-		openId = customerInformation.getString("openId");
-		//unionId = customerInformation.getString("unionId");
-		VCustomerExample example5 = new VCustomerExample();
-		example5.createCriteria().andPhoneNumEqualTo(phoneNum);
-		List<VCustomer> customerList2 = vCustomerMapper.selectByExample(example5);
-
+//		openId = customerInformation.getString("openId");
+//		//unionId = customerInformation.getString("unionId");
+//		VCustomerExample example5 = new VCustomerExample();
+//		example5.createCriteria().andPhoneNumEqualTo(phoneNum);
+//		List<VCustomer> customerList2 = vCustomerMapper.selectByExample(example5);
+		String openId = customerInformation.getString("openId");
+		VOperatorExample example =new VOperatorExample();
+		example.createCriteria().andOpenIdEqualTo(openId);
+		List<VOperator> customerList2= vOperatorMapper.selectByExample(example);
+		
 		// 用户不存在或者权限不够
 		if (customerList2.isEmpty()) {
 			return PytheResult.build(400, "仅供管理员，如需使用请换用婴咖出行小程序");
 		}
 
-		VCustomer customer = customerList2.get(0);
+		VOperator customer = customerList2.get(0);
 
 		// 是否权限符合
 		if (customer.getLevel() >= 1) {
-			TblCustomer record = new TblCustomer();
-			record.setOpenId(openId);
-			record.setCreated(new Date());
-			TblCustomerExample example3 = new TblCustomerExample();
-			example3.createCriteria().andPhoneNumEqualTo(phoneNum);
-			customerMapper.updateByExampleSelective(record, example3);
+			
+//			TblCustomer record = new TblCustomer();
+//			record.setOpenId(openId);
+//			record.setCreated(new Date());
+//			TblCustomerExample example3 = new TblCustomerExample();
+//			example3.createCriteria().andPhoneNumEqualTo(phoneNum);
+//			customerMapper.updateByExampleSelective(record, example3);
 
-			TblAccount account = accountMapper.selectByPrimaryKey(customer.getCustomerId());
-			//分为两种验证情况
-			if (account!=null) {
-				account.setAmount(0d);
-				account.setInAmount(0d);
-				account.setLevel(customer.getLevel());
-				accountMapper.updateByPrimaryKey(account);
-				return PytheResult.ok("管理员验证成功");
-			}
-			TblAccount newAccount = new TblAccount();
-			newAccount.setCustomerId(customerList2.get(0).getCustomerId());
-			newAccount.setAmount(0d);
-			newAccount.setLevel(customer.getLevel());
-			newAccount.setInAmount(0d);
-			newAccount.setOutAmount(0d);
-			newAccount.setGivingAmount(0d);
-			accountMapper.insert(newAccount);
+			TblOperator record = new TblOperator();
+			record.setOpenId(openId);
+			TblOperatorExample example3 =new TblOperatorExample();
+			example3.createCriteria().andPhoneNumEqualTo(phoneNum);
+			operatorMapper.updateByExampleSelective(record, example3);
+			
+//			TblAccount account = accountMapper.selectByPrimaryKey(customer.getCustomerId());
+//			//分为两种验证情况
+//			if (account!=null) {
+//				account.setAmount(0d);
+//				account.setInAmount(0d);
+//				account.setLevel(customer.getLevel());
+//				accountMapper.updateByPrimaryKey(account);
+//				return PytheResult.ok("管理员验证成功");
+//			}
+//			TblAccount newAccount = new TblAccount();
+//			newAccount.setCustomerId(customerList2.get(0).getCustomerId());
+//			newAccount.setAmount(0d);
+//			newAccount.setLevel(customer.getLevel());
+//			newAccount.setInAmount(0d);
+//			newAccount.setOutAmount(0d);
+//			newAccount.setGivingAmount(0d);
+//			accountMapper.insert(newAccount);
 			return PytheResult.ok("管理员验证成功");
 		} else {
 			return PytheResult.build(400, "仅供管理员，如需使用请换用婴咖出行小程序");
@@ -337,12 +364,17 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public PytheResult registerCheckByManger(String parameters) {
+//		JSONObject Information = JSONObject.parseObject(parameters);
+//		Integer type = Information.getInteger("type");
+//		VCustomerExample vCustomerExample = new VCustomerExample();
+//		String openId = Information.getString("openId");
+//		vCustomerExample.createCriteria().andOpenIdEqualTo(openId).andLevelGreaterThanOrEqualTo(1);
+//		List<VCustomer> customers = vCustomerMapper.selectByExample(vCustomerExample);
 		JSONObject Information = JSONObject.parseObject(parameters);
-		Integer type = Information.getInteger("type");
-		VCustomerExample vCustomerExample = new VCustomerExample();
 		String openId = Information.getString("openId");
-		vCustomerExample.createCriteria().andOpenIdEqualTo(openId).andLevelGreaterThanOrEqualTo(1);
-		List<VCustomer> customers = vCustomerMapper.selectByExample(vCustomerExample);
+		VOperatorExample example =new VOperatorExample();
+		example.createCriteria().andOpenIdEqualTo(openId);
+		List<VOperator> customers = vOperatorMapper.selectByExample(example);
 		// 返回用户数据
 		if (customers.isEmpty()) {
 			return PytheResult.build(400, "尚无该管理员信息");
@@ -364,6 +396,20 @@ public class CustomerServiceImpl implements CustomerService {
 		
 		customer.setXcxOpenId(null);
 		customerMapper.updateByPrimaryKey(customer);
+		return PytheResult.ok("退出成功");
+	}
+
+	@Override
+	public PytheResult LoginoutForManager(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject Information = JSONObject.parseObject(parameters);
+		String phoneNum = Information.getString("phoneNum");
+		TblOperatorExample example =new TblOperatorExample();
+		example.createCriteria().andPhoneNumEqualTo(phoneNum);
+		List<TblOperator> list = operatorMapper.selectByExample(example);
+		TblOperator operator =list.get(0);
+		operator.setOpenId(null);
+		operatorMapper.updateByPrimaryKey(operator);
 		return PytheResult.ok("退出成功");
 	}
 

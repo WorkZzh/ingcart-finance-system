@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
+import com.mchange.v2.lang.Coerce;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.ExcelExport;
@@ -31,6 +32,7 @@ import com.pythe.mapper.TblTeasurerMapper;
 import com.pythe.mapper.TblVersionMapper;
 import com.pythe.mapper.VCatalogMapper;
 import com.pythe.mapper.VCustomerMapper;
+import com.pythe.mapper.VOperatorMapper;
 import com.pythe.mapper.VOperatorRecordMapper;
 import com.pythe.mapper.VRecordBillMapper;
 import com.pythe.pojo.TblAccount;
@@ -56,6 +58,8 @@ import com.pythe.pojo.VCatalogExample;
 import com.pythe.pojo.VCustomer;
 import com.pythe.pojo.VCustomerExample;
 import com.pythe.pojo.VCustomerExample.Criteria;
+import com.pythe.pojo.VOperator;
+import com.pythe.pojo.VOperatorExample;
 import com.pythe.pojo.VOperatorRecord;
 import com.pythe.pojo.VOperatorRecordExample;
 import com.pythe.pojo.VRecordBill;
@@ -76,6 +80,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Value("${TOP_CODE}")
 	private Integer TOP_CODE;
+	
+	@Value("${THREE_CODE}")
+	private Integer THREE_CODE;
+	
 
 	@Value("${WEIXIN_REGISTER_TYPE}")
 	private Integer WEIXIN_REGISTER_TYPE;
@@ -139,6 +147,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Autowired
 	private VOperatorRecordMapper vOperatorRecordMapper;
+	
+	@Autowired
+	private VOperatorMapper vOperatorMapper;
+	
 
 	// BILL
 	@Value("${BILL_CHARGE_TYPE}")
@@ -359,7 +371,7 @@ public class ManagerServiceImpl implements ManagerService {
 		TblCatalog catalog = new TblCatalog();
 		catalog.setId(level);
 		catalog.setHigherLevelId(higherLevelId);
-		catalog.setCode(SECOND_CODE);
+		catalog.setCode(THREE_CODE);
 		catalog.setName(name);
 		catalogMapper.insert(catalog);
 
@@ -703,35 +715,11 @@ public class ManagerServiceImpl implements ManagerService {
 		recordLists.setQrId(null);
 
 		return PytheResult.ok(recordLists);
-
-		// VRecordBillExample recordBillExample = new VRecordBillExample();
-		// com.pythe.pojo.VRecordBillExample.Criteria cretria2 =
-		// recordBillExample.createCriteria();
-		//
-		//
-		// ArrayList<String> list = new ArrayList<String>();
-		// if (!"0".equals(level)) {
-		// TblCatalogExample example2 =new TblCatalogExample();
-		// example2.createCriteria().andHigherLevelIdEqualTo(level);
-		// List<TblCatalog> catalogList =
-		// catalogMapper.selectByExample(example2);
-		// if (!catalogList.isEmpty()) {
-		// for (TblCatalog tblCatalog : catalogList) {
-		// list.add(tblCatalog.getId());
-		// }
-		// }else{
-		// list.add(level);
-		// }
-		// cretria2.andLevelIn(list);
-		// }
-
-		//
-		// return null;
 	}
 
 	@Override
 	@Transactional
-	public PytheResult insertCompany(String parameters) {
+	public PytheResult insertGroup(String parameters) {
 		// TODO Auto-generated method stub
 		JSONObject params = JSONObject.parseObject(parameters);
 
@@ -750,7 +738,7 @@ public class ManagerServiceImpl implements ManagerService {
 		record.setName(name);
 
 		record.setHigherLevelId(TOP_COMPANY_ID);
-		record.setCode(TOP_CODE);
+		record.setCode(SECOND_CODE);
 		catalogMapper.insert(record);
 
 		// level为3就具有添加园区功能
@@ -1158,6 +1146,7 @@ public class ManagerServiceImpl implements ManagerService {
 		insertOperator(phoneNum, type, catalogId, COMPANY_MANAGER_LEVEL);
 		return PytheResult.build(200, "添加成功");
 	}
+	
 
 	@Override
 	public PytheResult insertIngcartManage(String parameters) {
@@ -1173,6 +1162,34 @@ public class ManagerServiceImpl implements ManagerService {
 		insertOperator(phoneNum, type, catalogId, INGCART_MANAGER_LEVEL);
 		return PytheResult.build(200, "添加成功");
 	}
+
+	@Override
+	public PytheResult selectAddOperatorRecord(String level, Integer pageNum, Integer pageSize) {
+		// TODO Auto-generated method stub
+		PageHelper.startPage(pageNum, pageSize);
+		VOperatorExample example =new VOperatorExample();
+		List<VOperator>  result =null;
+		if (!level.equals("0")) {
+			//查看level的 code是几层，code=2 查c2,code=3查c1
+			Integer code = catalogMapper.selectByPrimaryKey(level).getCode();
+			if (code==THREE_CODE) {
+				example.createCriteria().andC1IdEqualTo(level);
+			}else{
+				example.createCriteria().andC2IdEqualTo(level);
+			}
+			//将用户数据返回
+			result= vOperatorMapper.selectByExample(example);
+			return PytheResult.ok(result);
+		}
+		
+		//当为4，5级时候什么都可以看
+		result = vOperatorMapper.selectByExample(example);;
+		return PytheResult.ok(result);
+	}
+
+
+	
+
 	
 	
 	

@@ -75,6 +75,21 @@ public class CustomerController {
 	}
 	
 	
+	/**
+	 * 管理员退出登录
+	 * @return
+	 */
+	@RequestMapping(value = "/manage/loginout", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult LoginoutForManger(@RequestBody String parameters)
+	{
+		try {
+			return customerService.LoginoutForManager(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 	
 	
 	

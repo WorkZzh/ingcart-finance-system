@@ -41,7 +41,6 @@ public interface ManagerService {
 
 	PytheResult selectSumByTime(String parameters);
 
-	PytheResult insertCompany(String parameters);
 
 	PytheResult selectTeasurerOneLevel(Long managerId);
 
@@ -63,4 +62,8 @@ public interface ManagerService {
 	PytheResult insertOperatorManager(String parameters);
 
 	PytheResult insertIngcartManage(String parameters);
+
+	PytheResult selectAddOperatorRecord(String level, Integer pageNum, Integer pageSize);
+
+	PytheResult insertGroup(String parameters);
 }

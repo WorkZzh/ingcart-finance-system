@@ -25,6 +25,8 @@ public interface CustomerService  {
 
 	PytheResult Loginout(String parameters);
 
+	PytheResult LoginoutForManager(String parameters);
+
 
 
 //	PytheResult userLoginByVerificationCode(String parameters);

@@ -156,7 +156,7 @@ public class ManagerController {
 	}
 
 	/**
-	 * 给一家公司添加旗下的景区
+	 * 给集团添加旗下的景区
 	 * 
 	 * @param parameters
 	 * @return
@@ -174,17 +174,17 @@ public class ManagerController {
 	}
 
 	/**
-	 * 创建一家公司
+	 * 创建集团
 	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/insert/company/", method = RequestMethod.POST)
+	@RequestMapping(value = "/insert/group/", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult insertCompany(@RequestBody String parameters) throws Exception {
+	public PytheResult insertGroup(@RequestBody String parameters) throws Exception {
 		try {
-			return service.insertCompany(parameters);
+			return service.insertGroup(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
@@ -468,4 +468,19 @@ public class ManagerController {
 	}
 	
 	
+	/**
+	 * 查询人员添加记录
+	 */
+	@RequestMapping(value = "/select/add/record", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectAddOperatorRecord(@RequestParam(required = true, value = "level") String level,
+			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize)
+			throws Exception {
+		try {
+			return service.selectAddOperatorRecord(level,pageNum,pageSize);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 }
