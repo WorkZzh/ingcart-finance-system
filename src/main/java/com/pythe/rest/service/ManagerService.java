@@ -28,7 +28,6 @@ public interface ManagerService {
 
 	PytheResult updateMaintenanceStatus(Long id);
 
-
 	PytheResult updateLocation(String parameters);
 
 	PytheResult deleteMaintenanceStatus(Long qrId);
@@ -41,7 +40,6 @@ public interface ManagerService {
 
 	PytheResult selectSumByTime(String parameters);
 
-
 	PytheResult selectTeasurerOneLevel(Long managerId);
 
 	PytheResult queryRecordBillByTimes(String parameters);
@@ -53,7 +51,8 @@ public interface ManagerService {
 	PytheResult selectTeasurerTwoLevel(String c1_id, Integer level, String catalog_id);
 
 	PytheResult selectTwoLevel(String c1_id, Integer level, String catalog_id);
-	PytheResult selectSumByYear(String parameters);
+
+	PytheResult selectSumByMonths(String parameters);
 
 	PytheResult selectOperatorCondition(String level, Integer pageNum, Integer pageSize);
 
@@ -66,6 +65,6 @@ public interface ManagerService {
 	PytheResult selectAddOperatorRecord(String level, Integer pageNum, Integer pageSize);
 
 	PytheResult insertGroup(String parameters);
-	
+
 	PytheResult deleteOperator(String parameters);
 }

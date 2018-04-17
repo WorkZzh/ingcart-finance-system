@@ -48,7 +48,7 @@ public class ManagerController {
 	}
 
 	/**
-	 *一级列表
+	 * 一级列表
 	 */
 	@RequestMapping(value = "/select/one/level", method = RequestMethod.GET)
 	@ResponseBody
@@ -432,11 +432,11 @@ public class ManagerController {
 		}
 	}
 
-	@RequestMapping(value = "/select/bill/sum/year", method = RequestMethod.POST)
+	@RequestMapping(value = "/select/bill/sum/months", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult selectSumByYear(@RequestBody String parameters) {
+	public PytheResult selectSumByMonths(@RequestBody String parameters) {
 		try {
-			return service.selectSumByYear(parameters);
+			return service.selectSumByMonths(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
@@ -458,8 +458,7 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
 	/**
 	 * 查询人员添加记录
 	 */
@@ -469,7 +468,7 @@ public class ManagerController {
 			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize)
 			throws Exception {
 		try {
-			return service.selectAddOperatorRecord(level,pageNum,pageSize);
+			return service.selectAddOperatorRecord(level, pageNum, pageSize);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
@@ -477,8 +476,7 @@ public class ManagerController {
 	}
 
 	/**
-	 * 删除管理人员
-	 * 电话号码和操作人员的level
+	 * 删除管理人员 电话号码和操作人员的level
 	 */
 	@RequestMapping(value = "/delete/manager", method = RequestMethod.POST)
 	@ResponseBody

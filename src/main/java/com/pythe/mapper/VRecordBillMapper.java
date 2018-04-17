@@ -25,5 +25,6 @@ public interface VRecordBillMapper {
 	VRecordBill selectSumByTimes(@Param("levels") List<String> levels, @Param("startTime") String startTime,
 			@Param("endTime") String endTime);
 
-	List<VRecordBill> selectSumByYear(@Param("levels") List<String> levels, @Param("year") String year);
+	List<VRecordBill> selectSumByMonths(@Param("levels") List<String> levels, @Param("startMonth") String startMonth,
+			@Param("endMonth") String endMonth);
 }

@@ -9,6 +9,7 @@
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="password" property="password" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
     <result column="c1_id" property="c1Id" jdbcType="VARCHAR" />
     <result column="c1_name" property="c1Name" jdbcType="VARCHAR" />
     <result column="c2_id" property="c2Id" jdbcType="VARCHAR" />
@@ -73,7 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, phone_num, level, created, type, password, name, c1_id, c1_name, c2_id, c2_name
+    id, phone_num, level, created, type, password, name, note, c1_id, c1_name, c2_id, 
+    c2_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.VTeasurerRecordExample" >
     select
@@ -98,11 +100,11 @@
   <insert id="insert" parameterType="com.pythe.pojo.VTeasurerRecord" >
     insert into v_teasurer_record (id, phone_num, level, 
       created, type, password, 
-      name, c1_id, c1_name, 
+      name, note, c1_id, c1_name, 
       c2_id, c2_name)
     values (#{id,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
       #{created,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, 
-      #{name,jdbcType=VARCHAR}, #{c1Id,jdbcType=VARCHAR}, #{c1Name,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, #{c1Id,jdbcType=VARCHAR}, #{c1Name,jdbcType=VARCHAR}, 
       #{c2Id,jdbcType=VARCHAR}, #{c2Name,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.VTeasurerRecord" >
@@ -128,6 +130,9 @@
       </if>
       <if test="name != null" >
         name,
+      </if>
+      <if test="note != null" >
+        note,
       </if>
       <if test="c1Id != null" >
         c1_id,
@@ -163,6 +168,9 @@
       </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
       </if>
       <if test="c1Id != null" >
         #{c1Id,jdbcType=VARCHAR},
@@ -208,6 +216,9 @@
       <if test="record.name != null" >
         name = #{record.name,jdbcType=VARCHAR},
       </if>
+      <if test="record.note != null" >
+        note = #{record.note,jdbcType=VARCHAR},
+      </if>
       <if test="record.c1Id != null" >
         c1_id = #{record.c1Id,jdbcType=VARCHAR},
       </if>
@@ -234,6 +245,7 @@
       type = #{record.type,jdbcType=INTEGER},
       password = #{record.password,jdbcType=VARCHAR},
       name = #{record.name,jdbcType=VARCHAR},
+      note = #{record.note,jdbcType=VARCHAR},
       c1_id = #{record.c1Id,jdbcType=VARCHAR},
       c1_name = #{record.c1Name,jdbcType=VARCHAR},
       c2_id = #{record.c2Id,jdbcType=VARCHAR},
