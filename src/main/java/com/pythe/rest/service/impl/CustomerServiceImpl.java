@@ -313,7 +313,7 @@ public class CustomerServiceImpl implements CustomerService {
 //		List<VCustomer> customerList2 = vCustomerMapper.selectByExample(example5);
 		String openId = customerInformation.getString("openId");
 		VOperatorExample example =new VOperatorExample();
-		example.createCriteria().andOpenIdEqualTo(openId);
+		example.createCriteria().andPhoneNumEqualTo(phoneNum);
 		List<VOperator> customerList2= vOperatorMapper.selectByExample(example);
 		
 		// 用户不存在或者权限不够
@@ -372,9 +372,14 @@ public class CustomerServiceImpl implements CustomerService {
 //		List<VCustomer> customers = vCustomerMapper.selectByExample(vCustomerExample);
 		JSONObject Information = JSONObject.parseObject(parameters);
 		String openId = Information.getString("openId");
-		VOperatorExample example =new VOperatorExample();
+//		VOperatorExample example =new VOperatorExample();
+//		example.createCriteria().andOpenIdEqualTo(openId);
+//		List<VOperator> customers = vOperatorMapper.selectByExample(example);
+		
+		TblOperatorExample example =new TblOperatorExample();
 		example.createCriteria().andOpenIdEqualTo(openId);
-		List<VOperator> customers = vOperatorMapper.selectByExample(example);
+		List<TblOperator> customers = operatorMapper.selectByExample(example);
+		
 		// 返回用户数据
 		if (customers.isEmpty()) {
 			return PytheResult.build(400, "尚无该管理员信息");

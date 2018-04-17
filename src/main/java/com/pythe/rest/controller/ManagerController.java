@@ -48,7 +48,7 @@ public class ManagerController {
 	}
 
 	/**
-	 * 统计车的使用情况 查看一级目录 BUSINESS 为运营 ，TEASURER 为财务
+	 *一级列表
 	 */
 	@RequestMapping(value = "/select/one/level", method = RequestMethod.GET)
 	@ResponseBody
@@ -210,7 +210,7 @@ public class ManagerController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/insert/ingcart/manage", method = RequestMethod.POST)
+	@RequestMapping(value = "/insert/ingcart/manage/", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult insertIngcartManage(@RequestBody String parameters) throws Exception {
 		try {
@@ -444,7 +444,7 @@ public class ManagerController {
 	}
 
 	/**
-	 * 查看运营人员的使用情况
+	 * 查看运营人员使用车辆的情况
 	 */
 	@RequestMapping(value = "/select/operator/condition", method = RequestMethod.GET)
 	@ResponseBody
@@ -478,6 +478,7 @@ public class ManagerController {
 
 	/**
 	 * 删除管理人员
+	 * 电话号码和操作人员的level
 	 */
 	@RequestMapping(value = "/delete/manager", method = RequestMethod.POST)
 	@ResponseBody
