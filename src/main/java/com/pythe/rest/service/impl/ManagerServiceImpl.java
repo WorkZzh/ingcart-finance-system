@@ -80,10 +80,9 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Value("${TOP_CODE}")
 	private Integer TOP_CODE;
-	
+
 	@Value("${THREE_CODE}")
 	private Integer THREE_CODE;
-	
 
 	@Value("${WEIXIN_REGISTER_TYPE}")
 	private Integer WEIXIN_REGISTER_TYPE;
@@ -147,10 +146,9 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Autowired
 	private VOperatorRecordMapper vOperatorRecordMapper;
-	
+
 	@Autowired
 	private VOperatorMapper vOperatorMapper;
-	
 
 	// BILL
 	@Value("${BILL_CHARGE_TYPE}")
@@ -1146,7 +1144,6 @@ public class ManagerServiceImpl implements ManagerService {
 		insertOperator(phoneNum, type, catalogId, COMPANY_MANAGER_LEVEL);
 		return PytheResult.build(200, "添加成功");
 	}
-	
 
 	@Override
 	public PytheResult insertIngcartManage(String parameters) {
@@ -1167,28 +1164,26 @@ public class ManagerServiceImpl implements ManagerService {
 	public PytheResult selectAddOperatorRecord(String level, Integer pageNum, Integer pageSize) {
 		// TODO Auto-generated method stub
 		PageHelper.startPage(pageNum, pageSize);
-		VOperatorExample example =new VOperatorExample();
-		List<VOperator>  result =null;
+		VOperatorExample example = new VOperatorExample();
+		List<VOperator> result = null;
 		if (!level.equals("0")) {
-			//查看level的 code是几层，code=2 查c2,code=3查c1
+			// 查看level的 code是几层，code=2 查c2,code=3查c1
 			Integer code = catalogMapper.selectByPrimaryKey(level).getCode();
-			if (code==THREE_CODE) {
+			if (code == THREE_CODE) {
 				example.createCriteria().andC1IdEqualTo(level);
-			}else{
+			} else {
 				example.createCriteria().andC2IdEqualTo(level);
 			}
-			//将用户数据返回
-			result= vOperatorMapper.selectByExample(example);
+			// 将用户数据返回
+			result = vOperatorMapper.selectByExample(example);
 			return PytheResult.ok(result);
 		}
-		
-		//当为4，5级时候什么都可以看
-		result = vOperatorMapper.selectByExample(example);;
+
+		// 当为4，5级时候什么都可以看
+		result = vOperatorMapper.selectByExample(example);
+		;
 		return PytheResult.ok(result);
 	}
-
-
-	
 
 	public PytheResult deleteOperator(String parameters) {
 		// TODO Auto-generated method stub
