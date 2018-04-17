@@ -23,7 +23,6 @@ public class CartController {
 	private CartService service;
 	
 
-
 //    /**
 //	 * 管理员紧急关锁
 //	 * @return
@@ -140,6 +139,7 @@ public class CartController {
     
     /**
      * 无条件退返出租车费
+     * （有行程并且已结束）
      */
     @RequestMapping(value = "/manage/unconditional/refund/", method = RequestMethod.POST)
 	@ResponseBody

@@ -32,9 +32,11 @@ import com.pythe.mapper.TblTeasurerMapper;
 import com.pythe.mapper.TblVersionMapper;
 import com.pythe.mapper.VCatalogMapper;
 import com.pythe.mapper.VCustomerMapper;
+import com.pythe.mapper.VMaintenanceMapper;
 import com.pythe.mapper.VOperatorMapper;
 import com.pythe.mapper.VOperatorRecordMapper;
 import com.pythe.mapper.VRecordBillMapper;
+import com.pythe.mapper.VRecordMapper;
 import com.pythe.pojo.TblAccount;
 import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
@@ -58,12 +60,16 @@ import com.pythe.pojo.VCatalogExample;
 import com.pythe.pojo.VCustomer;
 import com.pythe.pojo.VCustomerExample;
 import com.pythe.pojo.VCustomerExample.Criteria;
+import com.pythe.pojo.VMaintenance;
+import com.pythe.pojo.VMaintenanceExample;
 import com.pythe.pojo.VOperator;
 import com.pythe.pojo.VOperatorExample;
 import com.pythe.pojo.VOperatorRecord;
 import com.pythe.pojo.VOperatorRecordExample;
+import com.pythe.pojo.VRecord;
 import com.pythe.pojo.VRecordBill;
 import com.pythe.pojo.VRecordBillExample;
+import com.pythe.pojo.VRecordExample;
 import com.pythe.rest.service.ManagerService;
 
 @Service
@@ -110,6 +116,9 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Autowired
 	private VCustomerMapper vCustomerMapper;
+	
+	@Autowired
+	private VMaintenanceMapper vMaintenanceMapper;
 
 	@Autowired
 	private TblCarMapper carMapper;
@@ -119,6 +128,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Autowired
 	private TblTeasurerMapper teasurerMapper;
+	
+	
+	@Autowired
+	private VRecordMapper recordMapper;
 
 	@Autowired
 	private TblOperatorMapper operatorMapper;
@@ -332,6 +345,7 @@ public class ManagerServiceImpl implements ManagerService {
 		Double price = information.getDouble("price");
 		Double giving = information.getDouble("giving");
 		String higherLevelId = information.getString("higherLevelId");
+		Integer status = information.getInteger("status");
 
 		TblDistributionExample example = new TblDistributionExample();
 		example.createCriteria().andNameEqualTo(name);
@@ -347,6 +361,7 @@ public class ManagerServiceImpl implements ManagerService {
 		record.setLevel(level);
 		record.setPrice(price);
 		record.setGiving(giving);
+		record.setStatus(status);
 		LinkedList<String> list = new LinkedList<String>();
 		list.add("1、该景区当日用车封顶" + price.intValue() + "元");
 		list.add("2、开锁需要余额不少于" + price.intValue() + "元");
@@ -434,16 +449,35 @@ public class ManagerServiceImpl implements ManagerService {
 	}
 
 	@Override
-	public PytheResult selectMaintennanceCondition(Integer pageNum, Integer pageSize) {
+	public PytheResult selectMaintennanceCondition(Integer pageNum, Integer pageSize,String level) {
 		// TODO Auto-generated method stub
+		
+		VMaintenanceExample example = new VMaintenanceExample();
+		com.pythe.pojo.VMaintenanceExample.Criteria criteria = example.createCriteria();
+		ArrayList<String> list = new ArrayList<String>();
+		if (!"0".equals(level)) {
+			TblCatalogExample example2 = new TblCatalogExample();
+			example2.createCriteria().andHigherLevelIdEqualTo(level);
+			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+			if (!catalogList.isEmpty()) {
+				for (TblCatalog tblCatalog : catalogList) {
+					list.add(tblCatalog.getId());
+				}
+			} else {
+				list.add(level);
+			}
+			criteria.andDescriptionIn(list);
+		}
+
 		PageHelper.startPage(pageNum, pageSize);
-		TblMaintenanceExample example = new TblMaintenanceExample();
-		List<TblMaintenance> maintenanceList = maintenanceMapper.selectByExampleWithBLOBs(example);
+		
+		List<VMaintenance> maintenanceList =  vMaintenanceMapper.selectByExampleWithBLOBs(example);
+		
 		if (maintenanceList.isEmpty()) {
 			return PytheResult.build(400, "暂无客户维修反馈");
 		}
 
-		for (TblMaintenance tblMaintenance : maintenanceList) {
+		for (VMaintenance tblMaintenance : maintenanceList) {
 			List<String> type = JsonUtils.jsonToList(tblMaintenance.getType(), String.class);
 			String str = "";
 			for (String string : type) {
@@ -725,6 +759,7 @@ public class ManagerServiceImpl implements ManagerService {
 
 		String name = params.getString("name");
 		String phoneNum = params.getString("phoneNum");
+		Long managerId = params.getLong("managerId");
 		Integer type = params.getInteger("type");
 		phoneNum = phoneNum.trim();
 		// 验证该电话是否已经加入是这家公司的最高管理员，如果是不允许添加
@@ -742,7 +777,7 @@ public class ManagerServiceImpl implements ManagerService {
 		catalogMapper.insert(record);
 
 		// level为3就具有添加园区功能
-		insertOperator(phoneNum, type, catalogId, GROUP_MANAGER_LEVEL);
+		insertOperator(phoneNum, type, catalogId, GROUP_MANAGER_LEVEL, managerId);
 
 		// 为了测试，而返回的参数，其实目录树上就有
 		JSONObject j = new JSONObject();
@@ -1096,7 +1131,7 @@ public class ManagerServiceImpl implements ManagerService {
 	}
 
 	// 重构管理者的方法
-	private void insertOperator(String phoneNum, Integer type, String catalogId, Integer level) {
+	private void insertOperator(String phoneNum, Integer type, String catalogId, Integer level, Long managerId) {
 		TblOperator operator = new TblOperator();
 		operator.setCatalogId(catalogId);
 		operator.setPhoneNum(phoneNum);
@@ -1105,6 +1140,7 @@ public class ManagerServiceImpl implements ManagerService {
 		operator.setName(phoneNum.substring(0, 3) + "••••" + phoneNum.substring(7));
 		operator.setCreated(new Date());
 		operator.setType(type);
+		operator.setManagerId(managerId);
 		operatorMapper.insert(operator);
 	}
 
@@ -1126,11 +1162,11 @@ public class ManagerServiceImpl implements ManagerService {
 		String phoneNum = information.getString("phoneNum");
 		Integer type = information.getInteger("type");
 		String catalogId = information.getString("catalogId");
-
+		Long managerId = information.getLong("managerId");
 		if (isExistPhoneInManger(phoneNum)) {
 			return PytheResult.build(400, "不允许重复添加，如需更改，请联系开发人员");
 		}
-		insertOperator(phoneNum, type, catalogId, PART_MANGER_LEVEL);
+		insertOperator(phoneNum, type, catalogId, PART_MANGER_LEVEL, managerId);
 		return PytheResult.build(400, "该用户已经是管理员");
 	}
 
@@ -1141,11 +1177,12 @@ public class ManagerServiceImpl implements ManagerService {
 		String phoneNum = information.getString("phoneNum");
 		Integer type = information.getInteger("type");
 		String catalogId = information.getString("catalogId");
+		Long managerId = information.getLong("managerId");
 		// 验证该电话是否已经加入是这家公司的管理员，如果是不允许添加
 		if (isExistPhoneInManger(phoneNum)) {
 			return PytheResult.build(400, "不允许重复添加，如需更改，请联系开发人员");
 		}
-		insertOperator(phoneNum, type, catalogId, COMPANY_MANAGER_LEVEL);
+		insertOperator(phoneNum, type, catalogId, COMPANY_MANAGER_LEVEL, managerId);
 		return PytheResult.build(200, "添加成功");
 	}
 
@@ -1156,11 +1193,12 @@ public class ManagerServiceImpl implements ManagerService {
 		String phoneNum = information.getString("phoneNum");
 		Integer type = information.getInteger("type");
 		String catalogId = information.getString("catalogId");
+		Long managerId = information.getLong("managerId");
 		// 验证该电话是否已经加入是这家公司的管理员，如果是不允许添加
 		if (isExistPhoneInManger(phoneNum)) {
 			return PytheResult.build(400, "不允许重复添加，如需更改，请联系开发人员");
 		}
-		insertOperator(phoneNum, type, catalogId, INGCART_MANAGER_LEVEL);
+		insertOperator(phoneNum, type, catalogId, INGCART_MANAGER_LEVEL, managerId);
 		return PytheResult.build(200, "添加成功");
 	}
 
@@ -1207,6 +1245,22 @@ public class ManagerServiceImpl implements ManagerService {
 		}
 		operatorMapper.deleteByPrimaryKey(tblOperators.get(0).getId());
 		return PytheResult.build(200, "删除成功");
+	}
+
+	@Override
+	public PytheResult selectLastRecrd(String phoneNum) {
+		VRecordExample example =new VRecordExample();
+		if (phoneNum.length() == 11) {
+			example.createCriteria().andPhoneNumEqualTo(phoneNum);
+		} else {
+			example.createCriteria().andQrIdEqualTo(Long.valueOf(phoneNum));
+		}
+		List<VRecord> record = recordMapper.selectByExample(example);
+		
+		if (record.isEmpty()) {
+			return PytheResult.build(400, "不存在任何记录");
+		}
+		return PytheResult.ok(record.get(0));
 	}
 
 }

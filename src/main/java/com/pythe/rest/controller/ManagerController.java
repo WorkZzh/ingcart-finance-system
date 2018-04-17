@@ -300,15 +300,17 @@ public class ManagerController {
 	}
 
 	/**
-	 * 查看维修列表
+	 * 查看报修列表
 	 * https://ingcart.com/select/maintenance/condition?pageNum=1&pageSize=10
 	 */
 	@RequestMapping(value = "/select/maintenance/condition", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectMaintennanceCondition(@RequestParam(defaultValue = "1") Integer pageNum,
+	public PytheResult selectMaintennanceCondition(
+			@RequestParam(required = true, value = "level") String level,
+			@RequestParam(defaultValue = "1") Integer pageNum,
 			@RequestParam(defaultValue = "10") Integer pageSize) throws Exception {
 		try {
-			return service.selectMaintennanceCondition(pageNum, pageSize);
+			return service.selectMaintennanceCondition(pageNum, pageSize,level);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
@@ -488,5 +490,26 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+
+	
+	
+	
+	/**
+	 *查询某个用户最近的一条行车记录
+	 */
+	@RequestMapping(value = "/select/last/record", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectLastRecrd(@RequestParam(required = true, value = "phoneNum") String phoneNum)
+			throws Exception {
+		try {
+			return service.selectLastRecrd(phoneNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+
+
 
 }

@@ -22,7 +22,7 @@ public interface ManagerService {
 
 	PytheResult selectAllAreaByCity(String city, Integer pageNum, Integer pageSize);
 
-	PytheResult selectMaintennanceCondition(Integer pageNum, Integer pageSize);
+	PytheResult selectMaintennanceCondition(Integer pageNum, Integer pageSize, String level);
 
 	PytheResult selectPriceLevel();
 
@@ -67,4 +67,6 @@ public interface ManagerService {
 	PytheResult insertGroup(String parameters);
 
 	PytheResult deleteOperator(String parameters);
+
+	PytheResult selectLastRecrd(String phoneNum);
 }
