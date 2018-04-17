@@ -53,8 +53,6 @@ public class MaintenanceController {
 
 	/**
 	 * 检修
-	 * 
-	 * @return
 	 */
 	@RequestMapping(value = "/record/maintenance", method = RequestMethod.POST)
 	@ResponseBody

@@ -85,7 +85,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 		Double latitude = information.getDouble("latitude");
 		Long qrId = information.getLong("qrId");
 		String annotation = information.getString("annotation");
-		Integer status_level = information.getInteger("status_level");
+		Integer status_level = information.getInteger("level");
 		// 景区级别
 		if (status_level == 1 || status_level == 2) {
 			// 通过手机号查所属园区

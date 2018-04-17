@@ -1189,7 +1189,7 @@ public class ManagerServiceImpl implements ManagerService {
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
-		Integer status_level = information.getInteger("status_level");
+		Integer status_level = information.getInteger("level");
 		// 通过手机号查看管理员等级
 		TblOperatorExample tblOperatorExample = new TblOperatorExample();
 		tblOperatorExample.createCriteria().andPhoneNumEqualTo(phoneNum);

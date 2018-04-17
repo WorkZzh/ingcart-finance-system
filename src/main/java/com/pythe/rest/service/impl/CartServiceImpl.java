@@ -2264,8 +2264,19 @@ public class CartServiceImpl implements CartService {
 	private int giveCoupon(Long managerId, Double price) {
 		// 送用户一张券
 		TblCoupon coupon = new TblCoupon();
-		// 券为8位随机数
-		coupon.setCode(StringUtils.getStringRandom(8));
+		// 产生不重复的为8位随机数
+		String code = null;
+		for (int i = 0; i <= 100; i++) {
+			code = StringUtils.getStringRandom(8);
+			TblCouponExample couponExample = new TblCouponExample();
+			couponExample.createCriteria().andStatusNotEqualTo(0).andCodeEqualTo(code);
+			List<TblCoupon> couponList = couponMapper.selectByExample(couponExample);
+			if (couponList.isEmpty()) {
+				break;
+			}
+		}
+
+		coupon.setCode(code);
 		coupon.setStopTime(DateUtils.parseTime(DateUtils.getTodayDate() + " 23:00:00"));
 		coupon.setStatus(0);
 		coupon.setManagerId(managerId);
