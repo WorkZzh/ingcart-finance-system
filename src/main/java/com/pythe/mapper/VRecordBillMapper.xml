@@ -352,11 +352,15 @@
 
 	</select>
 
+
+
+
 	<select id="selectSumByYear" resultMap="BaseResultMap">
 		SELECT count(*) as qr_id,COALESCE(sum(sum),0) as
 		sum,COALESCE(sum(amount),0) as amount,COALESCE(sum(refund_amount),0)
-		as refund_amount
-		,COALESCE(sum(giving_amount),0) AS giving_amount
+		as refund_amount,COALESCE(left(time,7),0) as level
+		,COALESCE(sum(giving_amount),0)
+		AS giving_amount
 		FROM
 		v_record_bill r
 		WHERE
