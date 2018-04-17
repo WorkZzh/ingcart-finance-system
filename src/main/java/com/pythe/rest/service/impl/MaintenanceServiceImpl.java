@@ -103,7 +103,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 			if (distributions.isEmpty()) {
 				return PytheResult.build(400, "园区没有投放车辆");
 			}
-			List<Long> list = JsonUtils.jsonToList(distributions.get(0).getCarIds(), long.class);
+			List<Long> list = JsonUtils.jsonToList(distributions.get(0).getCarIds(), Long.class);
 			if (!list.contains(qrId)) {
 				return PytheResult.build(400, "管理员权限不够");
 			}
