@@ -355,7 +355,7 @@
 
 
 
-	<select id="selectSumByYear" resultMap="BaseResultMap">
+	<select id="selectSumByMonths" resultMap="BaseResultMap">
 		SELECT count(*) as qr_id,COALESCE(sum(sum),0) as
 		sum,COALESCE(sum(amount),0) as amount,COALESCE(sum(refund_amount),0)
 		as refund_amount,COALESCE(left(time,7),0) as level
@@ -373,13 +373,22 @@
 			and
 		</if>
 
-		<if test="year!=null and year!=''">  
-    <![CDATA[ 
-         substring(r.time,1,4)=#{year} and
-    ]]>
+
+		<if test="startMonth!=null and startMonth!=''">
+
+			substring(r.time,1,7) <![CDATA[>=]]>
+			#{startMonth}
+			and
+
+		</if>
+		<if test="endMonth!=null and endMonth!=''">
+
+			substring(r.time,1,7) <![CDATA[<=]]>
+			#{endMonth}
+			and
 		</if>
 
-		1=1 group by substring(r.time,1,7) order by substring(r.time,1,7) ASC
+		1=1 group by substring(r.time,1,7) order by substring(r.time,1,7) DESC
 
 	</select>
 

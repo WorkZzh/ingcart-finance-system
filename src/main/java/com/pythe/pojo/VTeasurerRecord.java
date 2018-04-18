@@ -17,6 +17,8 @@ public class VTeasurerRecord {
 
     private String name;
 
+    private String note;
+
     private String c1Id;
 
     private String c1Name;
@@ -79,6 +81,14 @@ public class VTeasurerRecord {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note == null ? null : note.trim();
     }
 
     public String getC1Id() {

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.pythe.common.pojo.PytheResult;
@@ -98,6 +99,17 @@ public class TeasurerController {
 	public PytheResult selectTeasurerRocordList(@RequestBody String parameters) throws Exception {
 		try {
 			return teasurerService.selectTeasurerRocordList(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+
+	@RequestMapping(value = "/teasurer/select/id", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectTeasurerTwoLevel(@RequestParam(required = true, value = "id") Long id) {
+		try {
+			return teasurerService.selectTeasurerById(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));

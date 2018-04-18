@@ -19,6 +19,8 @@ public class TblTeasurerRecord {
 
     private String catalogId;
 
+    private String note;
+
     public Long getId() {
         return id;
     }
@@ -81,5 +83,13 @@ public class TblTeasurerRecord {
 
     public void setCatalogId(String catalogId) {
         this.catalogId = catalogId == null ? null : catalogId.trim();
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note == null ? null : note.trim();
     }
 }

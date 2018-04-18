@@ -10,6 +10,7 @@
     <result column="password" property="password" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="catalog_id" property="catalogId" jdbcType="VARCHAR" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -70,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, phone_num, level, created, type, password, name, catalog_id
+    id, phone_num, level, created, type, password, name, catalog_id, note
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblTeasurerRecordExample" >
     select
@@ -105,10 +106,12 @@
   <insert id="insert" parameterType="com.pythe.pojo.TblTeasurerRecord" >
     insert into tbl_teasurer_record (id, phone_num, level, 
       created, type, password, 
-      name, catalog_id)
+      name, catalog_id, note
+      )
     values (#{id,jdbcType=BIGINT}, #{phoneNum,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
       #{created,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, 
-      #{name,jdbcType=VARCHAR}, #{catalogId,jdbcType=VARCHAR})
+      #{name,jdbcType=VARCHAR}, #{catalogId,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblTeasurerRecord" >
     insert into tbl_teasurer_record
@@ -137,6 +140,9 @@
       <if test="catalogId != null" >
         catalog_id,
       </if>
+      <if test="note != null" >
+        note,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -162,6 +168,9 @@
       </if>
       <if test="catalogId != null" >
         #{catalogId,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -198,6 +207,9 @@
       <if test="record.catalogId != null" >
         catalog_id = #{record.catalogId,jdbcType=VARCHAR},
       </if>
+      <if test="record.note != null" >
+        note = #{record.note,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -212,7 +224,8 @@
       type = #{record.type,jdbcType=INTEGER},
       password = #{record.password,jdbcType=VARCHAR},
       name = #{record.name,jdbcType=VARCHAR},
-      catalog_id = #{record.catalogId,jdbcType=VARCHAR}
+      catalog_id = #{record.catalogId,jdbcType=VARCHAR},
+      note = #{record.note,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -241,6 +254,9 @@
       <if test="catalogId != null" >
         catalog_id = #{catalogId,jdbcType=VARCHAR},
       </if>
+      <if test="note != null" >
+        note = #{note,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -252,7 +268,8 @@
       type = #{type,jdbcType=INTEGER},
       password = #{password,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
-      catalog_id = #{catalogId,jdbcType=VARCHAR}
+      catalog_id = #{catalogId,jdbcType=VARCHAR},
+      note = #{note,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

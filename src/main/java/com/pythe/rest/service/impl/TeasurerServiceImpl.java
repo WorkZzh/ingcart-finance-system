@@ -70,6 +70,8 @@ public class TeasurerServiceImpl implements TeasurerService {
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum").trim();
+		String note = information.getString("note");
+		System.out.println(note);
 		TblTeasurerExample tblTeasurerExample = new TblTeasurerExample();
 		tblTeasurerExample.createCriteria().andPhoneNumEqualTo(phoneNum);
 		List<TblTeasurer> tblTeasurerList = tblTeasurerMapper.selectByExample(tblTeasurerExample);
@@ -85,6 +87,7 @@ public class TeasurerServiceImpl implements TeasurerService {
 		tblTeasurerRecord.setPassword(tblTeasurerList.get(0).getPassword());
 		tblTeasurerRecord.setPhoneNum(tblTeasurerList.get(0).getPhoneNum());
 		tblTeasurerRecord.setType(tblTeasurerList.get(0).getType());
+		tblTeasurerRecord.setNote(note);
 		tblTeasurerRecordMapper.insertSelective(tblTeasurerRecord);
 		tblTeasurerMapper.deleteByPrimaryKey(tblTeasurerList.get(0).getId());
 		return PytheResult.ok("财务人员删除成功");
@@ -271,6 +274,14 @@ public class TeasurerServiceImpl implements TeasurerService {
 		vTeasurerRecordExample.createCriteria().andLevelNotEqualTo(3);
 		List<VTeasurerRecord> vTeasurerRecordList = vTeasurerRecordMapper.selectByExample(vTeasurerRecordExample);
 		return PytheResult.ok(vTeasurerRecordList);
+	}
+
+	@Override
+	public PytheResult selectTeasurerById(Long id) {
+		// TODO Auto-generated method stub
+		TblTeasurer tblTeasurers = tblTeasurerMapper.selectByPrimaryKey(id);
+		return PytheResult.ok(tblTeasurers.getPhoneNum());
+
 	}
 
 }

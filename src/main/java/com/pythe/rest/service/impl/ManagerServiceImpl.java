@@ -1057,12 +1057,13 @@ public class ManagerServiceImpl implements ManagerService {
 
 	}
 
-	public PytheResult selectSumByYear(String parameters) {
+	public PytheResult selectSumByMonths(String parameters) {
 		// TODO Auto-generated method stub
 		JSONObject params = JSONObject.parseObject(parameters);
 
 		String level = params.getString("level");
-		String year = params.getString("year");
+		String startMonth = params.getString("startMonth");
+		String endMonth = params.getString("endMonth");
 		ArrayList<String> list = new ArrayList<String>();
 		if (!"0".equals(level)) {
 			TblCatalogExample example2 = new TblCatalogExample();
@@ -1079,11 +1080,14 @@ public class ManagerServiceImpl implements ManagerService {
 			list = null;
 		}
 
-		if ("0".equals(year)) {
-			year = null;
+		if ("0".equals(startMonth)) {
+			startMonth = null;
+		}
+		if ("0".equals(endMonth)) {
+			endMonth = null;
 		}
 
-		List<VRecordBill> recordLists = recordBillMapper.selectSumByYear(list, year);
+		List<VRecordBill> recordLists = recordBillMapper.selectSumByMonths(list, startMonth, endMonth);
 
 		return PytheResult.ok(recordLists);
 	}
