@@ -276,4 +276,12 @@ public class TeasurerServiceImpl implements TeasurerService {
 		return PytheResult.ok(vTeasurerRecordList);
 	}
 
+	@Override
+	public PytheResult selectTeasurerById(Long id) {
+		// TODO Auto-generated method stub
+		TblTeasurer tblTeasurers = tblTeasurerMapper.selectByPrimaryKey(id);
+		return PytheResult.ok(tblTeasurers.getPhoneNum());
+
+	}
+
 }
