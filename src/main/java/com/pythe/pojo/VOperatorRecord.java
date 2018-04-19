@@ -1,9 +1,10 @@
 package com.pythe.pojo;
 
-import java.time.Duration;
 import java.util.Date;
 
 public class VOperatorRecord {
+    private String phoneNum;
+
     private String id;
 
     private Long operatorId;
@@ -28,6 +29,7 @@ public class VOperatorRecord {
     
     private String duration;
     
+    
 
     public String getDuration() {
 		return duration;
@@ -37,7 +39,15 @@ public class VOperatorRecord {
 		this.duration = duration;
 	}
 
-	public String getId() {
+	public String getPhoneNum() {
+        return phoneNum;
+    }
+
+    public void setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum == null ? null : phoneNum.trim();
+    }
+
+    public String getId() {
         return id;
     }
 

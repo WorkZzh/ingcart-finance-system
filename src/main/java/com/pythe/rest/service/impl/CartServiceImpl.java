@@ -148,16 +148,13 @@ public class CartServiceImpl implements CartService {
 
 	@Value("${WX_PAY_CONFIRM_NOTIFY_URL}")
 	private String WX_PAY_CONFIRM_NOTIFY_URL;
-	
-	
+
 	@Value("${RECORD_USER_STATUS}")
 	private Integer RECORD_USER_STATUS;
 
 	@Value("${RECORD_END_STATUS}")
 	private Integer RECORD_END_STATUS;
 
-	
-	
 	@Autowired
 	private TblOperatorRecordMapper operatorRecordMapper;
 
@@ -262,7 +259,7 @@ public class CartServiceImpl implements CartService {
 		record.setLongitdeStart(longitude);
 		record.setLatitudeStart(latitude);
 		record.setCarId(carId);
-		//同时更新一下行程账单，方便统计
+		// 同时更新一下行程账单，方便统计
 		record.setStatus(RECORD_USER_STATUS);
 		record.setStartTime(new Date());
 		recordMapper.insert(record);
@@ -1003,13 +1000,13 @@ public class CartServiceImpl implements CartService {
 		// 判断是否是优惠券开锁
 		if (type.equals(1)) {
 			VCouponExample couponExample = new VCouponExample();
-			couponExample.createCriteria().andStatusNotEqualTo(0).andCodeEqualTo(code);
+			//可以用
+			couponExample.createCriteria().andStatusEqualTo(0).andCodeEqualTo(code);
 			List<VCoupon> list = vCouponMapper.selectByExample(couponExample);
 			if (list.isEmpty()) {
 				return PytheResult.build(400, "该优惠券已使用");
 			}
 			VCoupon coupon = list.get(0);
-
 			if (price.getPrice() > coupon.getAmount()) {
 				JSONObject json = new JSONObject();
 				json.put("price", price.getPrice() - coupon.getAmount());
@@ -1044,7 +1041,7 @@ public class CartServiceImpl implements CartService {
 		example.createCriteria().andQrIdEqualTo(qrId);
 		List<TblCar> carList = carMapper.selectByExample(example);
 		if (carList.isEmpty()) {
-			PytheResult.build(400, "该车不存在");
+			return PytheResult.build(400, "该车不存在");
 		}
 
 		TblCar car = carList.get(0);
@@ -1392,7 +1389,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	//@Transactional
+	// @Transactional
 	public void autoLock() {
 		// TODO Auto-generated method stub
 		Date date_ = DateUtils.parseTime(DateUtils.getTodayDate() + " 23:50:00");
@@ -1434,8 +1431,7 @@ public class CartServiceImpl implements CartService {
 			account.setAmount(account.getAmount() - amount);
 			account.setOutAmount(account.getOutAmount() - amount);
 			accountMapper.updateByPrimaryKey(account);
-			
-			
+
 			// 更新流水
 			TblBill bill = new TblBill();
 			bill.setId(billId);
@@ -1458,56 +1454,64 @@ public class CartServiceImpl implements CartService {
 		}
 
 		// 2、自动退款 （当天充值，并且当天无行程）
-//		Date start = DateUtils.parseTime(DateUtils.getTodayDate() + " 23:59:00");
-//		Date end = DateUtils.parseTime(DateUtils.getTodayDate() + " 01:00:00");
-//
-//		TblBillExample example2 = new TblBillExample();
-//		example2.createCriteria().andTimeBetween(start, end).andTypeEqualTo(BILL_CHARGE_TYPE).andStatusEqualTo(1);
-//		List<TblBill> billList = billMapper.selectByExample(example2);
-//		// 说明今天有充值
-//		Map<Long, TblBill> cMap = new LinkedHashMap<Long, TblBill>();
-//		// 有充值
-//		List<Long> cList = new LinkedList<Long>();
-//		// 有行程的用户
-//		List<Long> yList = new LinkedList<Long>();
-//		if (!billList.isEmpty()) {
-//			// 看充值的，无行程给他们退款。
-//			for (TblBill bill : billList) {
-//				cList.add(bill.getCustomerId());
-//				cMap.put(bill.getCustomerId(), bill);
-//			}
-//			TblRecordExample recordExample = new TblRecordExample();
-//			recordExample.createCriteria().andStartTimeBetween(start, end).andCustomerIdIn(cList);
-//			List<TblRecord> recordList = recordMapper.selectByExample(recordExample);
-//			for (TblRecord tblRecord : recordList) {
-//				yList.add(tblRecord.getCustomerId());
-//			}
-//
-//			cList.removeAll(yList);
-//
-//			// 退款
-//			for (Long target : cList) {
-//				TblBill bi = cMap.get(target);
-//				Double p = bi.getAmount() * 100;
-//				Double refund = bi.getRefundAmount() * 100;
-//				Double rest = p - refund;
-//
-//				String str = refundByOrderInWX(bi.getOutTradeNo(), String.valueOf(p.intValue()),
-//						String.valueOf(rest.intValue()));
-//
-//				if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") && !str.contains("累计退款金额大于支付金额")) {
-//
-//					TblAccount account = accountMapper.selectByPrimaryKey(bi.getCustomerId());
-//
-//					account.setAmount(account.getAmount() - bi.getAmount());
-//					account.setOutAmount(account.getOutAmount() - bi.getAmount());
-//					accountMapper.updateByPrimaryKey(account);
-//
-//					bi.setRefundAmount(bi.getRefundAmount() + bi.getAmount());
-//					billMapper.updateByPrimaryKey(bi);
-//				}
-//			}
-//		}
+		// Date start = DateUtils.parseTime(DateUtils.getTodayDate() + "
+		// 23:59:00");
+		// Date end = DateUtils.parseTime(DateUtils.getTodayDate() + "
+		// 01:00:00");
+		//
+		// TblBillExample example2 = new TblBillExample();
+		// example2.createCriteria().andTimeBetween(start,
+		// end).andTypeEqualTo(BILL_CHARGE_TYPE).andStatusEqualTo(1);
+		// List<TblBill> billList = billMapper.selectByExample(example2);
+		// // 说明今天有充值
+		// Map<Long, TblBill> cMap = new LinkedHashMap<Long, TblBill>();
+		// // 有充值
+		// List<Long> cList = new LinkedList<Long>();
+		// // 有行程的用户
+		// List<Long> yList = new LinkedList<Long>();
+		// if (!billList.isEmpty()) {
+		// // 看充值的，无行程给他们退款。
+		// for (TblBill bill : billList) {
+		// cList.add(bill.getCustomerId());
+		// cMap.put(bill.getCustomerId(), bill);
+		// }
+		// TblRecordExample recordExample = new TblRecordExample();
+		// recordExample.createCriteria().andStartTimeBetween(start,
+		// end).andCustomerIdIn(cList);
+		// List<TblRecord> recordList =
+		// recordMapper.selectByExample(recordExample);
+		// for (TblRecord tblRecord : recordList) {
+		// yList.add(tblRecord.getCustomerId());
+		// }
+		//
+		// cList.removeAll(yList);
+		//
+		// // 退款
+		// for (Long target : cList) {
+		// TblBill bi = cMap.get(target);
+		// Double p = bi.getAmount() * 100;
+		// Double refund = bi.getRefundAmount() * 100;
+		// Double rest = p - refund;
+		//
+		// String str = refundByOrderInWX(bi.getOutTradeNo(),
+		// String.valueOf(p.intValue()),
+		// String.valueOf(rest.intValue()));
+		//
+		// if (str.indexOf("SUCCESS") != -1 && !str.contains("订单已全额退款") &&
+		// !str.contains("累计退款金额大于支付金额")) {
+		//
+		// TblAccount account =
+		// accountMapper.selectByPrimaryKey(bi.getCustomerId());
+		//
+		// account.setAmount(account.getAmount() - bi.getAmount());
+		// account.setOutAmount(account.getOutAmount() - bi.getAmount());
+		// accountMapper.updateByPrimaryKey(account);
+		//
+		// bi.setRefundAmount(bi.getRefundAmount() + bi.getAmount());
+		// billMapper.updateByPrimaryKey(bi);
+		// }
+		// }
+		// }
 
 	}
 
@@ -1767,7 +1771,6 @@ public class CartServiceImpl implements CartService {
 
 		return PytheResult.ok("更新成功");
 	}
-
 
 	@Override
 	public PytheResult refundByTopManager(String parameters) {
@@ -2210,9 +2213,6 @@ public class CartServiceImpl implements CartService {
 		coupon.setStartTime(new Date());
 		return couponMapper.insert(coupon);
 	}
-	
-	
-	
 
 	@Override
 	public PytheResult transferCar(String parameters) {
@@ -2365,23 +2365,18 @@ public class CartServiceImpl implements CartService {
 		Double latitude = information.getDouble("latitude");
 		String recordId = FactoryUtils.getUUID();
 
-		TblOperatorRecord record =new TblOperatorRecord();
+		TblOperatorRecord record = new TblOperatorRecord();
 		record.setId(recordId);
 		record.setLatitudeStart(latitude);
 		record.setLongitdeStart(longitude);
 		record.setOperatorId(managerId);
-		//车使用中
+		// 车使用中
 		record.setStatus(RECORD_USER_STATUS);
 		record.setQrId(qrId);
 		record.setStartTime(new Date());
 		operatorRecordMapper.insert(record);
-		
+
 		return PytheResult.ok("开锁成功");
 	}
-	
-	
-	
-	
-	
-	
+
 }

@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.pythe.mapper.VOperatorRecordMapper" >
   <resultMap id="BaseResultMap" type="com.pythe.pojo.VOperatorRecord" >
+    <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
     <result column="id" property="id" jdbcType="VARCHAR" />
     <result column="operator_id" property="operatorId" jdbcType="BIGINT" />
     <result column="qr_id" property="qrId" jdbcType="BIGINT" />
@@ -73,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, operator_id, qr_id, status, start_time, stop_time, longitde_start, latitude_start, 
-    longitude_stop, latitude_stop, description
+    phone_num, id, operator_id, qr_id, status, start_time, stop_time, longitde_start, 
+    latitude_start, longitude_stop, latitude_stop, description
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.VOperatorRecordExample" >
     select
@@ -97,18 +98,23 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.VOperatorRecord" >
-    insert into v_operator_record (id, operator_id, qr_id, 
-      status, start_time, stop_time, 
-      longitde_start, latitude_start, longitude_stop, 
-      latitude_stop, description)
-    values (#{id,jdbcType=VARCHAR}, #{operatorId,jdbcType=BIGINT}, #{qrId,jdbcType=BIGINT}, 
-      #{status,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, 
-      #{longitdeStart,jdbcType=DOUBLE}, #{latitudeStart,jdbcType=DOUBLE}, #{longitudeStop,jdbcType=DOUBLE}, 
-      #{latitudeStop,jdbcType=DOUBLE}, #{description,jdbcType=VARCHAR})
+    insert into v_operator_record (phone_num, id, operator_id, 
+      qr_id, status, start_time, 
+      stop_time, longitde_start, latitude_start, 
+      longitude_stop, latitude_stop, description
+      )
+    values (#{phoneNum,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR}, #{operatorId,jdbcType=BIGINT}, 
+      #{qrId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{stopTime,jdbcType=TIMESTAMP}, #{longitdeStart,jdbcType=DOUBLE}, #{latitudeStart,jdbcType=DOUBLE}, 
+      #{longitudeStop,jdbcType=DOUBLE}, #{latitudeStop,jdbcType=DOUBLE}, #{description,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.VOperatorRecord" >
     insert into v_operator_record
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="phoneNum != null" >
+        phone_num,
+      </if>
       <if test="id != null" >
         id,
       </if>
@@ -144,6 +150,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="phoneNum != null" >
+        #{phoneNum,jdbcType=VARCHAR},
+      </if>
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
@@ -188,6 +197,9 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update v_operator_record
     <set >
+      <if test="record.phoneNum != null" >
+        phone_num = #{record.phoneNum,jdbcType=VARCHAR},
+      </if>
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
       </if>
@@ -228,7 +240,8 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update v_operator_record
-    set id = #{record.id,jdbcType=VARCHAR},
+    set phone_num = #{record.phoneNum,jdbcType=VARCHAR},
+      id = #{record.id,jdbcType=VARCHAR},
       operator_id = #{record.operatorId,jdbcType=BIGINT},
       qr_id = #{record.qrId,jdbcType=BIGINT},
       status = #{record.status,jdbcType=INTEGER},

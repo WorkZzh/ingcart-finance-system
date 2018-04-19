@@ -1115,13 +1115,15 @@ public class ManagerServiceImpl implements ManagerService {
 
 		PageHelper.startPage(pageNum, pageSize);
 		List<VOperatorRecord> operatorList = vOperatorRecordMapper.selectByExample(example);
+		String duration =null;
 		for (VOperatorRecord voperator : operatorList) {
 			// 1为行程结束
 			if (voperator.getStatus().equals(1)) {
-				DateUtils.minusForPartHour(voperator.getStopTime(), voperator.getStartTime());
+				duration = String.valueOf(DateUtils.minusForPartHour(voperator.getStopTime(), voperator.getStartTime()));
 			} else {
-				DateUtils.minusForPartHour(new Date(), voperator.getStartTime());
+				duration = String.valueOf(DateUtils.minusForPartHour(new Date(), voperator.getStartTime()));
 			}
+			voperator.setDuration(duration);
 		}
 
 		if (!operatorList.isEmpty()) {
@@ -1192,7 +1194,8 @@ public class ManagerServiceImpl implements ManagerService {
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
 		Integer type = information.getInteger("type");
-		String catalogId = information.getString("catalogId");
+//		String catalogId = information.getString("catalogId");
+		String catalogId = "0";
 		Long managerId = information.getLong("managerId");
 		// 验证该电话是否已经加入是这家公司的管理员，如果是不允许添加
 		if (isExistPhoneInManger(phoneNum)) {
