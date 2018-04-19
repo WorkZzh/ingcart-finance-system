@@ -59,14 +59,14 @@ public class ExcelExport {
 
 			for (int i = 0; i < results.size(); i++) {
 				HSSFRow row = sheet.createRow(i + 1);
-				row.createCell(0).setCellValue(new HSSFRichTextString(results.get(0).getString("distribution_name")));
-				row.createCell(1).setCellValue(new HSSFRichTextString(results.get(0).getString("date")));
-				row.createCell(2).setCellValue(new HSSFRichTextString(results.get(0).getString("start_time")));
-				row.createCell(3).setCellValue(new HSSFRichTextString(results.get(0).getString("stop_time")));
-				row.createCell(4).setCellValue(new HSSFRichTextString(results.get(0).getString("car_number")));
-				row.createCell(5).setCellValue(new HSSFRichTextString(results.get(0).getString("typeName")));
-				row.createCell(6).setCellValue(new HSSFRichTextString(results.get(0).getString("phone_number")));
-				row.createCell(7).setCellValue(new HSSFRichTextString(results.get(0).getString("sum")));
+				row.createCell(0).setCellValue(new HSSFRichTextString(results.get(i).getString("distribution_name")));
+				row.createCell(1).setCellValue(new HSSFRichTextString(results.get(i).getString("date")));
+				row.createCell(2).setCellValue(new HSSFRichTextString(results.get(i).getString("start_time")));
+				row.createCell(3).setCellValue(new HSSFRichTextString(results.get(i).getString("stop_time")));
+				row.createCell(4).setCellValue(new HSSFRichTextString(results.get(i).getString("car_number")));
+				row.createCell(5).setCellValue(new HSSFRichTextString(results.get(i).getString("typeName")));
+				row.createCell(6).setCellValue(new HSSFRichTextString(results.get(i).getString("phone_number")));
+				row.createCell(7).setCellValue(new HSSFRichTextString(results.get(i).getString("sum")));
 
 			}
 			workbook.write(fileout);
