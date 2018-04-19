@@ -9,7 +9,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.NativeWebRequest;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -22,18 +21,21 @@ import com.pythe.mapper.TblCatalogMapper;
 import com.pythe.mapper.TblDistributionMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
 import com.pythe.mapper.VAcountRecordMapper;
+import com.pythe.mapper.VMaintenanceMapper;
 import com.pythe.mapper.VOperatorMapper;
+import com.pythe.mapper.VOperatorRecordMapper;
 import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
 import com.pythe.pojo.TblCatalog;
 import com.pythe.pojo.TblCatalogExample;
-import com.pythe.pojo.TblDealerExample;
 import com.pythe.pojo.TblDistribution;
 import com.pythe.pojo.TblDistributionExample;
 import com.pythe.pojo.TblMaintenance;
 import com.pythe.pojo.TblMaintenanceExample;
 import com.pythe.pojo.VAcountRecord;
 import com.pythe.pojo.VAcountRecordExample;
+import com.pythe.pojo.VMaintenance;
+import com.pythe.pojo.VMaintenanceExample;
 import com.pythe.pojo.VOperator;
 import com.pythe.pojo.VOperatorExample;
 import com.pythe.rest.service.MaintenanceService;
@@ -58,6 +60,15 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
 	@Autowired
 	private TblDistributionMapper tblDistributionMapper;
+
+	@Autowired
+	private TblCatalogMapper catalogMapper;
+
+	@Autowired
+	private VOperatorRecordMapper vOperatorRecordMapper;
+
+	@Autowired
+	private VMaintenanceMapper vMaintenanceMapper;
 
 	// CAR
 	@Value("${CAR_FREE_STATUS}")
@@ -85,65 +96,39 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 		Double latitude = information.getDouble("latitude");
 		Long qrId = information.getLong("qrId");
 		String annotation = information.getString("annotation");
-		Integer status_level = information.getInteger("level");
-		// 景区级别
-		if (status_level == 1 || status_level == 2) {
-			// 通过手机号查所属园区
-			VOperatorExample vOperatorExample = new VOperatorExample();
-			vOperatorExample.createCriteria().andPhoneNumEqualTo(phoneNum);
-			List<VOperator> vOperators = VOperatorMapper.selectByExample(vOperatorExample);
-			if (vOperators.isEmpty()) {
-				return PytheResult.build(400, "管理员不存在");
+		String level = information.getString("level");
+		// 查询该权限的所有车辆
+		ArrayList<String> list = new ArrayList<String>();
+		TblDistributionExample tblDistributionExample = new TblDistributionExample();
+		com.pythe.pojo.TblDistributionExample.Criteria criteria = tblDistributionExample.createCriteria();
+		if (!"0".equals(level)) {
+			TblCatalogExample example2 = new TblCatalogExample();
+			example2.createCriteria().andHigherLevelIdEqualTo(level);
+			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+			if (!catalogList.isEmpty()) {
+				for (TblCatalog tblCatalog : catalogList) {
+					list.add(tblCatalog.getId());
+				}
+			} else {
+				list.add(level);
 			}
-			// 通过园区查车
-			TblDistributionExample tblDistributionExample = new TblDistributionExample();
-			tblDistributionExample.createCriteria().andLevelEqualTo(vOperators.get(0).getC1Id());
-			List<TblDistribution> distributions = tblDistributionMapper
-					.selectByExampleWithBLOBs(tblDistributionExample);
-			if (distributions.isEmpty()) {
-				return PytheResult.build(400, "园区没有投放车辆");
-			}
-			List<Long> list = JsonUtils.jsonToList(distributions.get(0).getCarIds(), Long.class);
-			if (!list.contains(qrId)) {
-				return PytheResult.build(400, "管理员权限不够");
-			}
-
-		} else if (status_level == 3) {
-			// 集团级别
-			VOperatorExample vOperatorExample = new VOperatorExample();
-			vOperatorExample.createCriteria().andPhoneNumEqualTo(phoneNum);
-			List<VOperator> vOperators = VOperatorMapper.selectByExample(vOperatorExample);
-			if (vOperators.isEmpty()) {
-				return PytheResult.build(400, "管理员不存在");
-			}
-			// 通过集团查所属的园区节点
-			TblCatalogExample tblCatalogExample = new TblCatalogExample();
-			tblCatalogExample.createCriteria().andHigherLevelIdEqualTo(vOperators.get(0).getC1Id());
-			List<String> listLevel = new ArrayList<String>();
-			List<TblCatalog> catalogs = tblCatalogMapper.selectByExample(tblCatalogExample);
-			for (TblCatalog tblCatalog : catalogs) {
-				listLevel.add(tblCatalog.getId());
-			}
-			// 查所有园区节点的车
-			TblDistributionExample tblDistributionExample = new TblDistributionExample();
-			tblDistributionExample.createCriteria().andLevelIn(listLevel);
-			List<TblDistribution> distributions = tblDistributionMapper
-					.selectByExampleWithBLOBs(tblDistributionExample);
-			if (distributions.isEmpty()) {
-				return PytheResult.build(400, "集团没有投放车辆");
-			}
-			List<Long> list = new ArrayList<Long>();
-			for (TblDistribution tblDistribution : distributions) {
-				List<Long> listTemp = JsonUtils.jsonToList(tblDistribution.getCarIds(), long.class);
-				list.addAll(listTemp);
-			}
-			if (!list.contains(qrId)) {
-				return PytheResult.build(400, "管理员权限不够");
-			}
-
+			criteria.andLevelIn(list);
 		}
 
-		// 四五级所有的车都有权限
+		List<TblDistribution> distributions = tblDistributionMapper.selectByExampleWithBLOBs(tblDistributionExample);
+		if (distributions.isEmpty()) {
+			return PytheResult.build(400, "园区没有投放该车辆");
+		}
+		List<Long> listcars = new ArrayList<Long>();
+		for (TblDistribution tblDistribution : distributions) {
+			if (tblDistribution.getCarIds() != null) {
+				List<Long> listTemp = JsonUtils.jsonToList(tblDistribution.getCarIds(), long.class);
+				listcars.addAll(listTemp);
+			}
+		}
+		if (!listcars.contains(qrId)) {
+			return PytheResult.build(400, "管理员权限不够");
+		}
 
 		// 该车已经被报修成功
 		TblMaintenanceExample example3 = new TblMaintenanceExample();
@@ -173,7 +158,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 		record.setAnnotation(annotation);
 		record.setCallTime(new Date());
 		record.setStatus(0);
-
+		record.setPhoneNum(phoneNum);
 		maintenanceMapper.insert(record);
 
 		return PytheResult.ok("谢谢反馈");
@@ -256,6 +241,146 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 		carMapper.updateByPrimaryKey(car);
 
 		return PytheResult.ok("录入成功");
+	}
+
+	@Override
+	public PytheResult selectMaintenanceByLevel(String level, Integer pageNum, Integer pageSize) {
+		// TODO Auto-generated method stub
+		// 获取该权限下的所有车辆
+		ArrayList<String> list = new ArrayList<String>();
+		TblDistributionExample tblDistributionExample = new TblDistributionExample();
+		com.pythe.pojo.TblDistributionExample.Criteria criteria = tblDistributionExample.createCriteria();
+		if (!"0".equals(level)) {
+			TblCatalogExample example2 = new TblCatalogExample();
+			example2.createCriteria().andHigherLevelIdEqualTo(level);
+			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+			if (!catalogList.isEmpty()) {
+				for (TblCatalog tblCatalog : catalogList) {
+					list.add(tblCatalog.getId());
+				}
+			} else {
+				list.add(level);
+			}
+			criteria.andLevelIn(list);
+		}
+
+		List<TblDistribution> distributions = tblDistributionMapper.selectByExampleWithBLOBs(tblDistributionExample);
+		if (distributions.isEmpty()) {
+			return PytheResult.build(400, "园区没有投放车辆");
+		}
+		List<Long> listcars = new ArrayList<Long>();
+		for (TblDistribution tblDistribution : distributions) {
+			if (tblDistribution.getCarIds() != null) {
+				List<Long> listTemp = JsonUtils.jsonToList(tblDistribution.getCarIds(), long.class);
+				listcars.addAll(listTemp);
+			}
+		}
+		// 查询报修记录
+		PageHelper.startPage(pageNum, pageSize);
+		VMaintenanceExample vMaintenanceExample = new VMaintenanceExample();
+		vMaintenanceExample.createCriteria().andQrIdIn(listcars);
+		List<VMaintenance> vMaintenances = vMaintenanceMapper.selectByExampleWithBLOBs(vMaintenanceExample);
+		if (!vMaintenances.isEmpty()) {
+			return PytheResult.ok(vMaintenances);
+		}
+		return PytheResult.build(400, "暂无报修记录");
+
+	}
+
+	@Override
+	public PytheResult deleteMaintenanceStatusByLevel(String level, Long qrId) {
+		// TODO Auto-generated method stub
+		// 获取该权限下的所有车辆
+		ArrayList<String> list = new ArrayList<String>();
+		TblDistributionExample tblDistributionExample = new TblDistributionExample();
+		com.pythe.pojo.TblDistributionExample.Criteria criteria = tblDistributionExample.createCriteria();
+		if (!"0".equals(level)) {
+			TblCatalogExample example2 = new TblCatalogExample();
+			example2.createCriteria().andHigherLevelIdEqualTo(level);
+			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+			if (!catalogList.isEmpty()) {
+				for (TblCatalog tblCatalog : catalogList) {
+					list.add(tblCatalog.getId());
+				}
+			} else {
+				list.add(level);
+			}
+			criteria.andLevelIn(list);
+		}
+
+		List<TblDistribution> distributions = tblDistributionMapper.selectByExampleWithBLOBs(tblDistributionExample);
+		if (distributions.isEmpty()) {
+			return PytheResult.build(400, "园区没有投放车辆");
+		}
+		List<Long> listcars = new ArrayList<Long>();
+		for (TblDistribution tblDistribution : distributions) {
+			if (tblDistribution.getCarIds() != null) {
+				List<Long> listTemp = JsonUtils.jsonToList(tblDistribution.getCarIds(), long.class);
+				listcars.addAll(listTemp);
+			}
+		}
+		if (!listcars.contains(qrId)) {
+			return PytheResult.build(400, "管理员权限不够");
+		}
+		// 删除报修记录
+		TblMaintenanceExample tblMaintenanceExample = new TblMaintenanceExample();
+		tblMaintenanceExample.createCriteria().andQrIdEqualTo(qrId);
+		List<TblMaintenance> maintenanceList = maintenanceMapper.selectByExampleWithBLOBs(tblMaintenanceExample);
+		if (maintenanceList.isEmpty()) {
+			return PytheResult.build(400, "该车没有被报修");
+		}
+		maintenanceMapper.deleteByPrimaryKey(maintenanceList.get(0).getId());
+		// 看看车牌号是否存在
+		TblCarExample example2 = new TblCarExample();
+		example2.createCriteria().andQrIdEqualTo(qrId);
+		List<TblCar> carList = carMapper.selectByExample(example2);
+		TblCar car = carList.get(0);
+
+		// 改变报修的状态码
+		car.setStatus(CAR_FREE_STATUS);
+		carMapper.updateByPrimaryKey(car);
+
+		return PytheResult.ok("解修成功");
+	}
+
+	@Override
+	public PytheResult updateFixedPointForCarByLevel(String parameters) {
+		// TODO Auto-generated method stub
+		// 关联景区和车
+		JSONObject information = JSONObject.parseObject(parameters);
+		Long qrId = information.getLong("qrId");
+		String areaId = information.getString("areaId");
+		String level = information.getString("level");
+		TblDistributionExample tblDistributionExample = new TblDistributionExample();
+		tblDistributionExample.createCriteria().andLevelEqualTo(level).andIdEqualTo(areaId);
+		List<TblDistribution> distributions = tblDistributionMapper.selectByExampleWithBLOBs(tblDistributionExample);
+		if (distributions.isEmpty()) {
+			return PytheResult.build(400, "输入有误或权限不够");
+		}
+		List<Long> list = new ArrayList<Long>();
+		if (distributions.get(0).getCarIds() != null) {
+			list = JsonUtils.jsonToList(distributions.get(0).getCarIds(), Long.class);
+		}
+
+		if (list.contains(qrId)) {
+			return PytheResult.build(400, "该车编号已录入，无需再录入");
+		}
+
+		list.add(qrId);
+		distributions.get(0).setCarIds(JsonUtils.objectToJson(list));
+		tblDistributionMapper.updateByPrimaryKeyWithBLOBs(distributions.get(0));
+
+		// 给车定级
+		TblCarExample example = new TblCarExample();
+		example.createCriteria().andQrIdEqualTo(qrId);
+		List<TblCar> carList = carMapper.selectByExample(example);
+		if (carList.isEmpty()) {
+			return PytheResult.build(400, "车编号未录入或输入错误");
+		}
+		TblCar car = carList.get(0);
+		car.setDescription(distributions.get(0).getLevel());
+		carMapper.updateByPrimaryKey(car);
+		return PytheResult.ok("关联成功");
 	}
 
 }

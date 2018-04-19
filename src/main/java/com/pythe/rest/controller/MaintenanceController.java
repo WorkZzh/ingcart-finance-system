@@ -60,4 +60,47 @@ public class MaintenanceController {
 		return service.recordMaintenance(parameter);
 	}
 
+	/*
+	 * 查询报修记录
+	 */
+	@RequestMapping(value = "/record/maintenance/level", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectMaintenanceByLevel(@RequestParam(required = true, value = "level") String level,
+			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "30") Integer pageSize) {
+		try {
+			return service.selectMaintenanceByLevel(level, pageNum, pageSize);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+
+	/*
+	 * 解除报修
+	 */
+	@RequestMapping(value = "/delete/maintenance/status/level", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult deleteMaintenanceStatusByLevel(@RequestParam(required = true, value = "level") String level,
+			@RequestParam(required = true, value = "qrId") Long qrId) {
+		try {
+			return service.deleteMaintenanceStatusByLevel(level, qrId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+
+	/***
+	 * 关联景区和车
+	 */
+	@RequestMapping(value = "/update/car/point/level", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult updateFixedPointForCar(@RequestBody String parameters) throws Exception {
+		try {
+			return service.updateFixedPointForCarByLevel(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 }

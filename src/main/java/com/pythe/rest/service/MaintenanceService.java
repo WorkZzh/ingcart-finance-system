@@ -10,4 +10,9 @@ public interface MaintenanceService {
 
 	PytheResult recordMaintenance(String parameter);
 
+	PytheResult selectMaintenanceByLevel(String level, Integer pageNum, Integer pageSize);
+
+	PytheResult deleteMaintenanceStatusByLevel(String level, Long qrId);
+	
+	PytheResult updateFixedPointForCarByLevel(String parameters);
 }
