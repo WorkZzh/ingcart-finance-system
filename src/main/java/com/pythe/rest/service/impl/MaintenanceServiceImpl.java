@@ -9,7 +9,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.NativeWebRequest;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -22,18 +21,21 @@ import com.pythe.mapper.TblCatalogMapper;
 import com.pythe.mapper.TblDistributionMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
 import com.pythe.mapper.VAcountRecordMapper;
+import com.pythe.mapper.VMaintenanceMapper;
 import com.pythe.mapper.VOperatorMapper;
+import com.pythe.mapper.VOperatorRecordMapper;
 import com.pythe.pojo.TblCar;
 import com.pythe.pojo.TblCarExample;
 import com.pythe.pojo.TblCatalog;
 import com.pythe.pojo.TblCatalogExample;
-import com.pythe.pojo.TblDealerExample;
 import com.pythe.pojo.TblDistribution;
 import com.pythe.pojo.TblDistributionExample;
 import com.pythe.pojo.TblMaintenance;
 import com.pythe.pojo.TblMaintenanceExample;
 import com.pythe.pojo.VAcountRecord;
 import com.pythe.pojo.VAcountRecordExample;
+import com.pythe.pojo.VMaintenance;
+import com.pythe.pojo.VMaintenanceExample;
 import com.pythe.pojo.VOperator;
 import com.pythe.pojo.VOperatorExample;
 import com.pythe.rest.service.MaintenanceService;
@@ -58,6 +60,15 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
 	@Autowired
 	private TblDistributionMapper tblDistributionMapper;
+
+	@Autowired
+	private TblCatalogMapper catalogMapper;
+
+	@Autowired
+	private VOperatorRecordMapper vOperatorRecordMapper;
+
+	@Autowired
+	private VMaintenanceMapper vMaintenanceMapper;
 
 	// CAR
 	@Value("${CAR_FREE_STATUS}")
@@ -103,7 +114,9 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 			if (distributions.isEmpty()) {
 				return PytheResult.build(400, "园区没有投放车辆");
 			}
-			List<Long> list = JsonUtils.jsonToList(distributions.get(0).getCarIds(), Long.class);
+			List<Long> list = new ArrayList<Long>();
+			if (distributions.get(0).getCarIds() != null)
+				list = JsonUtils.jsonToList(distributions.get(0).getCarIds(), Long.class);
 			if (!list.contains(qrId)) {
 				return PytheResult.build(400, "管理员权限不够");
 			}
@@ -134,8 +147,10 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 			}
 			List<Long> list = new ArrayList<Long>();
 			for (TblDistribution tblDistribution : distributions) {
-				List<Long> listTemp = JsonUtils.jsonToList(tblDistribution.getCarIds(), long.class);
-				list.addAll(listTemp);
+				if (tblDistribution.getCarIds() != null) {
+					List<Long> listTemp = JsonUtils.jsonToList(tblDistribution.getCarIds(), long.class);
+					list.addAll(listTemp);
+				}
 			}
 			if (!list.contains(qrId)) {
 				return PytheResult.build(400, "管理员权限不够");
