@@ -70,7 +70,7 @@ public interface CartService {
 
 	PytheResult refundUnconditionally(String parameters);
 
-	PytheResult transferCar(String parameters);
+	PytheResult updateCar(String parameters);
 
 	PytheResult manageUnlock(String parameters);
 

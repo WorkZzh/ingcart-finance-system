@@ -69,4 +69,8 @@ public interface ManagerService {
 	PytheResult deleteOperator(String parameters);
 
 	PytheResult selectLastRecrd(String phoneNum);
+
+	PytheResult deleteGroup(String parameters);
+
+	PytheResult deleteAttraction(String parameters);
 }

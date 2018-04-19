@@ -166,6 +166,25 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	/**
+	 * 删除景区
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/delete/attraction/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult deleteAttraction(@RequestBody String parameters) throws Exception {
+		try {
+			return service.deleteAttraction(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
 
 	/**
 	 * 创建集团
@@ -184,6 +203,31 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	/**
+	 * 删除集团
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/delete/group/", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult deleteGroup(@RequestBody String parameters) throws Exception {
+		try {
+			return service.deleteGroup(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * 更新车的位置
@@ -478,7 +522,7 @@ public class ManagerController {
 	}
 
 	/**
-	 * 删除管理人员 电话号码和操作人员的level
+	 * 删除管理人员电话号码和操作人员的level
 	 */
 	@RequestMapping(value = "/delete/manager", method = RequestMethod.POST)
 	@ResponseBody

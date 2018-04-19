@@ -181,15 +181,15 @@ public class CartController {
     /**
 	 * 换车送券
 	 * @return
-	 * localhost:8084/manage/urgent/refund
+	 * localhost:8084/transfer/car/
 	 */
     @RequestMapping(value = "/transfer/car/", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult transferCarAnd(
+	public PytheResult transferCar(
 			@RequestBody String parameters
 			) throws Exception {
 		try {
-			return service.transferCar(parameters);
+			return service.updateCar(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
@@ -231,7 +231,7 @@ public class CartController {
     
     /**
 	 *开锁检测_IOS
-	 * localhost:8084/rest/unlock/prepare?customerId=9&qrId=100001
+	 * localhost:8084/qr/unlock/prepare?customerId=9&qrId=100001
 	 */
     @RequestMapping(value = "/qr/unlock/prepare", method = RequestMethod.GET)
 	@ResponseBody

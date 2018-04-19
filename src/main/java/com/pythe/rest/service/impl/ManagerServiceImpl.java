@@ -279,8 +279,14 @@ public class ManagerServiceImpl implements ManagerService {
 		// 关联景区和车
 		JSONObject information = JSONObject.parseObject(parameters);
 		Long qrId = information.getLong("qrId");
-		String areaId = information.getString("areaId");
-		TblDistribution distribution = distributionMapper.selectByPrimaryKey(areaId);
+		String level = information.getString("level");
+		TblDistributionExample dexample =new TblDistributionExample();
+		dexample.createCriteria().andLevelEqualTo(level);
+		List<TblDistribution> distributionList = distributionMapper.selectByExampleWithBLOBs(dexample);
+		if (distributionList.isEmpty()) {
+			return PytheResult.build(400, "该景区不存在");
+		}
+		TblDistribution distribution = distributionList.get(0);
 
 		List<Long> list = null;
 		if (null == distribution.getCarIds()) {
@@ -313,9 +319,17 @@ public class ManagerServiceImpl implements ManagerService {
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		Long qrId = information.getLong("qrId");
-		String areaId = information.getString("areaId");
+		//String areaId = information.getString("areaId");
 		// 删除关联
-		TblDistribution distribution = distributionMapper.selectByPrimaryKey(areaId);
+		String level = information.getString("level");
+		TblDistributionExample dexample =new TblDistributionExample();
+		dexample.createCriteria().andLevelEqualTo(level);
+		List<TblDistribution> distributionList = distributionMapper.selectByExampleWithBLOBs(dexample);
+		if (distributionList.isEmpty()) {
+			return PytheResult.build(400, "该景区不存在");
+		}
+		TblDistribution distribution = distributionList.get(0);
+		
 		List<Long> list = JsonUtils.jsonToList(distribution.getCarIds(), Long.class);
 		list.remove(qrId);
 		distribution.setCarIds(JsonUtils.objectToJson(list));
@@ -330,7 +344,7 @@ public class ManagerServiceImpl implements ManagerService {
 		}
 
 		TblCar car = carList.get(0);
-		car.setDescription("A");
+		car.setDescription(null);
 		carMapper.updateByPrimaryKey(car);
 
 		return PytheResult.ok("删除成功");
@@ -1169,7 +1183,7 @@ public class ManagerServiceImpl implements ManagerService {
 			return PytheResult.build(400, "不允许重复添加，如需更改，请联系开发人员");
 		}
 		insertOperator(phoneNum, type, catalogId, PART_MANGER_LEVEL, managerId);
-		return PytheResult.build(400, "该用户已经是管理员");
+		return PytheResult.build(200, "添加成功");
 	}
 
 	@Override
@@ -1264,6 +1278,138 @@ public class ManagerServiceImpl implements ManagerService {
 			return PytheResult.build(400, "不存在任何记录");
 		}
 		return PytheResult.ok(record.get(0));
+	}
+
+	@Override
+	public PytheResult deleteGroup(String parameters) {
+		JSONObject information = JSONObject.parseObject(parameters);
+		String c1_id = information.getString("catalogId");
+		List<TblCatalog> cataList = null;
+		TblCatalogExample example = new TblCatalogExample();
+		// level为1，2时候就是属于一个园区
+		example.createCriteria().andHigherLevelIdEqualTo(c1_id);
+		cataList = catalogMapper.selectByExample(example);
+		
+		
+		//用户可能添加集团，所以只删除这个即可
+		if (cataList.isEmpty()) {
+			TblCatalogExample catalogExample =new TblCatalogExample();
+			catalogExample.createCriteria().andIdEqualTo(c1_id);
+			catalogMapper.deleteByExample(catalogExample);
+			
+			TblOperatorExample operatorExample =new TblOperatorExample();
+			operatorExample.createCriteria().andCatalogIdEqualTo(c1_id);
+			operatorMapper.deleteByExample(operatorExample);
+			return PytheResult.build(200,"删除成功");
+		}
+		
+		List<String> catalogs = new ArrayList<String>();
+		for (TblCatalog catalog : cataList) {
+			catalogs.add(catalog.getId());
+		}
+		
+		//得到关联车辆的ID
+		TblDistributionExample distributionExample =new TblDistributionExample();
+		distributionExample.createCriteria().andLevelIn(catalogs);
+		List<TblDistribution> distributionList = distributionMapper.selectByExampleWithBLOBs(distributionExample);
+		List<Long> carIds = new LinkedList<Long>(); 
+		for (TblDistribution distribution : distributionList) {
+			if (null!=distribution.getCarIds()) {
+				carIds.addAll(JsonUtils.jsonToList(distribution.getCarIds(), Long.class));
+			}
+		}
+		
+		//删除distribution表上的数据
+		distributionMapper.deleteByExample(distributionExample);
+		
+		
+		//删除关联的车辆
+		//可能还没有关联车辆，防止报错
+		if (!carIds.isEmpty()) {
+			TblCar record =new TblCar();
+			record.setDescription(null);
+			TblCarExample carExample = new TblCarExample();
+			carExample.createCriteria().andQrIdIn(carIds);
+			carMapper.updateByExampleSelective(record, carExample);
+		}
+
+		
+		
+	    //删除定价表
+		TblPriceExample priceExample =new TblPriceExample();
+		priceExample.createCriteria().andLevelIn(catalogs);
+		priceMapper.deleteByExample(priceExample);
+		
+		
+		//添加一个catalog最高管理人员ID
+		catalogs.add(c1_id);
+		
+		
+		//删除所有catalog目录
+		TblCatalogExample catalogExample =new TblCatalogExample();
+		catalogExample.createCriteria().andIdIn(catalogs);
+		catalogMapper.deleteByExample(catalogExample);
+		
+		
+		//删除景区下的所有管理者
+		TblOperatorExample operatorExample =new TblOperatorExample();
+		operatorExample.createCriteria().andCatalogIdIn(catalogs);
+		operatorMapper.deleteByExample(operatorExample);
+		
+		return PytheResult.build(200,"删除成功");
+	}
+
+	@Override
+	public PytheResult deleteAttraction(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject information = JSONObject.parseObject(parameters);
+		String c2_id = information.getString("catalogId");
+		//删除车的关联
+		TblDistributionExample distributionExample =new TblDistributionExample();
+		distributionExample.createCriteria().andLevelEqualTo(c2_id);
+		List<TblDistribution> distributionList = distributionMapper.selectByExampleWithBLOBs(distributionExample);
+		List<Long> carIds = new LinkedList<Long>(); 
+		for (TblDistribution distribution : distributionList) {
+			if (null!=distribution.getCarIds()) {
+				carIds.addAll(JsonUtils.jsonToList(distribution.getCarIds(), Long.class));
+			}
+		}
+		
+		
+		//删除distribution表上的数据
+		distributionMapper.deleteByExample(distributionExample);
+		
+		
+		//删除关联的车辆
+		//可能还没有关联车辆，防止报错
+		if (!carIds.isEmpty()) {
+			TblCar record =new TblCar();
+			record.setDescription(null);
+			TblCarExample carExample = new TblCarExample();
+			carExample.createCriteria().andQrIdIn(carIds);
+			carMapper.updateByExampleSelective(record, carExample);
+		}
+		
+	    //删除定价表
+		TblPriceExample priceExample =new TblPriceExample();
+		priceExample.createCriteria().andLevelEqualTo(c2_id);
+		priceMapper.deleteByExample(priceExample);
+		
+		
+		//删除所有catalog目录
+		TblCatalogExample catalogExample =new TblCatalogExample();
+		catalogExample.createCriteria().andIdEqualTo(c2_id);
+		catalogMapper.deleteByExample(catalogExample);
+		
+		
+		//删除景区下的所有管理者
+		TblOperatorExample operatorExample =new TblOperatorExample();
+		operatorExample.createCriteria().andCatalogIdEqualTo(c2_id);
+		operatorMapper.deleteByExample(operatorExample);
+		
+		return PytheResult.build(200,"删除成功");
+		
+		
 	}
 
 }

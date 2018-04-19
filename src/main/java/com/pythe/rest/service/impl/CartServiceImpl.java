@@ -73,6 +73,7 @@ import com.pythe.rest.service.CartService;
 public class CartServiceImpl implements CartService {
 
 	// 权限有2种
+	@Value("${DEVELOPER_LEVEL}")
 	private Integer DEVELOPER_LEVEL;
 
 	@Value("${TEST_PAY_TYPE}")
@@ -205,10 +206,10 @@ public class CartServiceImpl implements CartService {
 		String recordId = FactoryUtils.getUUID();
 		String code = null;
 		// 开锁成功后才来更新这个的。
-		if (null != information.getDouble("code")) {
+		if (null != information.getString("code")) {
 			code = information.getString("code");
 			TblCouponExample couponExample = new TblCouponExample();
-			couponExample.createCriteria().andStatusNotEqualTo(0).andCodeEqualTo(code);
+			couponExample.createCriteria().andStatusEqualTo(0).andCodeEqualTo(code);
 			TblCoupon coupon = couponMapper.selectByExample(couponExample).get(0);
 			coupon.setStatus(1);
 			couponMapper.updateByPrimaryKey(coupon);
@@ -964,7 +965,13 @@ public class CartServiceImpl implements CartService {
 			return PytheResult.build(100, "该车信息尚未录入，暂无法使用");
 		}
 		car = carList2.get(0);
-
+		
+		//如果没有关联景区是无法扫不开锁的
+		if (null==car.getDescription()) {
+			return PytheResult.build(400, "开锁失败，未绑定景区，请联系管理员");
+		}
+		
+		
 		// 检测该园区是否符合收费标准
 		String level = null;
 		if (null == car.getDescription()) {
@@ -2189,13 +2196,13 @@ public class CartServiceImpl implements CartService {
 		return PytheResult.build(400, "退款失败，具体原因，请咨询Ingcart出行");
 	}
 
-	private int giveCoupon(Long managerId, Double price) {
+	private int giveCoupon(Long customerId,Long managerId, Double price) {
 		// 送用户一张券
 		TblCoupon coupon = new TblCoupon();
 		// 产生不重复的为8位随机数
 		String code = null;
 		for (int i = 0; i <= 100; i++) {
-			code = StringUtils.getStringRandom(8);
+			code = StringUtils.getStringByLength(8);
 			TblCouponExample couponExample = new TblCouponExample();
 			couponExample.createCriteria().andStatusNotEqualTo(0).andCodeEqualTo(code);
 			List<TblCoupon> couponList = couponMapper.selectByExample(couponExample);
@@ -2204,6 +2211,7 @@ public class CartServiceImpl implements CartService {
 			}
 		}
 
+		coupon.setCustomerId(customerId);
 		coupon.setCode(code);
 		coupon.setStopTime(DateUtils.parseTime(DateUtils.getTodayDate() + " 23:00:00"));
 		coupon.setStatus(0);
@@ -2215,7 +2223,8 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public PytheResult transferCar(String parameters) {
+	@Transactional
+	public PytheResult updateCar(String parameters) {
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum").trim();
@@ -2250,7 +2259,7 @@ public class CartServiceImpl implements CartService {
 		if (3 == customer.getCarStatus()) {
 			// 删除之前的用车记录
 			recordMapper.deleteByPrimaryKey(recordId);
-			giveCoupon(managerId, customer.getPrice() - customer.getGiving());
+			giveCoupon(customerId,managerId, customer.getPrice() - customer.getGiving());
 			return PytheResult.ok("优惠券赠送成功");
 		}
 
@@ -2285,6 +2294,8 @@ public class CartServiceImpl implements CartService {
 		bill.setRefundAmount(givingAmount);
 		bill.setGivingAmount(0d);
 
+			
+
 		if (DEVELOPER_LEVEL.equals(customer.getLevel())) {
 			bill.setType(TEST_PAY_TYPE);
 		} else {
@@ -2311,7 +2322,7 @@ public class CartServiceImpl implements CartService {
 			billMapper.insert(bill);
 
 			// 送一张优惠券
-			giveCoupon(managerId, customer.getPrice() - customer.getGiving());
+			giveCoupon(customerId,managerId, customer.getPrice() - customer.getGiving());
 			return PytheResult.ok("优惠券赠送成功");
 		}
 
@@ -2342,7 +2353,7 @@ public class CartServiceImpl implements CartService {
 				billMapper.insert(bill);
 
 				// 送一张优惠券
-				giveCoupon(managerId, customer.getPrice() - customer.getGiving());
+				giveCoupon(customerId,managerId, customer.getPrice() - customer.getGiving());
 				return PytheResult.ok("优惠券赠送成功");
 			}
 		}
@@ -2350,7 +2361,6 @@ public class CartServiceImpl implements CartService {
 		// 这种情况是，因为退款不成功,优惠券没有，并没有扣除任何金额
 		bill.setStatus(NOT_PAY_STATUS);
 		billMapper.insert(bill);
-
 		return PytheResult.build(400, "优惠券已赠送，但退款失败，具体原因，请咨询开发人员");
 
 	}
@@ -2364,7 +2374,18 @@ public class CartServiceImpl implements CartService {
 		Double longitude = information.getDouble("longitude");
 		Double latitude = information.getDouble("latitude");
 		String recordId = FactoryUtils.getUUID();
-
+		
+		
+		TblCarExample example =new TblCarExample();
+		example.createCriteria().andQrIdEqualTo(qrId).andDescriptionIsNotNull();
+        List<TblCar> carList = carMapper.selectByExample(example);
+        if (carList.isEmpty()) {
+			return PytheResult.build(400, "该车暂未绑定任何景区");
+		}
+		
+		
+		
+		
 		TblOperatorRecord record = new TblOperatorRecord();
 		record.setId(recordId);
 		record.setLatitudeStart(latitude);

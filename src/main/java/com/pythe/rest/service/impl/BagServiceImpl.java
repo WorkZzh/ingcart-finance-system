@@ -313,12 +313,10 @@ public class BagServiceImpl implements BagService {
 		PageHelper.startPage(pageNum, pageSize);
 		VCouponExample example =new VCouponExample();
 		example.createCriteria().andCustomerIdEqualTo(customerId);
+		example.setOrderByClause("start_time desc");
 		List<VCoupon> coupon = couponMapper.selectByExample(example);
 		if (coupon.isEmpty()) {
 			return PytheResult.build(400, "暂无优惠券");
-		}
-		for (VCoupon vCoupon : coupon) {
-			
 		}
 		return PytheResult.ok(coupon);
 	}

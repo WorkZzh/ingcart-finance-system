@@ -173,6 +173,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 		record.setAnnotation(annotation);
 		record.setCallTime(new Date());
 		record.setStatus(0);
+		record.setPhoneNum(phoneNum);
 
 		maintenanceMapper.insert(record);
 
@@ -247,9 +248,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 		example2.createCriteria().andQrIdEqualTo(qrId);
 
 		List<TblCar> carList = carMapper.selectByExample(example2);
-
 		TblCar car = carList.get(0);
-
 		// 改变报修的状态码
 		car.setStatus(CAR_FREE_STATUS);
 		car.setUser(null);
@@ -257,5 +256,4 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
 		return PytheResult.ok("录入成功");
 	}
-
 }
