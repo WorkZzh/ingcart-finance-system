@@ -21,6 +21,7 @@ import com.pythe.mapper.TblCatalogMapper;
 import com.pythe.mapper.TblDistributionMapper;
 import com.pythe.mapper.TblMaintenanceMapper;
 import com.pythe.mapper.VAcountRecordMapper;
+import com.pythe.mapper.VDistributionMapper;
 import com.pythe.mapper.VMaintenanceMapper;
 import com.pythe.mapper.VOperatorMapper;
 import com.pythe.mapper.VOperatorRecordMapper;
@@ -34,10 +35,13 @@ import com.pythe.pojo.TblMaintenance;
 import com.pythe.pojo.TblMaintenanceExample;
 import com.pythe.pojo.VAcountRecord;
 import com.pythe.pojo.VAcountRecordExample;
+import com.pythe.pojo.VDistribution;
+import com.pythe.pojo.VDistributionExample;
 import com.pythe.pojo.VMaintenance;
 import com.pythe.pojo.VMaintenanceExample;
 import com.pythe.pojo.VOperator;
 import com.pythe.pojo.VOperatorExample;
+import com.pythe.pojo.VRecordBillExample;
 import com.pythe.rest.service.MaintenanceService;
 
 @Service
@@ -69,6 +73,9 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
 	@Autowired
 	private VMaintenanceMapper vMaintenanceMapper;
+	
+	@Autowired
+	private VDistributionMapper vDistributionMapper;
 
 	// CAR
 	@Value("${CAR_FREE_STATUS}")
@@ -270,5 +277,35 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 		carMapper.updateByPrimaryKey(car);
 
 		return PytheResult.ok("录入成功");
+	}
+
+	@Override
+	public PytheResult selectAllAreaByLevel(String level, Integer pageNum, Integer pageSize) {
+		// TODO Auto-generated method stub
+
+		VDistributionExample vDistributionExample =new VDistributionExample();
+		com.pythe.pojo.VDistributionExample.Criteria cretria2 = vDistributionExample.createCriteria();
+		ArrayList<String> list = new ArrayList<String>();
+		if (!"0".equals(level)) {
+			TblCatalogExample example2 = new TblCatalogExample();
+			example2.createCriteria().andHigherLevelIdEqualTo(level);
+			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+			if (!catalogList.isEmpty()) {
+				for (TblCatalog tblCatalog : catalogList) {
+					list.add(tblCatalog.getId());
+				}
+			} else {
+				list.add(level);
+			}
+			cretria2.andLevelIn(list);
+		}
+		if (pageNum == null || pageSize == null) {
+			pageNum = 1;
+			pageSize = 10;
+		}
+		PageHelper.startPage(pageNum, pageSize);
+		vDistributionExample.setOrderByClause("created");
+		List<VDistribution> vDistributions = vDistributionMapper.selectByExample(vDistributionExample);
+		return PytheResult.ok(vDistributions);
 	}
 }
