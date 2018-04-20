@@ -35,7 +35,18 @@ public class FactoryController {
 		}
 	}
 	
-
+	//将订单进行group by 统计一下。
+	@RequestMapping(value = "/groupby/ordernum", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult groupByOrderNumSum() {
+		try {
+			return service.groupByOrderNumSum();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
 	//生产账单
 	@RequestMapping(value = "/car/pay", method = RequestMethod.GET)
 	@ResponseBody

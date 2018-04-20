@@ -77,7 +77,12 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Value("${CAR_FREE_STATUS}")
 	private Integer CAR_FREE_STATUS;
-
+	
+	@Value("${CODE_PAS}")
+	private String CODE_PAS;
+	
+	
+	
 	@Value("${TOP_COMPANY_ID}")
 	private String TOP_COMPANY_ID;
 
@@ -1284,6 +1289,14 @@ public class ManagerServiceImpl implements ManagerService {
 	public PytheResult deleteGroup(String parameters) {
 		JSONObject information = JSONObject.parseObject(parameters);
 		String c1_id = information.getString("catalogId");
+		
+		
+		String password = information.getString("password");
+		if (!CODE_PAS.equals(password)) {
+			return PytheResult.build(400,"密码错误");
+		}
+		
+		
 		List<TblCatalog> cataList = null;
 		TblCatalogExample example = new TblCatalogExample();
 		// level为1，2时候就是属于一个园区
@@ -1364,6 +1377,12 @@ public class ManagerServiceImpl implements ManagerService {
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		String c2_id = information.getString("catalogId");
+		String password = information.getString("password");
+		
+		
+		if (!CODE_PAS.equals(password)) {
+			return PytheResult.build(400,"密码错误");
+		}
 		//删除车的关联
 		TblDistributionExample distributionExample =new TblDistributionExample();
 		distributionExample.createCriteria().andLevelEqualTo(c2_id);

@@ -11,6 +11,8 @@ public interface FactoryService {
 
 	PytheResult insertBillRecord();
 
+	PytheResult groupByOrderNumSum();
+
 
 
 

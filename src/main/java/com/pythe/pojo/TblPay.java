@@ -7,7 +7,7 @@ public class TblPay {
 
     private Date date;
 
-    private Long ordernum;
+    private String orderNum;
 
     private String recordid;
 
@@ -45,6 +45,10 @@ public class TblPay {
 
     private Double givingAmount;
 
+    private Double refundAmount;
+
+    private String customerTag;
+
     public Long getId() {
         return id;
     }
@@ -61,12 +65,12 @@ public class TblPay {
         this.date = date;
     }
 
-    public Long getOrdernum() {
-        return ordernum;
+    public String getOrderNum() {
+        return orderNum;
     }
 
-    public void setOrdernum(Long ordernum) {
-        this.ordernum = ordernum;
+    public void setOrderNum(String orderNum) {
+        this.orderNum = orderNum == null ? null : orderNum.trim();
     }
 
     public String getRecordid() {
@@ -211,5 +215,21 @@ public class TblPay {
 
     public void setGivingAmount(Double givingAmount) {
         this.givingAmount = givingAmount;
+    }
+
+    public Double getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setRefundAmount(Double refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+
+    public String getCustomerTag() {
+        return customerTag;
+    }
+
+    public void setCustomerTag(String customerTag) {
+        this.customerTag = customerTag == null ? null : customerTag.trim();
     }
 }

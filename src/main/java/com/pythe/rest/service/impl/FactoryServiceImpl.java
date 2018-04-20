@@ -19,6 +19,7 @@ import com.pythe.mapper.TblBillMapper;
 import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblComboMapper;
 import com.pythe.mapper.TblCustomerMapper;
+import com.pythe.mapper.TblPMapper;
 import com.pythe.mapper.TblPayMapper;
 import com.pythe.mapper.TblRecordMapper;
 import com.pythe.mapper.TblStoreMapper;
@@ -32,6 +33,8 @@ import com.pythe.pojo.TblCombo;
 import com.pythe.pojo.TblComboExample;
 import com.pythe.pojo.TblCustomer;
 import com.pythe.pojo.TblCustomerExample;
+import com.pythe.pojo.TblP;
+import com.pythe.pojo.TblPExample;
 import com.pythe.pojo.TblPay;
 import com.pythe.pojo.TblPayExample;
 import com.pythe.pojo.TblRecord;
@@ -51,6 +54,9 @@ public class FactoryServiceImpl implements FactoryService {
 
 	@Autowired
 	private TblCarMapper carMapper;
+	
+	@Autowired
+	private TblPMapper pMapper;
 	
 	
 	@Autowired
@@ -296,7 +302,7 @@ public class FactoryServiceImpl implements FactoryService {
 			bill.setAmount(tblPay.getAmount());
 			bill.setGivingAmount(tblPay.getGivingAmount());
 			bill.setCustomerId(tblPay.getCustomerId());
-			bill.setOutTradeNo(String.valueOf(tblPay.getOrdernum()));
+			//bill.setOutTradeNo(String.valueOf(tblPay.getOrdernum()));
 			bill.setStatus(PAY_STATUS);
 			num = RandomUtils.nextInt(1,3);
 			date = new DateTime(tblPay.getStartTime()).minusMinutes(num).minusSeconds(num).toDate();
@@ -320,6 +326,55 @@ public class FactoryServiceImpl implements FactoryService {
 		}
 		
 		return PytheResult.ok("更新成功");
+	}
+
+
+	@Override
+	public PytheResult groupByOrderNumSum() {
+		// TODO Auto-generated method stub
+		TblPExample p = new TblPExample();
+		p.setOrderByClause("DATE ASC");
+		List<TblP> payList = pMapper.selectByExample(p);
+		Date date = null;
+		int num = 1;
+		for (TblP tblP : payList) {
+			TblPayExample example= new TblPayExample();
+			example.createCriteria().andOrderNumEqualTo(tblP.getOrderNum());
+			
+			List<TblPay> list = payMapper.selectByExample(example);
+			if (list.isEmpty()) {
+				TblPay pay =new TblPay();
+				pay.setOrderNum(tblP.getOrderNum());
+				pay.setCustomerTag(tblP.getCustomerTag());
+				pay.setAmount(tblP.getAmount());
+				pay.setRefundAmount(tblP.getRefundAmount());
+				num = RandomUtils.nextInt(1,4);
+				date = new DateTime(tblP.getDate()).plusSeconds(num).toDate();
+				pay.setDate(date);
+				num = RandomUtils.nextInt(1,5);
+				date = new DateTime(pay.getDate()).plusMinutes(num).plusSeconds(num).toDate();
+				pay.setStartTime(date);
+				payMapper.insert(pay);
+			}else {
+				TblPay pay = list.get(0);
+				pay.setAmount(pay.getAmount()+tblP.getAmount());
+				pay.setRefundAmount(pay.getRefundAmount() + tblP.getRefundAmount());
+				if (tblP.getRefundAmount()<=0d) {
+					num = RandomUtils.nextInt(1,4);
+					date = new DateTime(tblP.getDate()).plusSeconds(num).toDate();
+					pay.setStopTime(date);
+				}
+				payMapper.updateByPrimaryKey(pay);
+			}
+			
+			
+			
+
+		
+			
+			
+		}
+		return PytheResult.ok("计费成功");
 	}
 
 
