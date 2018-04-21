@@ -61,16 +61,5 @@ public class MaintenanceController {
 	}
 
 
-	@RequestMapping(value = "/select/area/level", method = RequestMethod.GET)
-	@ResponseBody
-	public PytheResult selectAllAreaByLevel(@RequestParam(required = true, value = "level") String level,
-			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize)
-			throws Exception {
-		try {
-			return service.selectAllAreaByLevel(level, pageNum, pageSize);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
-		}
-	}
+
 }

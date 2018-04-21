@@ -35,7 +35,7 @@ public class FactoryController {
 		}
 	}
 	
-	//将订单进行group by 统计一下。
+	//(1)将订单进行group by 统计一下。
 	@RequestMapping(value = "/groupby/ordernum", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult groupByOrderNumSum() {
@@ -47,7 +47,7 @@ public class FactoryController {
 		}
 	}
 	
-	//生产账单
+	//(2)生产账单
 	@RequestMapping(value = "/car/pay", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult insetCarPay() {
@@ -61,7 +61,7 @@ public class FactoryController {
 	
 	
 	
-	//生产数据
+	//(3)生产数据
 	@RequestMapping(value = "/insert/bill/record", method = RequestMethod.GET)
 	@ResponseBody
 	public PytheResult insertBillRecord() {

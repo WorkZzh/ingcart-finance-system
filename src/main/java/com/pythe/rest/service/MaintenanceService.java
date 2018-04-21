@@ -10,5 +10,4 @@ public interface MaintenanceService {
 
 	PytheResult recordMaintenance(String parameter);
 
-	PytheResult selectAllAreaByLevel(String level, Integer pageNum, Integer pageSize);
 }

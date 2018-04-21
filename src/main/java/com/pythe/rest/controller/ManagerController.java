@@ -224,28 +224,29 @@ public class ManagerController {
 	}
 	
 	
-	
-	
-	
-	
-
 	/**
-	 * 更新车的位置
+	 * 插入一个某集团负责人（需要变成4级管理的等级）
 	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/update/car/loc", method = RequestMethod.POST)
+	@RequestMapping(value = "/insert/group/manage/", method = RequestMethod.POST)
 	@ResponseBody
-	public PytheResult updateLocation(@RequestBody String parameters) throws Exception {
+	public PytheResult insertGroupManager(@RequestBody String parameters) throws Exception {
 		try {
-			return service.updateLocation(parameters);
+			return service.insertGroupManager(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
+	
+
+
 
 	/**
 	 * 插入一个婴咖管理（需要变成4级管理的等级）
@@ -264,6 +265,9 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
+	
+	
+	
 
 	/**
 	 * 插入一个运营专员（需要变成1级管理的等级）
@@ -306,6 +310,25 @@ public class ManagerController {
 	public PytheResult selectCarAttraction(@RequestBody String parameters) throws Exception {
 		try {
 			return service.selectCarAttraction(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	
+	/**
+	 * 更新车的位置
+	 * 
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/update/car/loc", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult updateLocation(@RequestBody String parameters) throws Exception {
+		try {
+			return service.updateLocation(parameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
@@ -547,6 +570,19 @@ public class ManagerController {
 			throws Exception {
 		try {
 			return service.selectLastRecrd(phoneNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	@RequestMapping(value = "/select/area/level", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectAllAreaByLevel(
+			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize)
+			throws Exception {
+		try {
+			return service.selectAllAreaByLevel( pageNum, pageSize);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));

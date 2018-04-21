@@ -73,4 +73,10 @@ public interface ManagerService {
 	PytheResult deleteGroup(String parameters);
 
 	PytheResult deleteAttraction(String parameters);
+
+	PytheResult selectAllAreaByLevel(Integer pageNum, Integer pageSize);
+
+	PytheResult insertGroupManager(String parameters);
+	
+	
 }

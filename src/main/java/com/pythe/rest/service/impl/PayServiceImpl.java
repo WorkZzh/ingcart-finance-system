@@ -36,9 +36,6 @@ public class PayServiceImpl implements PayService {
 	@Value("${BILL_CHARGE_TYPE}")
 	private Integer BILL_CHARGE_TYPE;
 	
-	//管理人员使用和测试的钱
-	@Value("${MANAGER_PAY_TYPE}")
-	private Integer MANAGER_PAY_TYPE;
 	
 	
 	@Value("${DEVELOPER_LEVEL}")

@@ -32,6 +32,7 @@ import com.pythe.mapper.TblTeasurerMapper;
 import com.pythe.mapper.TblVersionMapper;
 import com.pythe.mapper.VCatalogMapper;
 import com.pythe.mapper.VCustomerMapper;
+import com.pythe.mapper.VDistributionMapper;
 import com.pythe.mapper.VMaintenanceMapper;
 import com.pythe.mapper.VOperatorMapper;
 import com.pythe.mapper.VOperatorRecordMapper;
@@ -59,6 +60,8 @@ import com.pythe.pojo.VCatalog;
 import com.pythe.pojo.VCatalogExample;
 import com.pythe.pojo.VCustomer;
 import com.pythe.pojo.VCustomerExample;
+import com.pythe.pojo.VDistribution;
+import com.pythe.pojo.VDistributionExample;
 import com.pythe.pojo.VCustomerExample.Criteria;
 import com.pythe.pojo.VMaintenance;
 import com.pythe.pojo.VMaintenanceExample;
@@ -81,6 +84,9 @@ public class ManagerServiceImpl implements ManagerService {
 	@Value("${CODE_PAS}")
 	private String CODE_PAS;
 	
+	
+	@Autowired
+	private VDistributionMapper vDistributionMapper;
 	
 	
 	@Value("${TOP_COMPANY_ID}")
@@ -776,16 +782,16 @@ public class ManagerServiceImpl implements ManagerService {
 		// TODO Auto-generated method stub
 		JSONObject params = JSONObject.parseObject(parameters);
 
-		String name = params.getString("name");
-		String phoneNum = params.getString("phoneNum");
-		Long managerId = params.getLong("managerId");
-		Integer type = params.getInteger("type");
-		phoneNum = phoneNum.trim();
-		// 验证该电话是否已经加入是这家公司的最高管理员，如果是不允许添加
-		if (isExistPhoneInManger(phoneNum)) {
-			return PytheResult.build(400, "不允许重复添加，如需更改，请联系开发人员");
-		}
+		String name = params.getString("name").trim();
 
+		TblCatalogExample catalogExample =new TblCatalogExample();
+		catalogExample.createCriteria().andNameEqualTo(name);
+		List<TblCatalog> catalogList = catalogMapper.selectByExample(catalogExample);
+
+		if (!catalogList.isEmpty()) {
+			return PytheResult.build(400,"该集团已经存在，不需重复");
+		}
+		
 		TblCatalog record = new TblCatalog();
 		String catalogId = FactoryUtils.getUUID();
 		record.setId(catalogId);
@@ -795,13 +801,7 @@ public class ManagerServiceImpl implements ManagerService {
 		record.setCode(SECOND_CODE);
 		catalogMapper.insert(record);
 
-		// level为3就具有添加园区功能
-		insertOperator(phoneNum, type, catalogId, GROUP_MANAGER_LEVEL, managerId);
-
-		// 为了测试，而返回的参数，其实目录树上就有
-		JSONObject j = new JSONObject();
-		j.put("higherLevelId", catalogId);
-		return PytheResult.build(200, "创建成功", j);
+		return PytheResult.build(200, "创建成功");
 	}
 
 	@Override
@@ -1171,9 +1171,12 @@ public class ManagerServiceImpl implements ManagerService {
 		TblOperatorExample example = new TblOperatorExample();
 		example.createCriteria().andPhoneNumEqualTo(phoneNum);
 		List<TblOperator> operatorList = operatorMapper.selectByExample(example);
-		if (operatorList.isEmpty())
+		if (operatorList.isEmpty()){
 			return false;
-		return true;
+		}else{
+			return true;
+		}
+		
 	}
 
 	@Override
@@ -1428,7 +1431,44 @@ public class ManagerServiceImpl implements ManagerService {
 		
 		return PytheResult.build(200,"删除成功");
 		
-		
 	}
+	
+	@Override
+	public PytheResult selectAllAreaByLevel(Integer pageNum, Integer pageSize) {
+		// TODO Auto-generated method stub
+		PageHelper.startPage(pageNum, pageSize);
+		VDistributionExample vDistributionExample =new VDistributionExample();
+		List<VDistribution> vDistributions = vDistributionMapper.selectByExample(vDistributionExample);
+		return PytheResult.ok(vDistributions);
+	}
+
+	@Override
+	public PytheResult insertGroupManager(String parameters) {
+		// TODO Auto-generated method stub
+		JSONObject params = JSONObject.parseObject(parameters);
+		String phoneNum = params.getString("phoneNum");
+		Long managerId = params.getLong("managerId");
+		Integer type = params.getInteger("type");
+		String catalogId =params.getString("catalogId");
+
+		
+		phoneNum = phoneNum.trim();
+		System.out.println("=================>"+phoneNum);
+		// 验证该电话是否已经加入是这家公司的最高管理员，如果是不允许添加
+		if (isExistPhoneInManger(phoneNum)) {
+			return PytheResult.build(400, "不允许重复添加，如需更改，请联系开发人员");
+		}
+		
+		// level为3就具有添加园区功能
+		insertOperator(phoneNum, type, catalogId, GROUP_MANAGER_LEVEL, managerId);
+
+		// 为了测试，而返回的参数，其实目录树上就有
+		JSONObject j = new JSONObject();
+		j.put("higherLevelId", catalogId);
+		
+		return PytheResult.build(200,"添加成功",j);
+	}
+	
+	
 
 }

@@ -4,7 +4,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.RecursiveAction;
+
+import org.joda.time.DateTime;
 
 import com.pythe.common.pojo.PytheResult;
 
@@ -442,6 +446,30 @@ public class DateUtils {
 		cal.set(year, Calendar.DECEMBER, 31);
 		return cal.get(Calendar.DAY_OF_YEAR) == 366 ? true : false;
 	}
+	
+	
+	/**
+	 * 产生时间序列
+	 * List<String> list = getSequenceDate("2018-02-01 00:00:00","2018-04-19 23:59:59");
+	 * @param start_date
+	 * @param end_date
+	 * @return
+	 */
+	public static List<String> getSequenceDate(String start_date,String end_date){
+		List<String> result = new LinkedList<String>();
+		Date start = DateUtils.parseTime(start_date);
+		Date end = DateUtils.parseTime(end_date);
+		while(true){
+			result.add(DateUtils.formatDate(start));
+			start = new DateTime(start).plusDays(1).toDate();
+			if (start.after(end)) {
+				break;
+			}
+		}
+		return result;
+	}
+	
+	
 
 	/**
 	 * 获取某年某月的开始日期,0为第一天，1为最后一天
