@@ -1256,7 +1256,9 @@ public class ManagerServiceImpl implements ManagerService {
 		// TODO Auto-generated method stub
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
-		Integer status_level = information.getInteger("level");
+		Integer managerLevel = information.getInteger("level");
+		String managerCatalogId = information.getString("catalogId");
+		
 		// 通过手机号查看管理员等级
 		TblOperatorExample tblOperatorExample = new TblOperatorExample();
 		tblOperatorExample.createCriteria().andPhoneNumEqualTo(phoneNum);
@@ -1265,11 +1267,30 @@ public class ManagerServiceImpl implements ManagerService {
 			return PytheResult.build(400, "没有此管理员，请核实后删除");
 		}
 		int level = tblOperators.get(0).getLevel();
-		if (level >= status_level) {
+		if (level >= managerLevel) {
 			return PytheResult.build(400, "权限不够，无法删除该等级管理员");
 		}
-		operatorMapper.deleteByPrimaryKey(tblOperators.get(0).getId());
-		return PytheResult.build(200, "删除成功");
+		else{
+			
+			List<String> higherCatalogIds = new LinkedList<String>();
+			TblOperator o = tblOperators.get(0);
+			for(String cId = o.getCatalogId(); cId != "0";)
+			{
+				TblCatalog c = catalogMapper.selectByPrimaryKey(cId);
+				TblCatalog hCatalog = catalogMapper.selectByPrimaryKey(c.getHigherLevelId());
+				higherCatalogIds.add(hCatalog.getId());
+				cId = hCatalog.getId();
+			}
+			if(higherCatalogIds.contains(managerCatalogId))
+			{
+				operatorMapper.deleteByPrimaryKey(tblOperators.get(0).getId());
+				return PytheResult.build(200, "删除成功");
+			}
+			else{
+				return PytheResult.build(500, "管辖区域不同");
+			}
+		}
+		
 	}
 
 	@Override
