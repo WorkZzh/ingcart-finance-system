@@ -115,5 +115,16 @@ public class TeasurerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-
+	
+	@RequestMapping(value = "/teasurer/select/cars/level", method = RequestMethod.GET)
+	@ResponseBody
+	public PytheResult selectCarsByLevel(@RequestParam(required = true, value = "level") String level,
+			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize) {
+		try {
+			return teasurerService.selectCarsByLevel(level,pageNum,pageSize);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
 }

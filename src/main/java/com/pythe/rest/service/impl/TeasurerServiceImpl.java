@@ -1,5 +1,6 @@
 package com.pythe.rest.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,20 +11,28 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.pythe.common.pojo.PytheResult;
+import com.pythe.common.utils.JsonUtils;
+import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblCatalogMapper;
+import com.pythe.mapper.TblDistributionMapper;
 import com.pythe.mapper.TblTeasurerMapper;
 import com.pythe.mapper.TblTeasurerRecordMapper;
 import com.pythe.mapper.TblVerificationMapper;
 import com.pythe.mapper.VTeasurerMapper;
 import com.pythe.mapper.VTeasurerRecordMapper;
+import com.pythe.pojo.TblCar;
+import com.pythe.pojo.TblCarExample;
 import com.pythe.pojo.TblCatalog;
 import com.pythe.pojo.TblCatalogExample;
+import com.pythe.pojo.TblDistribution;
+import com.pythe.pojo.TblDistributionExample;
 import com.pythe.pojo.TblTeasurer;
 import com.pythe.pojo.TblTeasurerExample;
 import com.pythe.pojo.TblTeasurerRecord;
 import com.pythe.pojo.TblTeasurerRecordExample;
 import com.pythe.pojo.TblVerification;
 import com.pythe.pojo.TblVerificationExample;
+import com.pythe.pojo.VRecordBillExample;
 import com.pythe.pojo.VTeasurer;
 import com.pythe.pojo.VTeasurerExample;
 import com.pythe.pojo.VTeasurerRecord;
@@ -44,6 +53,12 @@ public class TeasurerServiceImpl implements TeasurerService {
 	private TblCatalogMapper TblCatalogMapper;
 	@Autowired
 	private TblVerificationMapper verificationMapper;
+	@Autowired
+	private TblCatalogMapper catalogMapper;
+	@Autowired
+	private TblDistributionMapper distributionMapper;
+	@Autowired
+	private TblCarMapper carMapper;
 
 	@Override
 	public PytheResult selectTeasurerList(String parameters) {
@@ -282,6 +297,76 @@ public class TeasurerServiceImpl implements TeasurerService {
 		TblTeasurer tblTeasurers = tblTeasurerMapper.selectByPrimaryKey(id);
 		return PytheResult.ok(tblTeasurers.getPhoneNum());
 
+	}
+
+	@Override
+	public PytheResult selectCarsByLevel(String level,Integer pageNum,Integer pageSize) {
+		// TODO Auto-generated method stub
+		TblDistributionExample tblDistributionExample = new TblDistributionExample();
+		com.pythe.pojo.TblDistributionExample.Criteria cretria2 = tblDistributionExample.createCriteria();
+		ArrayList<String> list = new ArrayList<String>();
+		if (!"0".equals(level)) {
+			TblCatalogExample example2 = new TblCatalogExample();
+			example2.createCriteria().andHigherLevelIdEqualTo(level);
+			List<TblCatalog> catalogList = catalogMapper.selectByExample(example2);
+			if (!catalogList.isEmpty()) {
+				for (TblCatalog tblCatalog : catalogList) {
+					list.add(tblCatalog.getId());
+				}
+			} else {
+				list.add(level);
+			}
+			cretria2.andLevelIn(list);
+		} else {
+			list = null;
+		}
+		List<TblDistribution> distributions = distributionMapper.selectByExampleWithBLOBs(tblDistributionExample);
+		if (distributions.isEmpty()) {
+			return PytheResult.build(400, "景区没有投放车辆");
+		}
+		List<Long> listcars = new ArrayList<Long>();
+		List<JSONObject> resultJsons = new ArrayList<JSONObject>();
+		for (TblDistribution tblDistribution : distributions) {
+			if (tblDistribution.getCarIds() != null) {
+				List<Long> listTemp = JsonUtils.jsonToList(tblDistribution.getCarIds(), Long.class);
+				listcars.addAll(listTemp);
+				
+			}
+		}
+		TblCarExample tblCarExample = new TblCarExample();
+		tblCarExample.createCriteria().andQrIdIn(listcars);
+		PageHelper.startPage(pageNum, pageSize);
+		List<TblCar> cars = carMapper.selectByExample(tblCarExample);
+		for (TblCar tblCar : cars) {
+			JSONObject carjson = new JSONObject();
+			carjson.put("car_number", tblCar.getQrId());
+			if (tblCar.getStatus() == 0) {
+				carjson.put("status", "空闲");
+			} else if (tblCar.getStatus() == 1) {
+				carjson.put("status", "使用");
+			} else if (tblCar.getStatus() == 2) {
+				carjson.put("status", "保留");
+			} else if (tblCar.getStatus() == 3) {
+				carjson.put("status", "修理");
+			} else if (tblCar.getStatus() == 4) {
+				carjson.put("status", "关锁");
+			}
+			for (TblDistribution tblDistribution : distributions) {
+				if (tblDistribution.getCarIds() != null) {
+					List<Long> listTemp = JsonUtils.jsonToList(tblDistribution.getCarIds(), Long.class);
+					for(int i=0;i<listTemp.size();i++){
+						if(listTemp.get(i).equals(tblCar.getQrId())){
+							carjson.put("city", tblDistribution.getCity());
+							carjson.put("level", tblDistribution.getLevel());
+							carjson.put("name", tblDistribution.getName());
+						}
+					}
+					
+				}
+			}
+			resultJsons.add(carjson);
+		}
+		return PytheResult.build(200, "请求成功", resultJsons);
 	}
 
 }

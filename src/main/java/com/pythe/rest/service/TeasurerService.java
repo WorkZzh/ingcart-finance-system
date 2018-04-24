@@ -18,6 +18,8 @@ public interface TeasurerService {
 	PytheResult updatePassword(String parameters);
 
 	PytheResult selectTeasurerRocordList(String parameters);
-	
+
 	PytheResult selectTeasurerById(Long id);
+
+	PytheResult selectCarsByLevel(String level,Integer pageNum,Integer pageSize);
 }
