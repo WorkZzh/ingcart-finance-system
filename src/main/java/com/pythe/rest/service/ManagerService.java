@@ -77,6 +77,6 @@ public interface ManagerService {
 	PytheResult selectAllAreaByLevel(Integer pageNum, Integer pageSize);
 
 	PytheResult insertGroupManager(String parameters);
-	
-	
+
+	PytheResult downloadByTimes(String parameters);
 }

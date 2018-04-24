@@ -1,81 +1,173 @@
 package com.pythe.common.utils;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import com.alibaba.fastjson.JSONObject;
 
 public class ExcelExport {
-	public static String export(List<JSONObject> results) {
-		String retUrl = "https://ingcart.com/login/file/";
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet();
-		sheet.setDefaultColumnWidth(20);
-		HSSFFont headfont = workbook.createFont();
-		headfont.setFontName("黑体");
-		headfont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-		HSSFCellStyle headstyle = workbook.createCellStyle();
-		headstyle.setFont(headfont);
-		headstyle.setLocked(true);
-		try {
-			long time = new Date().getTime();
-			String fileName = "/home/opt/pythe-server/rest-8081-pythe/webapps/login/file/" + time + ".xls";
-			retUrl = retUrl + time + ".xls";
-			FileOutputStream fileout = new FileOutputStream(fileName);
-			HSSFRow rowtitle = sheet.createRow(0);
-			HSSFCell cell0=rowtitle.createCell(0);
-			cell0.setCellValue(new HSSFRichTextString("园区"));
-			cell0.setCellStyle(headstyle);
-			HSSFCell cell1=rowtitle.createCell(1);
-			cell1.setCellValue(new HSSFRichTextString("日期"));
-			cell1.setCellStyle(headstyle);
-			HSSFCell cell2=rowtitle.createCell(2);
-			cell2.setCellValue(new HSSFRichTextString("时间"));
-			cell2.setCellStyle(headstyle);
-			HSSFCell cell3=rowtitle.createCell(3);
-			cell3.setCellValue(new HSSFRichTextString("开始时间"));
-			cell3.setCellStyle(headstyle);
-			HSSFCell cell4=rowtitle.createCell(4);
-			cell4.setCellValue(new HSSFRichTextString("结束时间"));
-			cell4.setCellStyle(headstyle);
-			HSSFCell cell5=rowtitle.createCell(5);
-			cell5.setCellValue(new HSSFRichTextString("还车方式"));
-			cell5.setCellStyle(headstyle);
-			HSSFCell cell6=rowtitle.createCell(6);
-			cell6.setCellValue(new HSSFRichTextString("手机号"));
-			cell6.setCellStyle(headstyle);
-			HSSFCell cell7=rowtitle.createCell(7);
-			cell7.setCellValue(new HSSFRichTextString("金额"));
-			cell7.setCellStyle(headstyle);
+	public static void getHeadStyleRow(Sheet sheet0, Font headFont, CellStyle headStyle, String[] headcontent) {
+		headFont.setFontName("宋体");
+		headFont.setBoldweight((short) 40);
+		headFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		headStyle.setFont(headFont);
+		headStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		Row headRow = sheet0.createRow(0);
+		for (int i = 0; i < headcontent.length; i++) {
+			sheet0.setColumnWidth(i, 5000);
+			Cell time = headRow.createCell(i);
+			time.setCellValue(headcontent[i]);
+			time.setCellStyle(headStyle);
+		}
+	}
 
-			for (int i = 0; i < results.size(); i++) {
-				HSSFRow row = sheet.createRow(i + 1);
-				row.createCell(0).setCellValue(new HSSFRichTextString(results.get(i).getString("distribution_name")));
-				row.createCell(1).setCellValue(new HSSFRichTextString(results.get(i).getString("date")));
-				row.createCell(2).setCellValue(new HSSFRichTextString(results.get(i).getString("start_time")));
-				row.createCell(3).setCellValue(new HSSFRichTextString(results.get(i).getString("stop_time")));
-				row.createCell(4).setCellValue(new HSSFRichTextString(results.get(i).getString("car_number")));
-				row.createCell(5).setCellValue(new HSSFRichTextString(results.get(i).getString("typeName")));
-				row.createCell(6).setCellValue(new HSSFRichTextString(results.get(i).getString("phone_number")));
-				row.createCell(7).setCellValue(new HSSFRichTextString(results.get(i).getString("sum")));
+	public static void getBodyMonthStyleRow(Sheet sheet0, Font headFont, CellStyle headStyle, String[] monthcontent,
+			int rowCount, int cellCount) {
+		headFont.setFontName("宋体");
+		headFont.setBoldweight((short) 30);
+		headStyle.setFont(headFont);
+		headStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		Row headRow = sheet0.createRow(rowCount);
+		for (int i = 0; i < monthcontent.length; i++) {
+			Cell time = headRow.createCell(i + cellCount);
+			time.setCellValue(monthcontent[i]);
+			time.setCellStyle(headStyle);
+		}
+	}
 
+	public static void getBodyDayStyleRow(Sheet sheet0, Font headFont, CellStyle headStyle, List<JSONObject> results,
+			int rowCount) {
+		headFont.setFontName("宋体");
+		headFont.setBoldweight((short) 30);
+		headStyle.setFont(headFont);
+		headStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		int rowCountDESC = rowCount + results.size() - 1;
+		for (int i = 0; i < results.size(); i++) {
+			/*
+			 * Row headRow = sheet0.createRow(rowCount + i);
+			 * 
+			 * Cell cell = headRow.createCell(0);
+			 * cell.setCellType(Cell.CELL_TYPE_FORMULA);
+			 * cell.setCellFormula("hyperlink(\"#" + i + "日!A1\",\"" +
+			 * results.get(i).getString("time") + "\")");
+			 * cell.setCellStyle(headStyle);
+			 */
+
+			String monthcontent[] = { results.get(i).getString("time"), results.get(i).getString("sum"),
+					results.get(i).getString("refundAmount"), results.get(i).getString("givingAmount"),
+					results.get(i).getString("qrId") };
+			getBodyMonthStyleRow(sheet0, headFont, headStyle, monthcontent, rowCountDESC, 0);
+			rowCountDESC--;
+		}
+	}
+
+	public static void getBodyDayDetailRow(Sheet sheet0, Font headFont, CellStyle headStyle, List<JSONObject> results,
+			int rowCount) {
+		headFont.setFontName("宋体");
+		headFont.setBoldweight((short) 30);
+		headStyle.setFont(headFont);
+		headStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		for (int i = 0; i < results.size(); i++) {
+			String monthcontent[] = { results.get(i).getString("date"),results.get(i).getString("car_number"), results.get(i).getString("phone_number"),
+					results.get(i).getString("distribution_name"), results.get(i).getString("start_time"),
+					results.get(i).getString("stop_time"), results.get(i).getString("sum"),
+					results.get(i).getString("typeName") };
+			getBodyMonthStyleRow(sheet0, headFont, headStyle, monthcontent, rowCount + i, 0);
+		}
+	}
+
+	public static String export(JSONObject recordMonthJson, List<JSONObject> results, List<JSONObject> daydetails,
+			int dtype) {
+		Workbook workbook = new SXSSFWorkbook(100);
+		Sheet sheet0 = workbook.createSheet("交易汇总");
+		// 交易汇总sheet 头
+		CellStyle headStyle = workbook.createCellStyle();
+		CellStyle bodyStyle = workbook.createCellStyle();
+		Font headFont = workbook.createFont();
+		Font bodyFont = workbook.createFont();
+		String headcontent[] = { "时间", "总销售额", "总退款额", "总优惠额", "总次数" };
+		getHeadStyleRow(sheet0, headFont, headStyle, headcontent);
+		// 体
+		String monthcontent[] = { recordMonthJson.getString("time"), recordMonthJson.getString("sum"),
+				recordMonthJson.getString("refundAmount"), recordMonthJson.getString("givingAmount"),
+				recordMonthJson.getString("qrId") };
+		getBodyMonthStyleRow(sheet0, bodyFont, bodyStyle, monthcontent, 1, 0);
+		getBodyDayStyleRow(sheet0, bodyFont, bodyStyle, results, 2);
+		if (dtype == 0) {
+			// 日明细
+			String dateTemp = daydetails.get(daydetails.size() - 1).getString("date");
+			List<JSONObject> days = new LinkedList<JSONObject>();
+			for (int i = daydetails.size() - 1; i >= 0; i--) {
+				if (daydetails.get(i).getString("date").equals(dateTemp)) {
+					days.add(daydetails.get(i));
+				} else {
+					Sheet daySheet = workbook.createSheet(dateTemp);
+					dateTemp = daydetails.get(i).getString("date");
+					String daycontent[] = { "时间", "车号", "手机", "园区", "开始", "结束", "消费额", "备注" };
+					getHeadStyleRow(daySheet, headFont, headStyle, daycontent);
+					getBodyDayDetailRow(daySheet, bodyFont, bodyStyle, days, 1);
+					days.clear();
+					days = new LinkedList<JSONObject>();
+					days.add(daydetails.get(i));
+				}
 			}
+			Sheet daySheet = workbook.createSheet(dateTemp);
+			String daycontent[] = { "时间", "车号", "手机", "园区", "开始", "结束", "消费额", "备注" };
+			getHeadStyleRow(daySheet, headFont, headStyle, daycontent);
+			getBodyDayDetailRow(daySheet, bodyFont, bodyStyle, days, 1);
+			days.clear();
+
+		} else {
+			// 月明细
+			String dateTemp = daydetails.get(daydetails.size() - 1).getString("date").substring(0, 7);
+			List<JSONObject> days = new LinkedList<JSONObject>();
+			for (int i = daydetails.size() - 1; i >= 0; i--) {
+				if ((daydetails.get(i).getString("date").substring(0, 7)).equals(dateTemp)) {
+					days.add(daydetails.get(i));
+				} else {
+					Sheet daySheet = workbook.createSheet(dateTemp);
+					dateTemp = daydetails.get(i).getString("date").substring(0, 7);
+					String daycontent[] = { "时间", "车号", "手机", "园区", "开始", "结束", "消费额", "备注" };
+					getHeadStyleRow(daySheet, headFont, headStyle, daycontent);
+					getBodyDayDetailRow(daySheet, bodyFont, bodyStyle, days, 1);
+					days.clear();
+					days = new LinkedList<JSONObject>();
+					days.add(daydetails.get(i));
+				}
+			}
+
+			Sheet daySheet = workbook.createSheet(dateTemp);
+			String daycontent[] = { "时间", "车号", "手机", "园区", "开始", "结束", "消费额", "备注" };
+			getHeadStyleRow(daySheet, headFont, headStyle, daycontent);
+			getBodyDayDetailRow(daySheet, bodyFont, bodyStyle, days, 1);
+			days.clear();
+		}
+
+		long timeL = new Date().getTime();
+		String fileName = "https://ingcart.com/login/file/" + timeL + ".xlsx";
+		try {
+			FileOutputStream fileout = new FileOutputStream(fileName);
 			workbook.write(fileout);
 			fileout.flush();
 			fileout.close();
 		} catch (Exception e) {
+			// TODO: handle exception
 			e.printStackTrace();
 		}
 
-		return retUrl;
+		return fileName;
+
 	}
 }

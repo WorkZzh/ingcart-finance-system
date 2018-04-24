@@ -166,9 +166,10 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
+
 	/**
 	 * 删除景区
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -183,8 +184,6 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
 
 	/**
 	 * 创建集团
@@ -203,11 +202,10 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
+
 	/**
 	 * 删除集团
+	 * 
 	 * @param parameters
 	 * @return
 	 * @throws Exception
@@ -222,8 +220,7 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
 	/**
 	 * 插入一个某集团负责人（需要变成4级管理的等级）
 	 * 
@@ -241,12 +238,6 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
-	
-
-
 
 	/**
 	 * 插入一个婴咖管理（需要变成4级管理的等级）
@@ -265,9 +256,6 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
-	
 
 	/**
 	 * 插入一个运营专员（需要变成1级管理的等级）
@@ -315,8 +303,7 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-	
+
 	/**
 	 * 更新车的位置
 	 * 
@@ -372,12 +359,11 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/select/maintenance/condition", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectMaintennanceCondition(
-			@RequestParam(required = true, value = "level") String level,
-			@RequestParam(defaultValue = "1") Integer pageNum,
-			@RequestParam(defaultValue = "10") Integer pageSize) throws Exception {
+	public PytheResult selectMaintennanceCondition(@RequestParam(required = true, value = "level") String level,
+			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize)
+			throws Exception {
 		try {
-			return service.selectMaintennanceCondition(pageNum, pageSize,level);
+			return service.selectMaintennanceCondition(pageNum, pageSize, level);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
@@ -501,6 +487,17 @@ public class ManagerController {
 		}
 	}
 
+	@RequestMapping(value = "/record/bill/download/times", method = RequestMethod.POST)
+	@ResponseBody
+	public PytheResult downloadByTimes(@RequestBody String parameters) throws Exception {
+		try {
+			return service.downloadByTimes(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+
 	@RequestMapping(value = "/select/bill/sum/months", method = RequestMethod.POST)
 	@ResponseBody
 	public PytheResult selectSumByMonths(@RequestBody String parameters) {
@@ -558,11 +555,8 @@ public class ManagerController {
 		}
 	}
 
-	
-	
-	
 	/**
-	 *查询某个用户最近的一条行车记录
+	 * 查询某个用户最近的一条行车记录
 	 */
 	@RequestMapping(value = "/select/last/record", method = RequestMethod.GET)
 	@ResponseBody
@@ -575,21 +569,17 @@ public class ManagerController {
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
+
 	@RequestMapping(value = "/select/area/level", method = RequestMethod.GET)
 	@ResponseBody
-	public PytheResult selectAllAreaByLevel(
-			@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize)
-			throws Exception {
+	public PytheResult selectAllAreaByLevel(@RequestParam(defaultValue = "1") Integer pageNum,
+			@RequestParam(defaultValue = "10") Integer pageSize) throws Exception {
 		try {
-			return service.selectAllAreaByLevel( pageNum, pageSize);
+			return service.selectAllAreaByLevel(pageNum, pageSize);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
-	
-
-
 
 }
