@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
-import com.mchange.v2.lang.Coerce;
 import com.pythe.common.pojo.PytheResult;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.ExcelExport;
@@ -54,7 +56,6 @@ import com.pythe.pojo.TblOperatorExample;
 import com.pythe.pojo.TblPrice;
 import com.pythe.pojo.TblPriceExample;
 import com.pythe.pojo.TblTeasurer;
-import com.pythe.pojo.TblTeasurerExample;
 import com.pythe.pojo.TblVersion;
 import com.pythe.pojo.VCatalog;
 import com.pythe.pojo.VCatalogExample;
@@ -975,12 +976,8 @@ public class ManagerServiceImpl implements ManagerService {
 		return PytheResult.ok(recordLists);
 	}
 
-	public PytheResult downloadByTime(String parameters) {
+	public void downloadByTime(String time, String level, HttpServletRequest request, HttpServletResponse response) {
 		// TODO Auto-generated method stub
-		JSONObject params = JSONObject.parseObject(parameters);
-
-		String level = params.getString("level");
-		String time = params.getString("time");
 
 		/*
 		 * 视图v_record_bill
@@ -1099,11 +1096,8 @@ public class ManagerServiceImpl implements ManagerService {
 			results.add(result);
 		}
 
-		String retUrl = ExcelExport.export(recordMonthJson, dayresults, results, mdtype);
+		ExcelExport.export(recordMonthJson, dayresults, results, mdtype, response);
 
-		JSONObject json = new JSONObject();
-		json.put("retUrl", retUrl);
-		return PytheResult.build(200, "请求成功", json);
 	}
 
 	@Override
@@ -1519,14 +1513,9 @@ public class ManagerServiceImpl implements ManagerService {
 	}
 
 	@Override
-	public PytheResult downloadByTimes(String parameters) {
+	public void downloadByTimes(String level, String startTime, String endTime, HttpServletRequest request,
+			HttpServletResponse response) {
 		// TODO Auto-generated method stub
-		JSONObject params = JSONObject.parseObject(parameters);
-
-		String level = params.getString("level");
-		String startTime = params.getString("startTime");
-		String endTime = params.getString("endTime");
-
 		/*
 		 * 视图v_record_bill
 		 */
@@ -1622,12 +1611,9 @@ public class ManagerServiceImpl implements ManagerService {
 			}
 			results.add(result);
 		}
-		
-		String retUrl = ExcelExport.export(recordMonthJson, dayresults, results, 0);
 
-		JSONObject json = new JSONObject();
-		json.put("retUrl", retUrl);
-		return PytheResult.build(200, "请求成功", json);
+		ExcelExport.export(recordMonthJson, dayresults, results, 0, response);
+
 	}
 
 }

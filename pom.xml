@@ -7,7 +7,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>com.pythe</groupId>
-	<artifactId>pythe-share-car</artifactId>
+	<artifactId>ingcart-finance-system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<dependencies>

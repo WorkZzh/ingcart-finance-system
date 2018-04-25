@@ -1,5 +1,8 @@
 package com.pythe.rest.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -476,25 +479,27 @@ public class ManagerController {
 		}
 	}
 
-	@RequestMapping(value = "/record/bill/download/time", method = RequestMethod.POST)
-	@ResponseBody
-	public PytheResult downloadByTime(@RequestBody String parameters) throws Exception {
+	@RequestMapping(value = "/record/bill/download/time", method = RequestMethod.GET)
+	public void downloadByTime(@RequestParam(required = true, value = "time") String time,
+			@RequestParam(required = true, value = "level") String level, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		try {
-			return service.downloadByTime(parameters);
+			service.downloadByTime(time, level, request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
+
 		}
 	}
 
-	@RequestMapping(value = "/record/bill/download/times", method = RequestMethod.POST)
-	@ResponseBody
-	public PytheResult downloadByTimes(@RequestBody String parameters) throws Exception {
+	@RequestMapping(value = "/record/bill/download/times", method = RequestMethod.GET)
+	public void downloadByTimes(@RequestParam(required = true, value = "level") String level,
+			@RequestParam(required = true, value = "startTime") String startTime,
+			@RequestParam(required = true, value = "endTime") String endTime, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		try {
-			return service.downloadByTimes(parameters);
+			service.downloadByTimes(level,startTime,endTime, request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return PytheResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
 

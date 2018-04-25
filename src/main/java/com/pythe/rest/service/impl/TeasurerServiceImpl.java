@@ -32,7 +32,6 @@ import com.pythe.pojo.TblTeasurerRecord;
 import com.pythe.pojo.TblTeasurerRecordExample;
 import com.pythe.pojo.TblVerification;
 import com.pythe.pojo.TblVerificationExample;
-import com.pythe.pojo.VRecordBillExample;
 import com.pythe.pojo.VTeasurer;
 import com.pythe.pojo.VTeasurerExample;
 import com.pythe.pojo.VTeasurerRecord;

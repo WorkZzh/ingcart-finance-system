@@ -1,5 +1,8 @@
 package com.pythe.rest.service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.pythe.common.pojo.PytheResult;
 
 public interface ManagerService {
@@ -46,7 +49,7 @@ public interface ManagerService {
 
 	PytheResult selectSumByTimes(String parameters);
 
-	PytheResult downloadByTime(String parameters);
+	void downloadByTime(String time, String level, HttpServletRequest request, HttpServletResponse response);
 
 	PytheResult selectTeasurerTwoLevel(String c1_id, Integer level, String catalog_id);
 
@@ -78,5 +81,6 @@ public interface ManagerService {
 
 	PytheResult insertGroupManager(String parameters);
 
-	PytheResult downloadByTimes(String parameters);
+	void downloadByTimes(String level, String startTime, String endTime, HttpServletRequest request,
+			HttpServletResponse response);
 }
