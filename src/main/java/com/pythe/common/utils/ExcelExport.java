@@ -57,7 +57,7 @@ public class ExcelExport {
 		font.setBoldweight((short) 30);
 		style.setFont(font);
 		style.setAlignment(CellStyle.ALIGN_CENTER);
-		int rowCountDESC = rowCount + results.size() - 1;
+		int rowCountDESC = rowCount;
 		for (int i = 0; i < results.size(); i++) {
 			/*
 			 * Row headRow = sheet0.createRow(rowCount + i);
@@ -73,7 +73,7 @@ public class ExcelExport {
 					results.get(i).getString("refundAmount"), results.get(i).getString("givingAmount"),
 					results.get(i).getString("qrId") };
 			getBodyMonthStyleRow(sheet, font, style, monthcontent, rowCountDESC, 0);
-			rowCountDESC--;
+			rowCountDESC++;
 		}
 	}
 
@@ -175,9 +175,9 @@ public class ExcelExport {
 			getBodyDayStyleRow(sheet0, bodyFont, bodyStyle, results, 2);
 			if (dtype == 0) {
 				// 日明细
-				String dateTemp = daydetails.get(daydetails.size() - 1).getString("date");
+				String dateTemp = daydetails.get(0).getString("date");
 				List<JSONObject> days = new LinkedList<JSONObject>();
-				for (int i = daydetails.size() - 1; i >= 0; i--) {
+				for (int i = 0; i < daydetails.size(); i++) {
 					if (daydetails.get(i).getString("date").equals(dateTemp)) {
 						days.add(daydetails.get(i));
 					} else {
@@ -199,9 +199,9 @@ public class ExcelExport {
 
 			} else {
 				// 月明细
-				String dateTemp = daydetails.get(daydetails.size() - 1).getString("date").substring(0, 7);
+				String dateTemp = daydetails.get(0).getString("date").substring(0, 7);
 				List<JSONObject> days = new LinkedList<JSONObject>();
-				for (int i = daydetails.size() - 1; i >= 0; i--) {
+				for (int i = 0; i < daydetails.size(); i++) {
 					if ((daydetails.get(i).getString("date").substring(0, 7)).equals(dateTemp)) {
 						days.add(daydetails.get(i));
 					} else {
