@@ -481,10 +481,9 @@ public class ManagerController {
 
 	@RequestMapping(value = "/record/bill/download/time", method = RequestMethod.GET)
 	public void downloadByTime(@RequestParam(required = true, value = "time") String time,
-			@RequestParam(required = true, value = "level") String level, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+			@RequestParam(required = true, value = "level") String level) throws Exception {
 		try {
-			service.downloadByTime(time, level, request, response);
+			service.downloadByTime(time, level);
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -494,10 +493,9 @@ public class ManagerController {
 	@RequestMapping(value = "/record/bill/download/times", method = RequestMethod.GET)
 	public void downloadByTimes(@RequestParam(required = true, value = "level") String level,
 			@RequestParam(required = true, value = "startTime") String startTime,
-			@RequestParam(required = true, value = "endTime") String endTime, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+			@RequestParam(required = true, value = "endTime") String endTime) throws Exception {
 		try {
-			service.downloadByTimes(level,startTime,endTime, request, response);
+			service.downloadByTimes(level, startTime, endTime);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

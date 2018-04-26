@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.zookeeper.server.SessionTracker.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +16,8 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.pythe.common.pojo.PytheResult;
+import com.pythe.common.utils.CookieUtils;
+import com.pythe.common.utils.JWTUtils;
 import com.pythe.common.utils.JsonUtils;
 import com.pythe.mapper.TblCarMapper;
 import com.pythe.mapper.TblCatalogMapper;
@@ -58,10 +65,20 @@ public class TeasurerServiceImpl implements TeasurerService {
 	private TblDistributionMapper distributionMapper;
 	@Autowired
 	private TblCarMapper carMapper;
+	@Autowired
+	private HttpSession session;
+	@Autowired
+	private HttpServletRequest request;
+	@Autowired
+	private HttpServletResponse response;
 
 	@Override
 	public PytheResult selectTeasurerList(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject params = JSONObject.parseObject(parameters);
 		Integer pageNum = params.getInteger("pageNum");
 		Integer pageSize = params.getInteger("pageSize");
@@ -82,6 +99,10 @@ public class TeasurerServiceImpl implements TeasurerService {
 	@Override
 	public PytheResult deleteTeasurer(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum").trim();
 		String note = information.getString("note");
@@ -110,6 +131,10 @@ public class TeasurerServiceImpl implements TeasurerService {
 	@Override
 	public PytheResult insertLevelOneTeasurer(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
 		/*
@@ -146,7 +171,10 @@ public class TeasurerServiceImpl implements TeasurerService {
 	@Override
 	public PytheResult insertLevelTwoTeasurer(String parameters) {
 		// TODO Auto-generated method stub
-		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum").trim();
 		/*
@@ -192,6 +220,17 @@ public class TeasurerServiceImpl implements TeasurerService {
 		if (tblTeasurerList.size() == 0) {
 			return PytheResult.ok("用户名或密码错误");
 		}
+
+		String ingcartToken = "";
+		try {
+			ingcartToken = JWTUtils.createToken(name, password);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		CookieUtils.setCookie(request, response, "ingcartToken", ingcartToken);
+		session.setAttribute("ingcartToken", ingcartToken);
+
 		JSONObject json = new JSONObject();
 		json.put("catalogId", tblTeasurerList.get(0).getCatalogId());
 		json.put("id", tblTeasurerList.get(0).getId());
@@ -227,6 +266,20 @@ public class TeasurerServiceImpl implements TeasurerService {
 				return PytheResult.build(400, "验证码错误或过期");
 			}
 		}
+		// token
+		TblTeasurerExample tblTeasurerExample2 = new TblTeasurerExample();
+		tblTeasurerExample2.createCriteria().andPhoneNumEqualTo(phoneNum);
+		List<TblTeasurer> tblTeasurer = tblTeasurerMapper.selectByExample(tblTeasurerExample2);
+		String ingcartToken = "";
+		try {
+			ingcartToken = JWTUtils.createToken(phoneNum, tblTeasurer.get(0).getPassword());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		CookieUtils.setCookie(request, response, "ingcartToken", ingcartToken);
+		session.setAttribute("ingcartToken", ingcartToken);
+
 		JSONObject json = new JSONObject();
 		json.put("catalogId", tblTeasurerList.get(0).getCatalogId());
 		json.put("id", tblTeasurerList.get(0).getId());
@@ -273,6 +326,10 @@ public class TeasurerServiceImpl implements TeasurerService {
 	@Override
 	public PytheResult selectTeasurerRocordList(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject params = JSONObject.parseObject(parameters);
 		Integer pageNum = params.getInteger("pageNum");
 		Integer pageSize = params.getInteger("pageSize");
@@ -293,14 +350,22 @@ public class TeasurerServiceImpl implements TeasurerService {
 	@Override
 	public PytheResult selectTeasurerById(Long id) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		TblTeasurer tblTeasurers = tblTeasurerMapper.selectByPrimaryKey(id);
 		return PytheResult.ok(tblTeasurers.getPhoneNum());
 
 	}
 
 	@Override
-	public PytheResult selectCarsByLevel(String level,Integer pageNum,Integer pageSize) {
+	public PytheResult selectCarsByLevel(String level, Integer pageNum, Integer pageSize) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		TblDistributionExample tblDistributionExample = new TblDistributionExample();
 		com.pythe.pojo.TblDistributionExample.Criteria cretria2 = tblDistributionExample.createCriteria();
 		ArrayList<String> list = new ArrayList<String>();
@@ -329,7 +394,7 @@ public class TeasurerServiceImpl implements TeasurerService {
 			if (tblDistribution.getCarIds() != null) {
 				List<Long> listTemp = JsonUtils.jsonToList(tblDistribution.getCarIds(), Long.class);
 				listcars.addAll(listTemp);
-				
+
 			}
 		}
 		TblCarExample tblCarExample = new TblCarExample();
@@ -353,14 +418,14 @@ public class TeasurerServiceImpl implements TeasurerService {
 			for (TblDistribution tblDistribution : distributions) {
 				if (tblDistribution.getCarIds() != null) {
 					List<Long> listTemp = JsonUtils.jsonToList(tblDistribution.getCarIds(), Long.class);
-					for(int i=0;i<listTemp.size();i++){
-						if(listTemp.get(i).equals(tblCar.getQrId())){
+					for (int i = 0; i < listTemp.size(); i++) {
+						if (listTemp.get(i).equals(tblCar.getQrId())) {
 							carjson.put("city", tblDistribution.getCity());
 							carjson.put("level", tblDistribution.getLevel());
 							carjson.put("name", tblDistribution.getName());
 						}
 					}
-					
+
 				}
 			}
 			resultJsons.add(carjson);

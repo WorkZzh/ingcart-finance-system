@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,11 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.auth0.jwt.interfaces.Claim;
 import com.github.pagehelper.PageHelper;
 import com.pythe.common.pojo.PytheResult;
+import com.pythe.common.utils.CookieUtils;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.ExcelExport;
 import com.pythe.common.utils.FactoryUtils;
+import com.pythe.common.utils.JWTUtils;
 import com.pythe.common.utils.JsonUtils;
 import com.pythe.mapper.TblAccountMapper;
 import com.pythe.mapper.TblCarMapper;
@@ -61,9 +66,9 @@ import com.pythe.pojo.VCatalog;
 import com.pythe.pojo.VCatalogExample;
 import com.pythe.pojo.VCustomer;
 import com.pythe.pojo.VCustomerExample;
+import com.pythe.pojo.VCustomerExample.Criteria;
 import com.pythe.pojo.VDistribution;
 import com.pythe.pojo.VDistributionExample;
-import com.pythe.pojo.VCustomerExample.Criteria;
 import com.pythe.pojo.VMaintenance;
 import com.pythe.pojo.VMaintenanceExample;
 import com.pythe.pojo.VOperator;
@@ -171,6 +176,12 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Autowired
 	private VOperatorMapper vOperatorMapper;
+	@Autowired
+	private HttpSession session;
+	@Autowired
+	private HttpServletRequest request;
+	@Autowired
+	private HttpServletResponse response;
 
 	// BILL
 	@Value("${BILL_CHARGE_TYPE}")
@@ -197,6 +208,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult updateVersion(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject param = JSONObject.parseObject(parameters);
 
 		String type = param.getString("type");
@@ -222,6 +237,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectVersion(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject param = JSONObject.parseObject(parameters);
 
 		String apikey = param.getString("apikey");
@@ -237,7 +256,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Override
 	public PytheResult countCarCondition(String level, Integer pageNum, Integer pageSize) {
-
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		VCustomerExample example = new VCustomerExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andCarStatusEqualTo(1);
@@ -286,6 +308,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult updateFixedPointForCar(String parameters) {
 		// 关联景区和车
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		Long qrId = information.getLong("qrId");
 		String level = information.getString("level");
@@ -326,6 +352,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult deleteFixedPointForCar(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		Long qrId = information.getLong("qrId");
 		// String areaId = information.getString("areaId");
@@ -362,6 +392,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult insertAttraction(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String city = information.getString("city");
 		String name = information.getString("name");
@@ -416,7 +450,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Override
 	public PytheResult selectCarAttraction(String parameters) {
-
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		List<Long> carIds = information.getJSONArray("carIds").toJavaList(Long.class);
 		Integer pageNum = information.getInteger("pageNum");
@@ -453,6 +490,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectAllAreaByCity(String city, Integer pageNum, Integer pageSize) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		PageHelper.startPage(pageNum, pageSize);
 		TblDistributionExample example = new TblDistributionExample();
 		example.createCriteria().andCityEqualTo(city);
@@ -463,6 +504,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectAllCity() {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		List<TblDistribution> distributionList = distributionMapper.selectAllCity();
 		if (distributionList.isEmpty()) {
 			return PytheResult.build(400, "暂无景区所在的城市");
@@ -474,7 +519,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectMaintennanceCondition(Integer pageNum, Integer pageSize, String level) {
 		// TODO Auto-generated method stub
-
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		VMaintenanceExample example = new VMaintenanceExample();
 		com.pythe.pojo.VMaintenanceExample.Criteria criteria = example.createCriteria();
 		ArrayList<String> list = new ArrayList<String>();
@@ -519,6 +567,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectPriceLevel() {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		TblPriceExample example = new TblPriceExample();
 		List<TblPrice> priceList = priceMapper.selectByExample(example);
 		return PytheResult.ok(priceList);
@@ -527,6 +579,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult updateMaintenanceStatus(Long id) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		TblMaintenance maintenance = maintenanceMapper.selectByPrimaryKey(id);
 		maintenance.setStatus(1);
 		maintenanceMapper.updateByPrimaryKeyWithBLOBs(maintenance);
@@ -536,6 +592,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult updateLocation(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		Long qrId = information.getLong("qrId");
 		Double longitude = information.getDouble("longitude");
@@ -561,7 +621,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult deleteMaintenanceStatus(Long qrId) {
 		// TODO Auto-generated method stub
-
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		TblMaintenanceExample example = new TblMaintenanceExample();
 		example.createCriteria().andQrIdEqualTo(qrId);
 		List<TblMaintenance> maintenanceList = maintenanceMapper.selectByExampleWithBLOBs(example);
@@ -590,7 +653,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Override
 	public PytheResult zeroCleanAccount(String parameters) {
-
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNumStr = information.getString("phoneNum");
 		List<Long> phoneNums = JsonUtils.jsonToList(phoneNumStr, Long.class);
@@ -616,6 +682,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Override
 	public PytheResult queryRecordBill(String parameters) {
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject params = JSONObject.parseObject(parameters);
 
 		String level = params.getString("level");
@@ -707,6 +777,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectOneLevel(Long managerId) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		// id得换一下，t_表示财务 ， y_表示运营
 		TblOperator manager = operatorMapper.selectByPrimaryKey(managerId);
 
@@ -742,6 +816,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectSumByTime(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject params = JSONObject.parseObject(parameters);
 
 		String level = params.getString("level");
@@ -778,6 +856,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Transactional
 	public PytheResult insertGroup(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject params = JSONObject.parseObject(parameters);
 
 		String name = params.getString("name").trim();
@@ -805,6 +887,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectTwoLevel(String c1_id, Integer level, String catalog_id) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		List<TblCatalog> cataList = null;
 		TblCatalogExample example = new TblCatalogExample();
 		// level为1，2时候就是属于一个园区
@@ -819,6 +905,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Override
 	public PytheResult selectTeasurerOneLevel(Long managerId) {
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		TblTeasurer manager = teasurerMapper.selectByPrimaryKey(managerId);
 		List<VCatalog> catalogList = null;
 		VCatalogExample example2 = new VCatalogExample();
@@ -851,6 +941,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Override
 	public PytheResult queryRecordBillByTimes(String parameters) {
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject params = JSONObject.parseObject(parameters);
 
 		String level = params.getString("level");
@@ -942,6 +1036,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectSumByTimes(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject params = JSONObject.parseObject(parameters);
 
 		String level = params.getString("level");
@@ -976,7 +1074,7 @@ public class ManagerServiceImpl implements ManagerService {
 		return PytheResult.ok(recordLists);
 	}
 
-	public void downloadByTime(String time, String level, HttpServletRequest request, HttpServletResponse response) {
+	public void downloadByTime(String time, String level) {
 		// TODO Auto-generated method stub
 
 		/*
@@ -1103,6 +1201,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectTeasurerTwoLevel(String c1_id, Integer level, String catalog_id) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		List<TblCatalog> cataList = null;
 		TblCatalogExample example = new TblCatalogExample();
 		// level为1，2时候就是属于一个园区
@@ -1118,6 +1220,12 @@ public class ManagerServiceImpl implements ManagerService {
 
 	public PytheResult selectSumByMonths(String parameters) {
 		// TODO Auto-generated method stub
+
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
+
 		JSONObject params = JSONObject.parseObject(parameters);
 
 		String level = params.getString("level");
@@ -1154,6 +1262,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectOperatorCondition(String level, Integer pageNum, Integer pageSize) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		ArrayList<String> list = new ArrayList<String>();
 		VOperatorRecordExample example = new VOperatorRecordExample();
 		com.pythe.pojo.VOperatorRecordExample.Criteria criteria = example.createCriteria();
@@ -1223,6 +1335,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult insertOperator(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
 		Integer type = information.getInteger("type");
@@ -1238,6 +1354,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult insertOperatorManager(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
 		Integer type = information.getInteger("type");
@@ -1254,6 +1374,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult insertIngcartManage(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
 		Integer type = information.getInteger("type");
@@ -1271,6 +1395,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectAddOperatorRecord(String level, Integer pageNum, Integer pageSize) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		PageHelper.startPage(pageNum, pageSize);
 		VOperatorExample example = new VOperatorExample();
 		List<VOperator> result = null;
@@ -1295,6 +1423,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	public PytheResult deleteOperator(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String phoneNum = information.getString("phoneNum");
 		Integer managerLevel = information.getInteger("level");
@@ -1332,6 +1464,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Override
 	public PytheResult selectLastRecrd(String phoneNum) {
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		VRecordExample example = new VRecordExample();
 		if (phoneNum.length() == 11) {
 			example.createCriteria().andPhoneNumEqualTo(phoneNum);
@@ -1348,6 +1484,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Override
 	public PytheResult deleteGroup(String parameters) {
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String c1_id = information.getString("catalogId");
 
@@ -1427,6 +1567,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult deleteAttraction(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject information = JSONObject.parseObject(parameters);
 		String c2_id = information.getString("catalogId");
 		String password = information.getString("password");
@@ -1480,6 +1624,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult selectAllAreaByLevel(Integer pageNum, Integer pageSize) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		PageHelper.startPage(pageNum, pageSize);
 		VDistributionExample vDistributionExample = new VDistributionExample();
 		List<VDistribution> vDistributions = vDistributionMapper.selectByExample(vDistributionExample);
@@ -1489,6 +1637,10 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public PytheResult insertGroupManager(String parameters) {
 		// TODO Auto-generated method stub
+		String tokenMsg = JWTUtils.IngcartTokenOperation(session, request, response);
+		if (tokenMsg.equals("登录凭证过期")) {
+			return PytheResult.build(400, "登录凭证过期");
+		}
 		JSONObject params = JSONObject.parseObject(parameters);
 		String phoneNum = params.getString("phoneNum");
 		Long managerId = params.getLong("managerId");
@@ -1513,8 +1665,7 @@ public class ManagerServiceImpl implements ManagerService {
 	}
 
 	@Override
-	public void downloadByTimes(String level, String startTime, String endTime, HttpServletRequest request,
-			HttpServletResponse response) {
+	public void downloadByTimes(String level, String startTime, String endTime) {
 		// TODO Auto-generated method stub
 		/*
 		 * 视图v_record_bill
