@@ -1,5 +1,6 @@
 package com.pythe.common.utils;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -194,7 +195,8 @@ public class StringUtils {
 
 	// 生成随机数字和字母,
 	public static String getStringByLength(int length) {
-		//String str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		// String str =
+		// "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		String str = "0123456789";
 		Random random = new Random();
 		String temp = "";
@@ -226,6 +228,16 @@ public class StringUtils {
 		int start = s.indexOf(startStr);
 		int end = s.indexOf(endStr, s.indexOf(startStr));
 		return s.substring(0, start + startStr.length()) + "\"" + element + "\"" + s.substring(end);
+	}
+
+	/*
+	 * 精确到2位
+	 */
+	public static String round2(Double sum) {
+		double retTemp = (double) (Math.round(sum * 100) / 100.0);
+		DecimalFormat df = new DecimalFormat("0.00");
+		String ret = String.valueOf(df.format(retTemp));
+		return ret;
 	}
 
 }

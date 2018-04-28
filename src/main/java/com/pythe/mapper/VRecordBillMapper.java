@@ -30,5 +30,4 @@ public interface VRecordBillMapper {
 
 	List<VRecordBill> selectSumByMonthsGroupByDay(@Param("levels") List<String> levels,
 			@Param("startDay") String startDay, @Param("endDay") String endDay);
-
 }

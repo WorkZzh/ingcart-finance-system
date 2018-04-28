@@ -4,16 +4,14 @@
   <resultMap id="BaseResultMap" type="com.pythe.pojo.TblBill" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="customer_id" property="customerId" jdbcType="BIGINT" />
-    <result column="record_id" property="recordId" jdbcType="VARCHAR" />
     <result column="amount" property="amount" jdbcType="DOUBLE" />
     <result column="refund_amount" property="refundAmount" jdbcType="DOUBLE" />
     <result column="status" property="status" jdbcType="INTEGER" />
-    <result column="prepay_id" property="prepayId" jdbcType="VARCHAR" />
     <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="time" property="time" jdbcType="TIMESTAMP" />
     <result column="giving_amount" property="givingAmount" jdbcType="DOUBLE" />
-    <result column="manager_id" property="managerId" jdbcType="BIGINT" />
+    <result column="comefrom" property="comefrom" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,8 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, customer_id, record_id, amount, refund_amount, status, prepay_id, out_trade_no, 
-    type, time, giving_amount, manager_id
+    id, customer_id, amount, refund_amount, status, out_trade_no, type, time, giving_amount, 
+    comefrom
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblBillExample" >
     select
@@ -108,16 +106,14 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pythe.pojo.TblBill" >
-    insert into tbl_bill (id, customer_id, record_id, 
-      amount, refund_amount, status, 
-      prepay_id, out_trade_no, type, 
-      time, giving_amount, manager_id
-      )
-    values (#{id,jdbcType=VARCHAR}, #{customerId,jdbcType=BIGINT}, #{recordId,jdbcType=VARCHAR}, 
-      #{amount,jdbcType=DOUBLE}, #{refundAmount,jdbcType=DOUBLE}, #{status,jdbcType=INTEGER}, 
-      #{prepayId,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
-      #{time,jdbcType=TIMESTAMP}, #{givingAmount,jdbcType=DOUBLE}, #{managerId,jdbcType=BIGINT}
-      )
+    insert into tbl_bill (id, customer_id, amount, 
+      refund_amount, status, out_trade_no, 
+      type, time, giving_amount, 
+      comefrom)
+    values (#{id,jdbcType=VARCHAR}, #{customerId,jdbcType=BIGINT}, #{amount,jdbcType=DOUBLE}, 
+      #{refundAmount,jdbcType=DOUBLE}, #{status,jdbcType=INTEGER}, #{outTradeNo,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{time,jdbcType=TIMESTAMP}, #{givingAmount,jdbcType=DOUBLE}, 
+      #{comefrom,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblBill" >
     insert into tbl_bill
@@ -128,9 +124,6 @@
       <if test="customerId != null" >
         customer_id,
       </if>
-      <if test="recordId != null" >
-        record_id,
-      </if>
       <if test="amount != null" >
         amount,
       </if>
@@ -139,9 +132,6 @@
       </if>
       <if test="status != null" >
         status,
-      </if>
-      <if test="prepayId != null" >
-        prepay_id,
       </if>
       <if test="outTradeNo != null" >
         out_trade_no,
@@ -155,8 +145,8 @@
       <if test="givingAmount != null" >
         giving_amount,
       </if>
-      <if test="managerId != null" >
-        manager_id,
+      <if test="comefrom != null" >
+        comefrom,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -166,9 +156,6 @@
       <if test="customerId != null" >
         #{customerId,jdbcType=BIGINT},
       </if>
-      <if test="recordId != null" >
-        #{recordId,jdbcType=VARCHAR},
-      </if>
       <if test="amount != null" >
         #{amount,jdbcType=DOUBLE},
       </if>
@@ -177,9 +164,6 @@
       </if>
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
-      </if>
-      <if test="prepayId != null" >
-        #{prepayId,jdbcType=VARCHAR},
       </if>
       <if test="outTradeNo != null" >
         #{outTradeNo,jdbcType=VARCHAR},
@@ -193,8 +177,8 @@
       <if test="givingAmount != null" >
         #{givingAmount,jdbcType=DOUBLE},
       </if>
-      <if test="managerId != null" >
-        #{managerId,jdbcType=BIGINT},
+      <if test="comefrom != null" >
+        #{comefrom,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -213,9 +197,6 @@
       <if test="record.customerId != null" >
         customer_id = #{record.customerId,jdbcType=BIGINT},
       </if>
-      <if test="record.recordId != null" >
-        record_id = #{record.recordId,jdbcType=VARCHAR},
-      </if>
       <if test="record.amount != null" >
         amount = #{record.amount,jdbcType=DOUBLE},
       </if>
@@ -224,9 +205,6 @@
       </if>
       <if test="record.status != null" >
         status = #{record.status,jdbcType=INTEGER},
-      </if>
-      <if test="record.prepayId != null" >
-        prepay_id = #{record.prepayId,jdbcType=VARCHAR},
       </if>
       <if test="record.outTradeNo != null" >
         out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
@@ -240,8 +218,8 @@
       <if test="record.givingAmount != null" >
         giving_amount = #{record.givingAmount,jdbcType=DOUBLE},
       </if>
-      <if test="record.managerId != null" >
-        manager_id = #{record.managerId,jdbcType=BIGINT},
+      <if test="record.comefrom != null" >
+        comefrom = #{record.comefrom,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -252,16 +230,14 @@
     update tbl_bill
     set id = #{record.id,jdbcType=VARCHAR},
       customer_id = #{record.customerId,jdbcType=BIGINT},
-      record_id = #{record.recordId,jdbcType=VARCHAR},
       amount = #{record.amount,jdbcType=DOUBLE},
       refund_amount = #{record.refundAmount,jdbcType=DOUBLE},
       status = #{record.status,jdbcType=INTEGER},
-      prepay_id = #{record.prepayId,jdbcType=VARCHAR},
       out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=INTEGER},
       time = #{record.time,jdbcType=TIMESTAMP},
       giving_amount = #{record.givingAmount,jdbcType=DOUBLE},
-      manager_id = #{record.managerId,jdbcType=BIGINT}
+      comefrom = #{record.comefrom,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -272,9 +248,6 @@
       <if test="customerId != null" >
         customer_id = #{customerId,jdbcType=BIGINT},
       </if>
-      <if test="recordId != null" >
-        record_id = #{recordId,jdbcType=VARCHAR},
-      </if>
       <if test="amount != null" >
         amount = #{amount,jdbcType=DOUBLE},
       </if>
@@ -283,9 +256,6 @@
       </if>
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},
-      </if>
-      <if test="prepayId != null" >
-        prepay_id = #{prepayId,jdbcType=VARCHAR},
       </if>
       <if test="outTradeNo != null" >
         out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
@@ -299,8 +269,8 @@
       <if test="givingAmount != null" >
         giving_amount = #{givingAmount,jdbcType=DOUBLE},
       </if>
-      <if test="managerId != null" >
-        manager_id = #{managerId,jdbcType=BIGINT},
+      <if test="comefrom != null" >
+        comefrom = #{comefrom,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -308,16 +278,14 @@
   <update id="updateByPrimaryKey" parameterType="com.pythe.pojo.TblBill" >
     update tbl_bill
     set customer_id = #{customerId,jdbcType=BIGINT},
-      record_id = #{recordId,jdbcType=VARCHAR},
       amount = #{amount,jdbcType=DOUBLE},
       refund_amount = #{refundAmount,jdbcType=DOUBLE},
       status = #{status,jdbcType=INTEGER},
-      prepay_id = #{prepayId,jdbcType=VARCHAR},
       out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
       time = #{time,jdbcType=TIMESTAMP},
       giving_amount = #{givingAmount,jdbcType=DOUBLE},
-      manager_id = #{managerId,jdbcType=BIGINT}
+      comefrom = #{comefrom,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -12,7 +12,6 @@
 			jdbcType="DOUBLE" />
 		<result column="amount" property="amount" jdbcType="DOUBLE" />
 		<result column="type" property="type" jdbcType="INTEGER" />
-		<result column="time" property="time" jdbcType="TIMESTAMP" />
 		<result column="qr_id" property="qrId" jdbcType="BIGINT" />
 		<result column="level" property="level" jdbcType="VARCHAR" />
 		<result column="distribution_name" property="distributionName"
@@ -32,8 +31,7 @@
 									and ${criterion.condition} #{criterion.value}
 								</when>
 								<when test="criterion.betweenValue">
-									and ${criterion.condition} #{criterion.value}
-									and
+									and ${criterion.condition} #{criterion.value} and
 									#{criterion.secondValue}
 								</when>
 								<when test="criterion.listValue">
@@ -65,8 +63,7 @@
 									and ${criterion.condition} #{criterion.value}
 								</when>
 								<when test="criterion.betweenValue">
-									and ${criterion.condition} #{criterion.value}
-									and
+									and ${criterion.condition} #{criterion.value} and
 									#{criterion.secondValue}
 								</when>
 								<when test="criterion.listValue">
@@ -84,10 +81,9 @@
 		</where>
 	</sql>
 	<sql id="Base_Column_List">
-		phone_num, start_time, stop_time, sum, giving_amount,
-		refund_amount, amount,
+		phone_num, start_time, stop_time, sum, giving_amount, refund_amount, amount,
 		type,
-		time, qr_id, level, distribution_name
+		qr_id, level, distribution_name
 	</sql>
 	<select id="selectByExample" resultMap="BaseResultMap"
 		parameterType="com.pythe.pojo.VRecordBillExample">
@@ -111,22 +107,16 @@
 		</if>
 	</delete>
 	<insert id="insert" parameterType="com.pythe.pojo.VRecordBill">
-		insert into v_record_bill
-		(phone_num, start_time, stop_time,
+		insert into v_record_bill (phone_num, start_time, stop_time,
 		sum, giving_amount, refund_amount,
-		amount, type, time,
-		qr_id, level, distribution_name
-		)
-		values
-		(#{phoneNum,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP},
+		amount, type, qr_id, level,
+		distribution_name)
+		values (#{phoneNum,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP},
 		#{stopTime,jdbcType=TIMESTAMP},
-		#{sum,jdbcType=DOUBLE},
-		#{givingAmount,jdbcType=DOUBLE}, #{refundAmount,jdbcType=DOUBLE},
+		#{sum,jdbcType=DOUBLE}, #{givingAmount,jdbcType=DOUBLE}, #{refundAmount,jdbcType=DOUBLE},
 		#{amount,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER},
-		#{time,jdbcType=TIMESTAMP},
-		#{qrId,jdbcType=BIGINT},
-		#{level,jdbcType=VARCHAR}, #{distributionName,jdbcType=VARCHAR}
-		)
+		#{qrId,jdbcType=BIGINT}, #{level,jdbcType=VARCHAR},
+		#{distributionName,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.pythe.pojo.VRecordBill">
 		insert into v_record_bill
@@ -154,9 +144,6 @@
 			</if>
 			<if test="type != null">
 				type,
-			</if>
-			<if test="time != null">
-				time,
 			</if>
 			<if test="qrId != null">
 				qr_id,
@@ -192,9 +179,6 @@
 			</if>
 			<if test="type != null">
 				#{type,jdbcType=INTEGER},
-			</if>
-			<if test="time != null">
-				#{time,jdbcType=TIMESTAMP},
 			</if>
 			<if test="qrId != null">
 				#{qrId,jdbcType=BIGINT},
@@ -241,9 +225,6 @@
 			<if test="record.type != null">
 				type = #{record.type,jdbcType=INTEGER},
 			</if>
-			<if test="record.time != null">
-				time = #{record.time,jdbcType=TIMESTAMP},
-			</if>
 			<if test="record.qrId != null">
 				qr_id = #{record.qrId,jdbcType=BIGINT},
 			</if>
@@ -251,8 +232,7 @@
 				level = #{record.level,jdbcType=VARCHAR},
 			</if>
 			<if test="record.distributionName != null">
-				distribution_name =
-				#{record.distributionName,jdbcType=VARCHAR},
+				distribution_name = #{record.distributionName,jdbcType=VARCHAR},
 			</if>
 		</set>
 		<if test="_parameter != null">
@@ -261,36 +241,21 @@
 	</update>
 	<update id="updateByExample" parameterType="map">
 		update v_record_bill
-		set phone_num =
-		#{record.phoneNum,jdbcType=VARCHAR},
-		start_time =
-		#{record.startTime,jdbcType=TIMESTAMP},
-		stop_time =
-		#{record.stopTime,jdbcType=TIMESTAMP},
-		sum =
-		#{record.sum,jdbcType=DOUBLE},
-		giving_amount =
-		#{record.givingAmount,jdbcType=DOUBLE},
-		refund_amount =
-		#{record.refundAmount,jdbcType=DOUBLE},
-		amount =
-		#{record.amount,jdbcType=DOUBLE},
-		type =
-		#{record.type,jdbcType=INTEGER},
-		time =
-		#{record.time,jdbcType=TIMESTAMP},
-		qr_id =
-		#{record.qrId,jdbcType=BIGINT},
-		level =
-		#{record.level,jdbcType=VARCHAR},
-		distribution_name =
-		#{record.distributionName,jdbcType=VARCHAR}
+		set phone_num = #{record.phoneNum,jdbcType=VARCHAR},
+		start_time = #{record.startTime,jdbcType=TIMESTAMP},
+		stop_time = #{record.stopTime,jdbcType=TIMESTAMP},
+		sum = #{record.sum,jdbcType=DOUBLE},
+		giving_amount = #{record.givingAmount,jdbcType=DOUBLE},
+		refund_amount = #{record.refundAmount,jdbcType=DOUBLE},
+		amount = #{record.amount,jdbcType=DOUBLE},
+		type = #{record.type,jdbcType=INTEGER},
+		qr_id = #{record.qrId,jdbcType=BIGINT},
+		level = #{record.level,jdbcType=VARCHAR},
+		distribution_name = #{record.distributionName,jdbcType=VARCHAR}
 		<if test="_parameter != null">
 			<include refid="Update_By_Example_Where_Clause" />
 		</if>
 	</update>
-
-
 	<select id="selectSumByTime" resultMap="BaseResultMap">
 		SELECT count(*) as qr_id,COALESCE(sum(sum),0) as
 		sum,COALESCE(sum(amount),0) as amount,COALESCE(sum(refund_amount),0)
@@ -309,7 +274,7 @@
 		</if>
 
 		<if test="time != null">
-			r.time like concat(#{time},'%') and
+			r.start_time like concat(#{time},'%') and
 		</if>
 
 		1=1
@@ -336,14 +301,14 @@
 
 		<if test="startTime!=null and startTime!=''">
 
-			r.time <![CDATA[>=]]>
+			r.start_time <![CDATA[>=]]>
 			#{startTime}
 			and
 
 		</if>
 		<if test="endTime!=null and endTime!=''">
 
-			r.time <![CDATA[<=]]>
+			r.start_time <![CDATA[<=]]>
 			#{endTime}
 			and
 		</if>
@@ -358,7 +323,7 @@
 	<select id="selectSumByMonths" resultMap="BaseResultMap">
 		SELECT count(*) as qr_id,COALESCE(sum(sum),0) as
 		sum,COALESCE(sum(amount),0) as amount,COALESCE(sum(refund_amount),0)
-		as refund_amount,COALESCE(left(time,7),0) as level
+		as refund_amount,COALESCE(left(start_time,7),0) as level
 		,COALESCE(sum(giving_amount),0)
 		AS giving_amount
 		FROM
@@ -376,26 +341,26 @@
 
 		<if test="startMonth!=null and startMonth!=''">
 
-			substring(r.time,1,7) <![CDATA[>=]]>
+			substring(r.start_time,1,7) <![CDATA[>=]]>
 			#{startMonth}
 			and
 
 		</if>
 		<if test="endMonth!=null and endMonth!=''">
 
-			substring(r.time,1,7) <![CDATA[<=]]>
+			substring(r.start_time,1,7) <![CDATA[<=]]>
 			#{endMonth}
 			and
 		</if>
 
-		1=1 group by substring(r.time,1,7) order by substring(r.time,1,7) DESC
+		1=1 group by substring(r.start_time,1,7) order by substring(r.start_time,1,7) DESC
 
 	</select>
 
 	<select id="selectSumByMonthsGroupByDay" resultMap="BaseResultMap">
 		SELECT count(*) as qr_id,COALESCE(sum(sum),0) as
 		sum,COALESCE(sum(amount),0) as amount,COALESCE(sum(refund_amount),0)
-		as refund_amount,COALESCE(left(time,10),0) as level
+		as refund_amount,COALESCE(left(start_time,10),0) as level
 		,COALESCE(sum(giving_amount),0)
 		AS giving_amount
 		FROM
@@ -413,19 +378,20 @@
 
 		<if test="startDay!=null and startDay!=''">
 
-			substring(r.time,1,10) <![CDATA[>=]]>
+			substring(r.start_time,1,10) <![CDATA[>=]]>
 			#{startDay}
 			and
 
 		</if>
 		<if test="endDay!=null and endDay!=''">
 
-			substring(r.time,1,10) <![CDATA[<=]]>
+			substring(r.start_time,1,10) <![CDATA[<=]]>
 			#{endDay}
 			and
 		</if>
 
-		1=1 group by substring(r.time,1,10) order by substring(r.time,1,10) DESC
+		1=1 group by substring(r.start_time,1,10) order by substring(r.start_time,1,10)
+		DESC
 
 	</select>
 </mapper>

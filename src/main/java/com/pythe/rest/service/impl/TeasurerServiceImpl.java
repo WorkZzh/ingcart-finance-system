@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.zookeeper.server.SessionTracker.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -115,7 +114,7 @@ public class TeasurerServiceImpl implements TeasurerService {
 		}
 		TblTeasurerRecord tblTeasurerRecord = new TblTeasurerRecord();
 		tblTeasurerRecord.setCatalogId(tblTeasurerList.get(0).getCatalogId());
-		tblTeasurerRecord.setCreated(tblTeasurerList.get(0).getCreated());
+		tblTeasurerRecord.setCreated(new Date());
 		tblTeasurerRecord.setId(tblTeasurerList.get(0).getId());
 		tblTeasurerRecord.setLevel(tblTeasurerList.get(0).getLevel());
 		tblTeasurerRecord.setName(tblTeasurerList.get(0).getName());
@@ -411,9 +410,7 @@ public class TeasurerServiceImpl implements TeasurerService {
 			} else if (tblCar.getStatus() == 2) {
 				carjson.put("status", "保留");
 			} else if (tblCar.getStatus() == 3) {
-				carjson.put("status", "修理");
-			} else if (tblCar.getStatus() == 4) {
-				carjson.put("status", "关锁");
+				carjson.put("status", "故障");
 			}
 			for (TblDistribution tblDistribution : distributions) {
 				if (tblDistribution.getCarIds() != null) {

@@ -19,28 +19,13 @@ public class VRecordBill {
 
     private Integer type;
 
-    private Date time;
-
     private Long qrId;
 
     private String level;
 
     private String distributionName;
-    
-    private Long frequency;
 
-    
-    
-    
-    public Long getFrequency() {
-		return frequency;
-	}
-
-	public void setFrequency(Long frequency) {
-		this.frequency = frequency;
-	}
-
-	public String getPhoneNum() {
+    public String getPhoneNum() {
         return phoneNum;
     }
 
@@ -102,14 +87,6 @@ public class VRecordBill {
 
     public void setType(Integer type) {
         this.type = type;
-    }
-
-    public Date getTime() {
-        return time;
-    }
-
-    public void setTime(Date time) {
-        this.time = time;
     }
 
     public Long getQrId() {

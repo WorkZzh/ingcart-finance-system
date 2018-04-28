@@ -7,15 +7,11 @@ public class TblBill {
 
     private Long customerId;
 
-    private String recordId;
-
     private Double amount;
 
     private Double refundAmount;
 
     private Integer status;
-
-    private String prepayId;
 
     private String outTradeNo;
 
@@ -25,7 +21,7 @@ public class TblBill {
 
     private Double givingAmount;
 
-    private Long managerId;
+    private String comefrom;
 
     public String getId() {
         return id;
@@ -41,14 +37,6 @@ public class TblBill {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
-    }
-
-    public String getRecordId() {
-        return recordId;
-    }
-
-    public void setRecordId(String recordId) {
-        this.recordId = recordId == null ? null : recordId.trim();
     }
 
     public Double getAmount() {
@@ -73,14 +61,6 @@ public class TblBill {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public String getPrepayId() {
-        return prepayId;
-    }
-
-    public void setPrepayId(String prepayId) {
-        this.prepayId = prepayId == null ? null : prepayId.trim();
     }
 
     public String getOutTradeNo() {
@@ -115,11 +95,11 @@ public class TblBill {
         this.givingAmount = givingAmount;
     }
 
-    public Long getManagerId() {
-        return managerId;
+    public String getComefrom() {
+        return comefrom;
     }
 
-    public void setManagerId(Long managerId) {
-        this.managerId = managerId;
+    public void setComefrom(String comefrom) {
+        this.comefrom = comefrom == null ? null : comefrom.trim();
     }
 }

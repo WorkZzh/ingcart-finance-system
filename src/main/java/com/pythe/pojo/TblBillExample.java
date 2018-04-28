@@ -235,76 +235,6 @@ public class TblBillExample {
             return (Criteria) this;
         }
 
-        public Criteria andRecordIdIsNull() {
-            addCriterion("record_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdIsNotNull() {
-            addCriterion("record_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdEqualTo(String value) {
-            addCriterion("record_id =", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdNotEqualTo(String value) {
-            addCriterion("record_id <>", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdGreaterThan(String value) {
-            addCriterion("record_id >", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdGreaterThanOrEqualTo(String value) {
-            addCriterion("record_id >=", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdLessThan(String value) {
-            addCriterion("record_id <", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdLessThanOrEqualTo(String value) {
-            addCriterion("record_id <=", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdLike(String value) {
-            addCriterion("record_id like", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdNotLike(String value) {
-            addCriterion("record_id not like", value, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdIn(List<String> values) {
-            addCriterion("record_id in", values, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdNotIn(List<String> values) {
-            addCriterion("record_id not in", values, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdBetween(String value1, String value2) {
-            addCriterion("record_id between", value1, value2, "recordId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordIdNotBetween(String value1, String value2) {
-            addCriterion("record_id not between", value1, value2, "recordId");
-            return (Criteria) this;
-        }
-
         public Criteria andAmountIsNull() {
             addCriterion("amount is null");
             return (Criteria) this;
@@ -482,76 +412,6 @@ public class TblBillExample {
 
         public Criteria andStatusNotBetween(Integer value1, Integer value2) {
             addCriterion("status not between", value1, value2, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdIsNull() {
-            addCriterion("prepay_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdIsNotNull() {
-            addCriterion("prepay_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdEqualTo(String value) {
-            addCriterion("prepay_id =", value, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdNotEqualTo(String value) {
-            addCriterion("prepay_id <>", value, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdGreaterThan(String value) {
-            addCriterion("prepay_id >", value, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdGreaterThanOrEqualTo(String value) {
-            addCriterion("prepay_id >=", value, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdLessThan(String value) {
-            addCriterion("prepay_id <", value, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdLessThanOrEqualTo(String value) {
-            addCriterion("prepay_id <=", value, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdLike(String value) {
-            addCriterion("prepay_id like", value, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdNotLike(String value) {
-            addCriterion("prepay_id not like", value, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdIn(List<String> values) {
-            addCriterion("prepay_id in", values, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdNotIn(List<String> values) {
-            addCriterion("prepay_id not in", values, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdBetween(String value1, String value2) {
-            addCriterion("prepay_id between", value1, value2, "prepayId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPrepayIdNotBetween(String value1, String value2) {
-            addCriterion("prepay_id not between", value1, value2, "prepayId");
             return (Criteria) this;
         }
 
@@ -805,63 +665,73 @@ public class TblBillExample {
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdIsNull() {
-            addCriterion("manager_id is null");
+        public Criteria andComefromIsNull() {
+            addCriterion("comefrom is null");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdIsNotNull() {
-            addCriterion("manager_id is not null");
+        public Criteria andComefromIsNotNull() {
+            addCriterion("comefrom is not null");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdEqualTo(Long value) {
-            addCriterion("manager_id =", value, "managerId");
+        public Criteria andComefromEqualTo(String value) {
+            addCriterion("comefrom =", value, "comefrom");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdNotEqualTo(Long value) {
-            addCriterion("manager_id <>", value, "managerId");
+        public Criteria andComefromNotEqualTo(String value) {
+            addCriterion("comefrom <>", value, "comefrom");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdGreaterThan(Long value) {
-            addCriterion("manager_id >", value, "managerId");
+        public Criteria andComefromGreaterThan(String value) {
+            addCriterion("comefrom >", value, "comefrom");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("manager_id >=", value, "managerId");
+        public Criteria andComefromGreaterThanOrEqualTo(String value) {
+            addCriterion("comefrom >=", value, "comefrom");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdLessThan(Long value) {
-            addCriterion("manager_id <", value, "managerId");
+        public Criteria andComefromLessThan(String value) {
+            addCriterion("comefrom <", value, "comefrom");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdLessThanOrEqualTo(Long value) {
-            addCriterion("manager_id <=", value, "managerId");
+        public Criteria andComefromLessThanOrEqualTo(String value) {
+            addCriterion("comefrom <=", value, "comefrom");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdIn(List<Long> values) {
-            addCriterion("manager_id in", values, "managerId");
+        public Criteria andComefromLike(String value) {
+            addCriterion("comefrom like", value, "comefrom");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdNotIn(List<Long> values) {
-            addCriterion("manager_id not in", values, "managerId");
+        public Criteria andComefromNotLike(String value) {
+            addCriterion("comefrom not like", value, "comefrom");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdBetween(Long value1, Long value2) {
-            addCriterion("manager_id between", value1, value2, "managerId");
+        public Criteria andComefromIn(List<String> values) {
+            addCriterion("comefrom in", values, "comefrom");
             return (Criteria) this;
         }
 
-        public Criteria andManagerIdNotBetween(Long value1, Long value2) {
-            addCriterion("manager_id not between", value1, value2, "managerId");
+        public Criteria andComefromNotIn(List<String> values) {
+            addCriterion("comefrom not in", values, "comefrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andComefromBetween(String value1, String value2) {
+            addCriterion("comefrom between", value1, value2, "comefrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andComefromNotBetween(String value1, String value2) {
+            addCriterion("comefrom not between", value1, value2, "comefrom");
             return (Criteria) this;
         }
     }

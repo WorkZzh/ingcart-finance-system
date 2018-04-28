@@ -12,7 +12,12 @@
     <result column="latitude_start" property="latitudeStart" jdbcType="DOUBLE" />
     <result column="longitude_stop" property="longitudeStop" jdbcType="DOUBLE" />
     <result column="latitude_stop" property="latitudeStop" jdbcType="DOUBLE" />
-    <result column="bill_id" property="billId" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <result column="refund_amount" property="refundAmount" jdbcType="DOUBLE" />
+    <result column="giving_amount" property="givingAmount" jdbcType="DOUBLE" />
+    <result column="manager_id" property="managerId" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,7 +79,8 @@
   </sql>
   <sql id="Base_Column_List" >
     id, customer_id, car_id, status, start_time, stop_time, longitde_start, latitude_start, 
-    longitude_stop, latitude_stop, bill_id
+    longitude_stop, latitude_stop, amount, refund_amount, giving_amount, manager_id, 
+    type, out_trade_no
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pythe.pojo.TblRecordExample" >
     select
@@ -110,11 +116,15 @@
     insert into tbl_record (id, customer_id, car_id, 
       status, start_time, stop_time, 
       longitde_start, latitude_start, longitude_stop, 
-      latitude_stop, bill_id)
+      latitude_stop, amount, refund_amount, 
+      giving_amount, manager_id, type, 
+      out_trade_no)
     values (#{id,jdbcType=VARCHAR}, #{customerId,jdbcType=BIGINT}, #{carId,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{stopTime,jdbcType=TIMESTAMP}, 
       #{longitdeStart,jdbcType=DOUBLE}, #{latitudeStart,jdbcType=DOUBLE}, #{longitudeStop,jdbcType=DOUBLE}, 
-      #{latitudeStop,jdbcType=DOUBLE}, #{billId,jdbcType=VARCHAR})
+      #{latitudeStop,jdbcType=DOUBLE}, #{amount,jdbcType=DOUBLE}, #{refundAmount,jdbcType=DOUBLE}, 
+      #{givingAmount,jdbcType=DOUBLE}, #{managerId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, 
+      #{outTradeNo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pythe.pojo.TblRecord" >
     insert into tbl_record
@@ -149,8 +159,23 @@
       <if test="latitudeStop != null" >
         latitude_stop,
       </if>
-      <if test="billId != null" >
-        bill_id,
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="refundAmount != null" >
+        refund_amount,
+      </if>
+      <if test="givingAmount != null" >
+        giving_amount,
+      </if>
+      <if test="managerId != null" >
+        manager_id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -184,8 +209,23 @@
       <if test="latitudeStop != null" >
         #{latitudeStop,jdbcType=DOUBLE},
       </if>
-      <if test="billId != null" >
-        #{billId,jdbcType=VARCHAR},
+      <if test="amount != null" >
+        #{amount,jdbcType=DOUBLE},
+      </if>
+      <if test="refundAmount != null" >
+        #{refundAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="givingAmount != null" >
+        #{givingAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="managerId != null" >
+        #{managerId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -228,8 +268,23 @@
       <if test="record.latitudeStop != null" >
         latitude_stop = #{record.latitudeStop,jdbcType=DOUBLE},
       </if>
-      <if test="record.billId != null" >
-        bill_id = #{record.billId,jdbcType=VARCHAR},
+      <if test="record.amount != null" >
+        amount = #{record.amount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.refundAmount != null" >
+        refund_amount = #{record.refundAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.givingAmount != null" >
+        giving_amount = #{record.givingAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.managerId != null" >
+        manager_id = #{record.managerId,jdbcType=BIGINT},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.outTradeNo != null" >
+        out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -248,7 +303,12 @@
       latitude_start = #{record.latitudeStart,jdbcType=DOUBLE},
       longitude_stop = #{record.longitudeStop,jdbcType=DOUBLE},
       latitude_stop = #{record.latitudeStop,jdbcType=DOUBLE},
-      bill_id = #{record.billId,jdbcType=VARCHAR}
+      amount = #{record.amount,jdbcType=DOUBLE},
+      refund_amount = #{record.refundAmount,jdbcType=DOUBLE},
+      giving_amount = #{record.givingAmount,jdbcType=DOUBLE},
+      manager_id = #{record.managerId,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=INTEGER},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -283,8 +343,23 @@
       <if test="latitudeStop != null" >
         latitude_stop = #{latitudeStop,jdbcType=DOUBLE},
       </if>
-      <if test="billId != null" >
-        bill_id = #{billId,jdbcType=VARCHAR},
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DOUBLE},
+      </if>
+      <if test="refundAmount != null" >
+        refund_amount = #{refundAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="givingAmount != null" >
+        giving_amount = #{givingAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="managerId != null" >
+        manager_id = #{managerId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -300,15 +375,16 @@
       latitude_start = #{latitudeStart,jdbcType=DOUBLE},
       longitude_stop = #{longitudeStop,jdbcType=DOUBLE},
       latitude_stop = #{latitudeStop,jdbcType=DOUBLE},
-      bill_id = #{billId,jdbcType=VARCHAR}
+      amount = #{amount,jdbcType=DOUBLE},
+      refund_amount = #{refundAmount,jdbcType=DOUBLE},
+      giving_amount = #{givingAmount,jdbcType=DOUBLE},
+      manager_id = #{managerId,jdbcType=BIGINT},
+      type = #{type,jdbcType=INTEGER},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  
-      <select id="selectPreRecordPrimaryKey" resultMap="BaseResultMap"> 
+        <select id="selectPreRecordPrimaryKey" resultMap="BaseResultMap"> 
       
        SELECT * FROM tbl_record WHERE customer_id=#{0} AND car_id= #{1} ORDER BY START_time DESC LIMIT 1
 	</select>
-  
-
-  
 </mapper>

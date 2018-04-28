@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,10 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.auth0.jwt.interfaces.Claim;
 import com.github.pagehelper.PageHelper;
 import com.pythe.common.pojo.PytheResult;
-import com.pythe.common.utils.CookieUtils;
 import com.pythe.common.utils.DateUtils;
 import com.pythe.common.utils.ExcelExport;
 import com.pythe.common.utils.FactoryUtils;
@@ -719,7 +716,7 @@ public class ManagerServiceImpl implements ManagerService {
 		 * 查第一天和最后一天的记录
 		 */
 		if (!"0".equals(time)) {
-			cretria2.andTimeBetween(DateUtils.parseTime(DateUtils.getDay(time, 0) + " 01:00:00"),
+			cretria2.andStartTimeBetween(DateUtils.parseTime(DateUtils.getDay(time, 0) + " 01:00:00"),
 					DateUtils.parseTime(DateUtils.getDay(time, 1) + " 23:50:00"));
 		}
 
@@ -747,15 +744,18 @@ public class ManagerServiceImpl implements ManagerService {
 		for (VRecordBill vRecordBill : recordBills) {
 			JSONObject result = new JSONObject();
 			result.put("car_number", vRecordBill.getQrId());
-			result.put("phone_number",
-					vRecordBill.getPhoneNum().substring(0, 3) + "????" + vRecordBill.getPhoneNum().substring(7));
+			String phoneNum = "";
+			if (vRecordBill.getPhoneNum() != null) {
+				phoneNum = vRecordBill.getPhoneNum().substring(0, 3) + "????" + vRecordBill.getPhoneNum().substring(7);
+			}
+			result.put("phone_number", phoneNum);
 			result.put("distribution_name", vRecordBill.getDistributionName());
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			result.put("date", dateFormat.format(vRecordBill.getTime()));
 			SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 			result.put("start_time", timeFormat.format(vRecordBill.getStartTime()));
 			result.put("stop_time", timeFormat.format(vRecordBill.getStopTime()));
-			result.put("sum", vRecordBill.getSum());
+			result.put("date", dateFormat.format(vRecordBill.getStartTime()));
+			result.put("sum", com.pythe.common.utils.StringUtils.round2(vRecordBill.getSum()));
 			type = vRecordBill.getType();
 			if (type.equals(BILL_PAY_TYPE)) {
 				result.put("typeName", "非定点还");
@@ -846,9 +846,13 @@ public class ManagerServiceImpl implements ManagerService {
 		}
 
 		VRecordBill recordLists = recordBillMapper.selectSumByTime(list, time);
-		recordLists.setFrequency(recordLists.getQrId());
-		recordLists.setQrId(null);
-
+		recordLists.setQrId(recordLists.getQrId());
+		recordLists.setSum(Double.valueOf(com.pythe.common.utils.StringUtils.round2(recordLists.getSum())));
+		recordLists.setAmount(Double.valueOf(com.pythe.common.utils.StringUtils.round2(recordLists.getAmount())));
+		recordLists.setRefundAmount(
+				Double.valueOf(com.pythe.common.utils.StringUtils.round2(recordLists.getRefundAmount())));
+		recordLists.setGivingAmount(
+				Double.valueOf(com.pythe.common.utils.StringUtils.round2(recordLists.getGivingAmount())));
 		return PytheResult.ok(recordLists);
 	}
 
@@ -978,7 +982,7 @@ public class ManagerServiceImpl implements ManagerService {
 		 * 查第一天和最后一天的记录
 		 */
 		if (!"0".equals(startTime) && !"0".equals(endTime)) {
-			cretria2.andTimeBetween(DateUtils.parseTime(startTime + " 01:00:00"),
+			cretria2.andStartTimeBetween(DateUtils.parseTime(startTime + " 01:00:00"),
 					DateUtils.parseTime(endTime + " 23:50:00"));
 		}
 
@@ -1006,15 +1010,18 @@ public class ManagerServiceImpl implements ManagerService {
 		for (VRecordBill vRecordBill : recordBills) {
 			JSONObject result = new JSONObject();
 			result.put("car_number", vRecordBill.getQrId());
-			result.put("phone_number",
-					vRecordBill.getPhoneNum().substring(0, 3) + "????" + vRecordBill.getPhoneNum().substring(7));
+			String phoneNum = "";
+			if (vRecordBill.getPhoneNum() != null) {
+				phoneNum = vRecordBill.getPhoneNum().substring(0, 3) + "????" + vRecordBill.getPhoneNum().substring(7);
+			}
+			result.put("phone_number", phoneNum);
 			result.put("distribution_name", vRecordBill.getDistributionName());
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			result.put("date", dateFormat.format(vRecordBill.getTime()));
 			SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 			result.put("start_time", timeFormat.format(vRecordBill.getStartTime()));
 			result.put("stop_time", timeFormat.format(vRecordBill.getStopTime()));
-			result.put("sum", vRecordBill.getSum());
+			result.put("date", dateFormat.format(vRecordBill.getStartTime()));
+			result.put("sum", com.pythe.common.utils.StringUtils.round2(vRecordBill.getSum()));
 			type = vRecordBill.getType();
 			if (type.equals(BILL_PAY_TYPE)) {
 				result.put("typeName", "非定点还");
@@ -1068,9 +1075,13 @@ public class ManagerServiceImpl implements ManagerService {
 			endTime = null;
 		}
 		VRecordBill recordLists = recordBillMapper.selectSumByTimes(list, startTime, endTime);
-		recordLists.setFrequency(recordLists.getQrId());
-		recordLists.setQrId(null);
-
+		recordLists.setQrId(recordLists.getQrId());
+		recordLists.setSum(Double.valueOf(com.pythe.common.utils.StringUtils.round2(recordLists.getSum())));
+		recordLists.setAmount(Double.valueOf(com.pythe.common.utils.StringUtils.round2(recordLists.getAmount())));
+		recordLists.setRefundAmount(
+				Double.valueOf(com.pythe.common.utils.StringUtils.round2(recordLists.getRefundAmount())));
+		recordLists.setGivingAmount(
+				Double.valueOf(com.pythe.common.utils.StringUtils.round2(recordLists.getGivingAmount())));
 		return PytheResult.ok(recordLists);
 	}
 
@@ -1107,14 +1118,13 @@ public class ManagerServiceImpl implements ManagerService {
 		 * 按月汇总/按年汇总
 		 */
 		VRecordBill recordMonth = recordBillMapper.selectSumByTime(list, time);
-		recordMonth.setFrequency(recordMonth.getQrId());
-		recordMonth.setQrId(null);
+		recordMonth.setQrId(recordMonth.getQrId());
 		JSONObject recordMonthJson = new JSONObject();
 		recordMonthJson.put("time", time);
 		recordMonthJson.put("sum", recordMonth.getSum());
 		recordMonthJson.put("refundAmount", recordMonth.getRefundAmount());
 		recordMonthJson.put("givingAmount", recordMonth.getGivingAmount());
-		recordMonthJson.put("qrId", recordMonth.getFrequency());
+		recordMonthJson.put("qrId", recordMonth.getQrId());
 
 		List<JSONObject> dayresults = new LinkedList<JSONObject>();
 		int mdtype = 0;
@@ -1154,7 +1164,7 @@ public class ManagerServiceImpl implements ManagerService {
 		/* 查第一天和最后一天的记录 */
 
 		if (!"0".equals(time)) {
-			cretria2.andTimeBetween(DateUtils.parseTime(DateUtils.getDay(time, 0) + " 01:00:00"),
+			cretria2.andStartTimeBetween(DateUtils.parseTime(DateUtils.getDay(time, 0) + " 01:00:00"),
 					DateUtils.parseTime(DateUtils.getDay(time, 1) + " 23:50:00"));
 		}
 
@@ -1168,16 +1178,19 @@ public class ManagerServiceImpl implements ManagerService {
 		for (VRecordBill vRecordBill : recordBills) {
 			JSONObject result = new JSONObject();
 			result.put("car_number", vRecordBill.getQrId());
-			result.put("phone_number",
-					vRecordBill.getPhoneNum().substring(0, 3) + "????" + vRecordBill.getPhoneNum().substring(7));
+			String phoneNum = "";
+			if (vRecordBill.getPhoneNum() != null) {
+				phoneNum = vRecordBill.getPhoneNum().substring(0, 3) + "••••" + vRecordBill.getPhoneNum().substring(7);
+			}
+			result.put("phone_number", phoneNum);
 			result.put("distribution_name", vRecordBill.getDistributionName());
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			result.put("date", dateFormat.format(vRecordBill.getTime()));
+			result.put("date", dateFormat.format(vRecordBill.getStartTime()));
 			SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-			result.put("start_time",
-					dateFormat.format(vRecordBill.getTime()) + " " + timeFormat.format(vRecordBill.getStartTime()));
+			result.put("start_time", dateFormat.format(vRecordBill.getStartTime()) + " "
+					+ timeFormat.format(vRecordBill.getStartTime()));
 			result.put("stop_time",
-					dateFormat.format(vRecordBill.getTime()) + " " + timeFormat.format(vRecordBill.getStopTime()));
+					dateFormat.format(vRecordBill.getStartTime()) + " " + timeFormat.format(vRecordBill.getStopTime()));
 			result.put("sum", vRecordBill.getSum());
 			type = vRecordBill.getType();
 			if (type.equals(BILL_PAY_TYPE)) {
@@ -1255,7 +1268,14 @@ public class ManagerServiceImpl implements ManagerService {
 		}
 
 		List<VRecordBill> recordLists = recordBillMapper.selectSumByMonths(list, startMonth, endMonth);
-
+		for (VRecordBill vRecordBill : recordLists) {
+			vRecordBill.setSum(Double.valueOf(com.pythe.common.utils.StringUtils.round2(vRecordBill.getSum())));
+			vRecordBill.setAmount(Double.valueOf(com.pythe.common.utils.StringUtils.round2(vRecordBill.getAmount())));
+			vRecordBill.setRefundAmount(
+					Double.valueOf(com.pythe.common.utils.StringUtils.round2(vRecordBill.getRefundAmount())));
+			vRecordBill.setGivingAmount(
+					Double.valueOf(com.pythe.common.utils.StringUtils.round2(vRecordBill.getGivingAmount())));
+		}
 		return PytheResult.ok(recordLists);
 	}
 
@@ -1698,14 +1718,13 @@ public class ManagerServiceImpl implements ManagerService {
 		 */
 		VRecordBill recordMonth = recordBillMapper.selectSumByTimes(list, startTime + " 01:00:00",
 				endTime + " 23:50:00");
-		recordMonth.setFrequency(recordMonth.getQrId());
-		recordMonth.setQrId(null);
+		recordMonth.setQrId(recordMonth.getQrId());
 		JSONObject recordMonthJson = new JSONObject();
 		recordMonthJson.put("time", startTime + " - " + endTime);
 		recordMonthJson.put("sum", recordMonth.getSum());
 		recordMonthJson.put("refundAmount", recordMonth.getRefundAmount());
 		recordMonthJson.put("givingAmount", recordMonth.getGivingAmount());
-		recordMonthJson.put("qrId", recordMonth.getFrequency());
+		recordMonthJson.put("qrId", recordMonth.getQrId());
 
 		List<JSONObject> dayresults = new LinkedList<JSONObject>();
 
@@ -1724,7 +1743,7 @@ public class ManagerServiceImpl implements ManagerService {
 			dayresults.add(recordDayJson);
 		}
 
-		cretria2.andTimeBetween(DateUtils.parseTime(startTime + " 01:00:00"),
+		cretria2.andStartTimeBetween(DateUtils.parseTime(startTime + " 01:00:00"),
 				DateUtils.parseTime(endTime + " 23:50:00"));
 
 		/* 查询出视图中的集合 */
@@ -1737,16 +1756,19 @@ public class ManagerServiceImpl implements ManagerService {
 		for (VRecordBill vRecordBill : recordBills) {
 			JSONObject result = new JSONObject();
 			result.put("car_number", vRecordBill.getQrId());
-			result.put("phone_number",
-					vRecordBill.getPhoneNum().substring(0, 3) + "????" + vRecordBill.getPhoneNum().substring(7));
+			String phoneNum = "";
+			if (vRecordBill.getPhoneNum() != null) {
+				phoneNum = vRecordBill.getPhoneNum().substring(0, 3) + "••••" + vRecordBill.getPhoneNum().substring(7);
+			}
+			result.put("phone_number", phoneNum);
 			result.put("distribution_name", vRecordBill.getDistributionName());
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			result.put("date", dateFormat.format(vRecordBill.getTime()));
+			result.put("date", dateFormat.format(vRecordBill.getStartTime()));
 			SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-			result.put("start_time",
-					dateFormat.format(vRecordBill.getTime()) + " " + timeFormat.format(vRecordBill.getStartTime()));
+			result.put("start_time", dateFormat.format(vRecordBill.getStartTime()) + " "
+					+ timeFormat.format(vRecordBill.getStartTime()));
 			result.put("stop_time",
-					dateFormat.format(vRecordBill.getTime()) + " " + timeFormat.format(vRecordBill.getStopTime()));
+					dateFormat.format(vRecordBill.getStartTime()) + " " + timeFormat.format(vRecordBill.getStopTime()));
 			result.put("sum", vRecordBill.getSum());
 			type = vRecordBill.getType();
 			if (type.equals(BILL_PAY_TYPE)) {

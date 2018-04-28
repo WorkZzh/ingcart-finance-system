@@ -23,7 +23,17 @@ public class TblRecord {
 
     private Double latitudeStop;
 
-    private String billId;
+    private Double amount;
+
+    private Double refundAmount;
+
+    private Double givingAmount;
+
+    private Long managerId;
+
+    private Integer type;
+
+    private String outTradeNo;
 
     public String getId() {
         return id;
@@ -105,11 +115,51 @@ public class TblRecord {
         this.latitudeStop = latitudeStop;
     }
 
-    public String getBillId() {
-        return billId;
+    public Double getAmount() {
+        return amount;
     }
 
-    public void setBillId(String billId) {
-        this.billId = billId == null ? null : billId.trim();
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Double getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setRefundAmount(Double refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+
+    public Double getGivingAmount() {
+        return givingAmount;
+    }
+
+    public void setGivingAmount(Double givingAmount) {
+        this.givingAmount = givingAmount;
+    }
+
+    public Long getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(Long managerId) {
+        this.managerId = managerId;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public String getOutTradeNo() {
+        return outTradeNo;
+    }
+
+    public void setOutTradeNo(String outTradeNo) {
+        this.outTradeNo = outTradeNo == null ? null : outTradeNo.trim();
     }
 }
